@@ -16,8 +16,8 @@ export class Start extends Phaser.Scene {
         this.load.image('description_button_click', 'assets/GameStart/button/cover_game_description_button_click.png')
         this.load.image('setting_btn', 'assets/GameStart/button/setting_button.png');
         this.load.image('setting_btn_click', 'assets/GameStart/button/setting_button_click.png');
-        this.load.image('info_btn', 'assets/GameStart/button/program_information_button.png');
-        this.load.image('info_btn_click', 'assets/GameStart/button/program_information_button_click.png');
+        this.load.image('program_btn', 'assets/GameStart/button/program_information_button.png');
+        this.load.image('program_btn_click', 'assets/GameStart/button/program_information_button_click.png');
         this.load.image('desc_button', 'assets/GameStart/button/game_description_button.png')
         this.load.image('desc_button_click', 'assets/GameStart/button/game_description_button_click.png')
 
@@ -43,7 +43,6 @@ export class Start extends Phaser.Scene {
         this.bgVideo = this.add.video(960, 540, 'cover_video');
         this.bgVideo.setMute(false);
         this.bgVideo.play(true); // loop
-
 
         const descriptionPages = [
             {   
@@ -121,15 +120,22 @@ export class Start extends Phaser.Scene {
             descriptionPanel.setVisible(false);
         });
 
-        const infoBtn = new CustomButton(this, 400, 100, 'info_btn', 'info_btn_click', () => {
+
+        const programBtn = new CustomButton(this, 400, 100, 'program_btn', 'program_btn_click', () => {
             programPanel.setVisible(true);
             programPanel.currentPage = 0;
-            descriptionPanel.refresh();   
+            programPanel.refresh();   
         }, () => {
             programPanel.setVisible(false);
         });
+
+        gameDescrBtn.needClicked = true;
+        settingBtn.needClicked = true;
+        descBtn.needClicked = true;
+        programBtn.needClicked = true;
+
+        descriptionPanel.toggleBtn = descBtn;
+        programPanel.toggleBtn = programBtn;
    
-
-
     }
 }

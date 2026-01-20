@@ -5,6 +5,7 @@ export class CustomButton extends Phaser.GameObjects.Image {
         this.normalKey = normalKey;
         this.pressedKey = pressedKey;
         this.isClicked = false;
+        this.needClicked = false; // 預設為普通模式
 
         this.cbDown = callbackDown || (() => {});
         this.cbUp = callbackUp || (() => {});
@@ -13,31 +14,50 @@ export class CustomButton extends Phaser.GameObjects.Image {
         this.setInteractive({ useHandCursor: true });
 
         this.on('pointerdown', () => {
-            this.isClicked = !this.isClicked;
-
-            if (this.isClicked) {
-                // 狀態 A: 變為按下樣式並執行 callbackDown
-                if (this.pressedKey) {
-                    this.setTexture(this.pressedKey);
-                    this.setScale(0.95);
+            if (this.needClicked) {
+                // Toggle 
+                this.isClicked = !this.isClicked;
+                if (this.isClicked) {
+                    this.setPressedState();
+                    this.cbDown();
+                } else {
+                    this.setNormalState();
+                    this.cbUp();
                 }
-                this.cbDown();
             } else {
-                // 狀態 B: 變回原樣並執行 callbackUp
-                if (this.normalKey) {
-                    this.setTexture(this.normalKey);
-                    this.setScale(1);
-                }
+                // Normal Press
+                this.setPressedState();
+                this.cbDown();
+            }
+        });
+
+        this.on('pointerup', () => {
+            if (!this.needClicked) {
+                this.setNormalState();
                 this.cbUp();
+            }
+        });
+
+        this.on('pointerout', () => {
+            if (!this.needClicked) {
+                this.setNormalState();
             }
         });
     }
 
+    // 抽離出嚟方便管理樣式
+    setPressedState() {
+        if (this.pressedKey) this.setTexture(this.pressedKey);
+        this.setScale(0.95);
+    }
+
+    setNormalState() {
+        if (this.normalKey) this.setTexture(this.normalKey);
+        this.setScale(1);
+    }
+
     resetStatus() {
         this.isClicked = false;
-        if (this.normalKey) {
-            this.setTexture(this.normalKey);
-            this.setScale(1);
-        }
+        this.setNormalState();
     }
 }

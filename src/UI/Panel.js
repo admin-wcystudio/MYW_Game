@@ -6,18 +6,24 @@ export class CustomPanel extends Phaser.GameObjects.Container {
         this.scene = scene;
         this.pages = pages;
         this.currentPage = 0;
+        this.toggleBtn = null;
 
-        // 1. 初始化內容底圖
         this.contentImage = scene.add.image(0, 0, this.pages[0].content);
         this.add(this.contentImage);
 
-        // 2. 建立按鈕物件 (座標根據 1920x1080 調整)
-        this.prevBtn = new CustomButton(scene, -570, 260, null, null, null, () => this.changePage(-1));
-        this.nextBtn = new CustomButton(scene, 570, 260, null, null, null, () => this.changePage(1));
+        this.prevBtn = new CustomButton(scene, -570, 260, null, null,  () => this.changePage(-1));
+        this.nextBtn = new CustomButton(scene, 570, 260, null, null,  () => this.changePage(1));
         
-        this.closeBtn = new CustomButton(scene, 625, -295, null, null, null, () => {
+        this.closeBtn = new CustomButton(scene, 625, -295, null, null, () => {
             this.setVisible(false);
+
+            if (this.toggleBtn) {
+                this.toggleBtn.resetStatus();
+            }
         });
+        this.prevBtn.needClicked = false;
+        this.nextBtn.needClicked = false;
+        this.closeBtn.needClicked = false;
 
         this.add([this.prevBtn, this.nextBtn, this.closeBtn]);
 
@@ -31,13 +37,13 @@ export class CustomPanel extends Phaser.GameObjects.Container {
     changePage(dir) {
         this.currentPage += dir;
 
-        if (this.currentPage < 0) {
-            this.currentPage = 0;
-        }
+    if (this.currentPage < 0) {
+        this.currentPage = 0;
+    }
     
-        if (this.currentPage >= this.pages.length) {
-            this.currentPage = this.pages.length - 1;
-        }
+    if (this.currentPage >= this.pages.length) {
+        this.currentPage = this.pages.length - 1;
+    }
         this.refresh();
     }
 
