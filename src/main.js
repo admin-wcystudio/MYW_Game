@@ -5,8 +5,8 @@ const config = {
     title: 'Overlord Rising',
     description: '',
     parent: 'game-container',
-    width: 1280,
-    height: 720,
+    width: 1920,
+    height: 1080,
     backgroundColor: '#000000',
     pixelArt: false,
     scene: [
