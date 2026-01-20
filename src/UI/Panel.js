@@ -84,3 +84,10 @@ export class CustomPanel extends Phaser.GameObjects.Container {
         }
     }
 }
+
+// export class SettingPanel extends Phraser.GameObjects.Container {
+//     constructor(scene, x ,y) {
+//         super(scene, x, y);
+//         this.scene = scene;
+//     }
+// }

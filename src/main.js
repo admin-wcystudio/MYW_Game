@@ -1,4 +1,5 @@
-import { Start } from './scenes/Start.js';
+import { BootScene } from './scenes/BootScene.js';
+import { GameStartScene } from './scenes/GameStartScene.js';
 
 const config = {
     type: Phaser.AUTO,
@@ -10,7 +11,8 @@ const config = {
     backgroundColor: '#000000',
     pixelArt: false,
     scene: [
-        Start
+        BootScene,
+        GameStartScene,
     ],
     scale: {
         mode: Phaser.Scale.FIT,
@@ -18,5 +20,4 @@ const config = {
     },
 }
 
-new Phaser.Game(config);
-            
+const game = new Phaser.Game(config);
