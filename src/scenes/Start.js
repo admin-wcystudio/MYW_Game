@@ -60,13 +60,46 @@ export class Start extends Phaser.Scene {
             }
         ];
 
+        const programPages = [
+            {   
+                content: 'program_information_p1', 
+                nextBtn: 'next_button', nextBtnClick: 'next_button_click', 
+                prevBtn: 'prev_button' , prevBtnClick : 'prev_button_click',    
+                closeBtn: 'close_button', closeBtnClick : 'close_button_click'
+            },
+            { 
+                content: 'program_information_p2', 
+                nextBtn: 'next_button', nextBtnClick: 'next_button_click', 
+                prevBtn: 'prev_button' , prevBtnClick: 'prev_button' , 
+                closeBtn: 'close_button', closeBtnClick : 'close_button_click'
+            },
+            { 
+                content: 'program_information_p3', 
+                nextBtn: 'next_button', nextBtnClick: 'next_button_click', 
+                prevBtn: 'prev_button' , prevBtnClick: 'prev_button' , 
+                closeBtn: 'close_button', closeBtnClick : 'close_button_click'
+            },
+            { 
+                content: 'program_information_p4', 
+                nextBtn: 'next_button', nextBtnClick: 'next_button_click', 
+                prevBtn: 'prev_button' , prevBtnClick: 'prev_button' , 
+                closeBtn: 'close_button', closeBtnClick : 'close_button_click'
+            }
+
+        ]
+
         const descriptionPanel = new CustomPanel(this, 960, 540, descriptionPages);
         descriptionPanel.setVisible(false);
         descriptionPanel.setDepth(100);
 
+        const programPanel = new CustomPanel(this, 960, 540, programPages);
+        programPanel.setVisible(false);
+        programPanel.setDepth(100);
+
 
         const gameDescrBtn = new CustomButton(this, 960, 800, 'description_button', 'description_button_click', () => {
             descriptionPanel.setVisible(true);
+            descriptionPanel.currentPage = 0;
             descriptionPanel.refresh();   
         });
 
@@ -79,14 +112,22 @@ export class Start extends Phaser.Scene {
             console.log("settings page");
         });
 
-
-        const descBtn = new CustomButton(this, 250, 100, 'desc_button', 'desc_button_click', () => {   
+        const descBtn = new CustomButton(this, 250, 100, 'desc_button', 'desc_button_click', 
+        () => {   
             descriptionPanel.setVisible(true);
+            descriptionPanel.currentPage = 0;
             descriptionPanel.refresh();    
+        }, () => {
+            descriptionPanel.setVisible(false);
         });
 
         const infoBtn = new CustomButton(this, 400, 100, 'info_btn', 'info_btn_click', () => {
-        }, ()=> {});
+            programPanel.setVisible(true);
+            programPanel.currentPage = 0;
+            descriptionPanel.refresh();   
+        }, () => {
+            programPanel.setVisible(false);
+        });
    
 
 
