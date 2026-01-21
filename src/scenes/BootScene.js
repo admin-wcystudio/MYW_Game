@@ -3,6 +3,9 @@ export class BootScene extends Phaser.Scene {
         super ('BootScene');
     }
     preload() {
+
+        this.load.plugin('rexinputtextplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexinputtextplugin.min.js', true);
+        
         //game start background
         this.load.video('cover_video', 'assets/GameStart/cover_bg.mp4');
         this.load.image('game_start', 'assets/GameStart/button/cover_game_start.png');
@@ -63,15 +66,18 @@ export class BootScene extends Phaser.Scene {
 
         this.load.image('login_boy_btn', loginPath + 'choosepage_boy_button.png');
         this.load.image('login_boy_btn_click', loginPath + 'choosepage_boy_button_click.png');
+        
         this.load.image('login_girl_btn', loginPath + 'choosepage_girl_button.png');
         this.load.image('login_girl_btn_click', loginPath + 'choosepage_girl_button_click.png');
-        
+
         this.load.image('login_namebar', loginPath + 'choosepage_namebar.png');
         this.load.image('bubble1', loginPath + 'choosepage_bubble1.png');
         this.load.image('bubble2', loginPath + 'choosepage_bubble2.png');
-        
-        this.load.image('boy_chinese_gif', loginPath + 'choosepage_boy_chinese.gif');
-        this.load.image('girl_chinese_gif', loginPath + 'choosepage_girl_chinese.gif');
+
+        this.load.image('boy_chinese_img', loginPath + 'choosepage_boy_chinese.gif');
+        this.load.image('girl_chinese_img', loginPath + 'choosepage_girl_chinese.gif');
+        this.load.image('boy_galaxy', loginPath + 'choosepage_boy_galaxy.gif');
+        this.load.image('girl_galaxy', loginPath + 'choosepage_girl_galaxy.gif');
     }
 
     create() {

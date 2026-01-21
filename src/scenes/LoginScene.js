@@ -1,5 +1,7 @@
+import { CustomButton } from '../UI/Button.js';
 import { createCommonUI } from '../UI/UIHelper.js';
 import { CustomPanel , SettingPanel } from '../UI/Panel.js';
+import { FormUtil } from '../util/formUtil.js';
 
 export class LoginScene extends Phaser.Scene {
     constructor() {
@@ -56,7 +58,48 @@ export class LoginScene extends Phaser.Scene {
 
         createCommonUI(this, programPages, descriptionPages);
 
+        this.add.image(960, 150, 'login_namebar').setDepth(10);
+
+        this.selectedGender = 'M';
+
+        this.add.image(960, 540, 'boy_galaxy');
+        this.add.image(960, 540, 'girl_galaxy');
+
+        const boyBtn = new CustomButton(
+            this, 620, 950, 
+            'login_boy_btn', 'login_boy_btn_click', 
+            () => {
+                this.selectedGender = 'M';
+                this.savePlayerInfo();
+            }, () => {});
+
+        const girlBtn = new CustomButton(
+            this, 1300, 950, 
+            'login_girl_btn', 'login_girl_btn_click', 
+            () => {
+                this.selectedGender = 'F';
+                this.savePlayerInfo();
+            }, () => {});   
+
     }
 
+    savePlayerInfo() {
+        const playerName = this.nameInput.text; // 讀取玩家輸入的文字
+        
+        if (!playerName || playerName.trim() === "") {
+            alert("請先輸入名字");
+            return;
+        }
+        const player = {
+            name: playerName,
+            gender: this.selectedGender
+        };
+        
+        localStorage.setItem('player', JSON.stringify(player));
+        console.log('PlayerInfo Saved:', player);
+        
+        // 進入下一關
+        //this.scene.start('GameStartScene');
+    }
 
 }
