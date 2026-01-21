@@ -56,6 +56,22 @@ export class BootScene extends Phaser.Scene {
 
         this.load.image('save_btn', 'assets/Settings/setting_page_save.png');
         this.load.image('save_btn_click', 'assets/Settings/setting_page_save_click.png');
+
+
+        const loginPath = 'assets/Login/';
+        this.load.video('login_bg_video', loginPath + 'choosepage_bg.mp4');
+
+        this.load.image('login_boy_btn', loginPath + 'choosepage_boy_button.png');
+        this.load.image('login_boy_btn_click', loginPath + 'choosepage_boy_button_click.png');
+        this.load.image('login_girl_btn', loginPath + 'choosepage_girl_button.png');
+        this.load.image('login_girl_btn_click', loginPath + 'choosepage_girl_button_click.png');
+        
+        this.load.image('login_namebar', loginPath + 'choosepage_namebar.png');
+        this.load.image('bubble1', loginPath + 'choosepage_bubble1.png');
+        this.load.image('bubble2', loginPath + 'choosepage_bubble2.png');
+        
+        this.load.image('boy_chinese_gif', loginPath + 'choosepage_boy_chinese.gif');
+        this.load.image('girl_chinese_gif', loginPath + 'choosepage_girl_chinese.gif');
     }
 
     create() {
@@ -67,10 +83,10 @@ export class BootScene extends Phaser.Scene {
             const settings = JSON.parse(savedData);
 
             this.sound.volume = settings.volume * 0.2;
-            
+
             this.registry.set('globalSettings', settings);
         }
-        this.scene.start('GameStartScene');
+        this.scene.start('LoginScene');
     }
 
 }

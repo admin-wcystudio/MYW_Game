@@ -1,17 +1,16 @@
-import { CustomButton } from '../UI/Button.js';
-import { CustomPanel , SettingPanel } from '../UI/Panel.js';
 import { createCommonUI } from '../UI/UIHelper.js';
+import { CustomPanel , SettingPanel } from '../UI/Panel.js';
 
-export class GameStartScene extends Phaser.Scene {
+export class LoginScene extends Phaser.Scene {
     constructor() {
-        super('GameStartScene');
+        super('LoginScene');
     }
 
     create() {
-        this.bgVideo = this.add.video(960, 540, 'cover_video');
+        this.bgVideo = this.add.video(960, 540, 'login_bg_video');
         this.bgVideo.setMute(false);
         this.bgVideo.play(true); // loop
-
+        
         const descriptionPages = [
             {   
                 content: 'game_description_p1', 
@@ -55,24 +54,9 @@ export class GameStartScene extends Phaser.Scene {
 
         ]
 
-        const descriptionPanel = new CustomPanel(this, 960, 540, descriptionPages);
-        descriptionPanel.setVisible(false);
-        descriptionPanel.setDepth(100);
+        createCommonUI(this, programPages, descriptionPages);
 
-
-        const gameDescrBtn = new CustomButton(this, 960, 800, 'description_button', 'description_button_click', () => {
-            descriptionPanel.setVisible(true);
-            descriptionPanel.currentPage = 0;
-            descriptionPanel.refresh();   
-        });
-        gameDescrBtn.needClicked = false;
-
-        const startBtn = new CustomButton(this, 960, 900, 'game_start', 'game_start_click', () => {
-            console.log("go to login");
-            this.scene.start('LoginScene');
-        });
-
-        
-   
     }
+
+
 }

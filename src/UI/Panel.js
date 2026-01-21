@@ -30,7 +30,6 @@ export class CustomPanel extends Phaser.GameObjects.Container {
         // 重要：將呢個 Container 加落 Scene
         scene.add.existing(this);
         
-        // 初始更新一次
         this.refresh();
     }
 
@@ -86,9 +85,10 @@ export class CustomPanel extends Phaser.GameObjects.Container {
 }
 
 export class SettingPanel extends Phaser.GameObjects.Container {
-    constructor(scene, x ,y ) {
+    constructor(scene, x ,y) {
         super(scene, x, y);
         this.scene = scene;
+        this.currentPage = 0;
         this.toggleBtn = null;
 
         // default volume
