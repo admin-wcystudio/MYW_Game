@@ -1,5 +1,5 @@
 import { CustomButton } from '../UI/Button.js';
-import { CustomPanel } from '../UI/Panel.js';
+import { CustomPanel , SettingPanel } from '../UI/Panel.js';
 
 
 export class GameStartScene extends Phaser.Scene {
@@ -63,6 +63,10 @@ export class GameStartScene extends Phaser.Scene {
         programPanel.setVisible(false);
         programPanel.setDepth(100);
 
+        const settingPanel = new SettingPanel (this, 960, 540);
+        //settingPanel.setVisible(false);
+        settingPanel.setDepth(100);
+
 
         const gameDescrBtn = new CustomButton(this, 960, 800, 'description_button', 'description_button_click', () => {
             descriptionPanel.setVisible(true);
@@ -76,8 +80,16 @@ export class GameStartScene extends Phaser.Scene {
         });
 
         const settingBtn = new CustomButton(this, 100, 100, 'setting_btn', 'setting_btn_click', () => {
-            console.log("settings page");
+            settingPanel.setVisible(true);
+            settingPanel.currentPage = 0;
+            settingPanel.refresh();
+        }, () => {
+            settingPanel.setVisible(false);
         });
+
+
+
+
 
         const descBtn = new CustomButton(this, 250, 100, 'desc_button', 'desc_button_click', 
         () => {   
@@ -97,13 +109,14 @@ export class GameStartScene extends Phaser.Scene {
             programPanel.setVisible(false);
         });
 
-        gameDescrBtn.needClicked = true;
+        gameDescrBtn.needClicked = false;
         settingBtn.needClicked = true;
         descBtn.needClicked = true;
         programBtn.needClicked = true;
 
         descriptionPanel.toggleBtn = descBtn;
         programPanel.toggleBtn = programBtn;
+        settingPanel.toggleBtn = settingBtn;
    
     }
 }

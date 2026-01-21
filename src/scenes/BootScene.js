@@ -60,6 +60,16 @@ export class BootScene extends Phaser.Scene {
 
     create() {
         console.log('Global Assets Loaded');
+
+        const savedData = localStorage.getItem('gameSettings');
+
+        if (savedData) {
+            const settings = JSON.parse(savedData);
+
+            this.sound.volume = settings.volume * 0.2;
+            
+            this.registry.set('globalSettings', settings);
+        }
         this.scene.start('GameStartScene');
     }
 
