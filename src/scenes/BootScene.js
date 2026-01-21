@@ -77,6 +77,17 @@ export class BootScene extends Phaser.Scene {
         this.load.image('girl_chinese_img', loginPath + 'choosepage_girl_chinese.gif');
         this.load.image('boy_galaxy', loginPath + 'choosepage_boy_galaxy.gif');
         this.load.image('girl_galaxy', loginPath + 'choosepage_girl_galaxy.gif');
+
+        //main street
+
+        // 主街場景
+        this.load.image('stage', 'assets/MainStreet/stage.png');
+        this.load.image('gameintro_01', 'assets/MainStreet/gameintro-01.png');
+        this.load.image('gameintro_02', 'assets/MainStreet/gameintro-02.png');
+        this.load.image('gameintro_bag', 'assets/MainStreet/gameintro_bag.png');
+        this.load.image('gameintro_bag_click', 'assets/MainStreet/gameintro_bag_click.png');
+        this.load.image('gameintro_closebutton', 'assets/MainStreet/gameintro_closebutton.png');
+        this.load.image('gameintro_closebutton_click', 'assets/MainStreet/gameintro_closebutton_click.png');
     }
 
     create() {

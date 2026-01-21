@@ -59,24 +59,22 @@ export class LoginScene extends Phaser.Scene {
 
         this.add.image(960, 150, 'login_namebar').setDepth(10);
 
-        const width = 300;
+        const width = 350;
         const height = 50;
 
-        this.nameInput = this.add.rexInputText(1080, 190, 300, 50, {
+        this.nameInput = this.add.rexInputText(1080, 190, width, height, {
             type: 'text',
             placeholder: '_',
             fontSize: '48px',
-            color: '#FFCC00', // 匹配圖片黃色
+            color: '#fbb03b', 
             fontFamily: 'Arial',
             fontWeight: 'bold',
             backgroundColor: 'transparent'
         }).setDepth(20);
 
-        // 3. 測試讀取鍵盤輸入
         this.nameInput.on('textchange', (inputText) => {
             console.log("現在的名字是:", inputText.text);
         });
-
 
         this.selectedGender = 'M';
 
@@ -101,10 +99,6 @@ export class LoginScene extends Phaser.Scene {
 
     }
 
-    update() {
-
-    }
-
     savePlayerInfo() {
         const playerName = this.nameInput.text; // 讀取玩家輸入的文字
 
@@ -121,7 +115,7 @@ export class LoginScene extends Phaser.Scene {
         console.log('PlayerInfo Saved:', player);
 
         // 進入下一關
-        //this.scene.start('GameStartScene');
+        this.scene.start('MainStreetScene');
     }
 
 }
