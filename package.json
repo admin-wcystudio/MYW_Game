@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "@azerion/phaser-input": "^2.0.5"
+  },
+  "dependencies": {
+    "phaser3-rex-plugins": "^1.80.17"
+  }
+}

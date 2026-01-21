@@ -1,0 +1,17 @@
+# 依賴庫 (最重要)
+node_modules/
+
+# 建置產物 (如果你有使用 Vite, Webpack 或 Tauri)
+dist/
+target/
+src-tauri/target/
+
+# 環境變數與日誌
+.env
+*.log
+npm-debug.log*
+
+# 編輯器私有設定
+.vscode/
+.idea/
+.DS_Store

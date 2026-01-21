@@ -11,9 +11,9 @@ export class CustomPanel extends Phaser.GameObjects.Container {
         this.contentImage = scene.add.image(0, 0, this.pages[0].content);
         this.add(this.contentImage);
 
-        this.prevBtn = new CustomButton(scene, -570, 260, null, null,  () => this.changePage(-1));
-        this.nextBtn = new CustomButton(scene, 570, 260, null, null,  () => this.changePage(1));
-        
+        this.prevBtn = new CustomButton(scene, -570, 260, null, null, () => this.changePage(-1));
+        this.nextBtn = new CustomButton(scene, 570, 260, null, null, () => this.changePage(1));
+
         this.closeBtn = new CustomButton(scene, 625, -295, null, null, () => {
             this.setVisible(false);
 
@@ -29,20 +29,20 @@ export class CustomPanel extends Phaser.GameObjects.Container {
 
         // 重要：將呢個 Container 加落 Scene
         scene.add.existing(this);
-        
+
         this.refresh();
     }
 
     changePage(dir) {
         this.currentPage += dir;
 
-    if (this.currentPage < 0) {
-        this.currentPage = 0;
-    }
-    
-    if (this.currentPage >= this.pages.length) {
-        this.currentPage = this.pages.length - 1;
-    }
+        if (this.currentPage < 0) {
+            this.currentPage = 0;
+        }
+
+        if (this.currentPage >= this.pages.length) {
+            this.currentPage = this.pages.length - 1;
+        }
         this.refresh();
     }
 
@@ -73,19 +73,19 @@ export class CustomPanel extends Phaser.GameObjects.Container {
                 this.nextBtn.pressedKey = data.nextBtnClick;
             }
         }
-        if(data.closeBtn) {
+        if (data.closeBtn) {
             this.closeBtn.setVisible(true);
             this.closeBtn.setTexture(data.closeBtn);
             this.closeBtn.normalKey = data.closeBtn;
             this.closeBtn.pressedKey = data.closeBtnClick;
-        }else {
+        } else {
             this.closeBtn.setVisible(false);
         }
     }
 }
 
 export class SettingPanel extends Phaser.GameObjects.Container {
-    constructor(scene, x ,y) {
+    constructor(scene, x, y) {
         super(scene, x, y);
         this.scene = scene;
         this.currentPage = 0;
@@ -94,7 +94,7 @@ export class SettingPanel extends Phaser.GameObjects.Container {
         // default volume
         this.currentVolume = 3
         this.volumeCells = [];
-    
+
         // background
         this.contentImage = scene.add.image(0, 0, 'setting_bg');
         this.add(this.contentImage);
@@ -104,19 +104,19 @@ export class SettingPanel extends Phaser.GameObjects.Container {
         this.volumeBg = scene.add.image(130, -100, 'vol_bg'); // 座標要相對於 Container 中心
         this.add(this.volumeBg);
 
-        const startX = -260; 
-        let cellGap = 130; 
+        const startX = -260;
+        let cellGap = 130;
 
         for (let i = 1; i <= 5; i++) {
-            let xOffset = startX + ( i * cellGap);
+            let xOffset = startX + (i * cellGap);
             let cell = scene.add.image(startX + (cellGap * i), -103, `vol_${i}`);
-            console.log("Cell xoffset" , this.xOffset);
-            
+            console.log("Cell xoffset", this.xOffset);
+
             cell.setDepth(104);
             this.add(cell);
             this.volumeCells.push(cell);
-    
-            cell.setVisible(i <= this.currentVolume); 
+
+            cell.setVisible(i <= this.currentVolume);
         }
 
         //language
@@ -130,9 +130,9 @@ export class SettingPanel extends Phaser.GameObjects.Container {
         this.cantoneseBtn.setDepth(105);
         this.cantoneseBtn.needClicked = true;
         this.add([this.mandarinBtn, this.cantoneseBtn]);
-        
+
         this.prevBtn = new CustomButton(scene, -250, -100, 'vol_left', 'vol_left_click', () => this.setVolume(-1));
-        this.nextBtn = new CustomButton(scene, 525, -100, 'vol_right', 'vol_right_click', () => this.setVolume(1));   
+        this.nextBtn = new CustomButton(scene, 525, -100, 'vol_right', 'vol_right_click', () => this.setVolume(1));
         this.closeBtn = new CustomButton(scene, 625, -295, 'close_button', 'close_button_click', () => {
             this.setVisible(false);
 
@@ -162,8 +162,8 @@ export class SettingPanel extends Phaser.GameObjects.Container {
         if (this.currentVolume > 5) this.currentVolume = 5;
 
         this.volumeCells.forEach((cell, index) => {
-        // index 是 0-4，currentVolume 是 1-5
-        cell.setVisible(index < this.currentVolume);
+            // index 是 0-4，currentVolume 是 1-5
+            cell.setVisible(index < this.currentVolume);
         });
 
         this.scene.sound.volume = this.currentVolume * 0.2;
@@ -172,7 +172,7 @@ export class SettingPanel extends Phaser.GameObjects.Container {
 
     setLanguage(lang) {
         if (lang === 'CN') {
-            this.cantoneseBtn.resetStatus(); 
+            this.cantoneseBtn.resetStatus();
             console.log("Switch to Mandarin");
         } else {
             this.mandarinBtn.resetStatus();
@@ -183,14 +183,14 @@ export class SettingPanel extends Phaser.GameObjects.Container {
 
     saveToLocal() {
         const settings = {
-            volume : this.currentVolume,
-            language : this.currentLanguage
+            volume: this.currentVolume,
+            language: this.currentLanguage
         };
 
         localStorage.setItem('gameSettings', JSON.stringify(settings));
 
         console.log('Settings Saved:', settings);
-    
+
         this.setVisible(false);
         if (this.toggleBtn) this.toggleBtn.resetStatus();
     }

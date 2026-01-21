@@ -1,14 +1,14 @@
 export class CustomButton extends Phaser.GameObjects.Image {
     constructor(scene, x, y, normalKey, pressedKey, callbackDown, callbackUp) {
         super(scene, x, y, normalKey);
-        
+
         this.normalKey = normalKey;
         this.pressedKey = pressedKey;
         this.isClicked = false;
         this.needClicked = false; // 預設為普通模式
 
-        this.cbDown = callbackDown || (() => {});
-        this.cbUp = callbackUp || (() => {});
+        this.cbDown = callbackDown || (() => { });
+        this.cbUp = callbackUp || (() => { });
 
         scene.add.existing(this);
         this.setInteractive({ useHandCursor: true });

@@ -1,11 +1,10 @@
 export class BootScene extends Phaser.Scene {
-    constructor () {
-        super ('BootScene');
+    constructor() {
+        super('BootScene');
     }
     preload() {
-
         this.load.plugin('rexinputtextplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexinputtextplugin.min.js', true);
-        
+
         //game start background
         this.load.video('cover_video', 'assets/GameStart/cover_bg.mp4');
         this.load.image('game_start', 'assets/GameStart/button/cover_game_start.png');
@@ -66,7 +65,7 @@ export class BootScene extends Phaser.Scene {
 
         this.load.image('login_boy_btn', loginPath + 'choosepage_boy_button.png');
         this.load.image('login_boy_btn_click', loginPath + 'choosepage_boy_button_click.png');
-        
+
         this.load.image('login_girl_btn', loginPath + 'choosepage_girl_button.png');
         this.load.image('login_girl_btn_click', loginPath + 'choosepage_girl_button_click.png');
 

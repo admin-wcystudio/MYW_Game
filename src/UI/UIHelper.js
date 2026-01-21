@@ -1,8 +1,8 @@
 import { CustomButton } from './Button.js';
-import { CustomPanel , SettingPanel } from './Panel.js';
+import { CustomPanel, SettingPanel } from './Panel.js';
 
 export function createCommonUI(scene, programPages, descriptionPages) {
-    const settingPanel = new SettingPanel (scene, 960, 540);
+    const settingPanel = new SettingPanel(scene, 960, 540);
     settingPanel.setVisible(false);
     settingPanel.setDepth(110);
     scene.add.existing(settingPanel);
@@ -27,7 +27,7 @@ export function createCommonUI(scene, programPages, descriptionPages) {
     allButtons.push(settingBtn);
 
     const descBtn = new CustomButton(scene, 250, 100, 'desc_button', 'desc_button_click', () => {
-        openPanel(descriptionPanel ,descBtn);
+        openPanel(descriptionPanel, descBtn);
     }, () => {
         descriptionPanel.setVisible(false);
     });
@@ -51,21 +51,21 @@ export function createCommonUI(scene, programPages, descriptionPages) {
 
     function openPanel(targetPanel, activeBtn) {
         [settingPanel, descriptionPanel, programPanel]
-        .forEach(p => {
-            if (p) p.setVisible(false);
-        });
+            .forEach(p => {
+                if (p) p.setVisible(false);
+            });
         // --- 重設所有按鈕狀態 ---
         allButtons.forEach(btn => {
             if (btn !== activeBtn) {
-                btn.resetStatus?.(); 
+                btn.resetStatus?.();
             }
         });
-            // 開啟目標 Panel
+        // 開啟目標 Panel
         if (targetPanel) {
             targetPanel.setVisible(true);
             targetPanel.currentPage = 0;
             if (targetPanel.refresh) targetPanel.refresh();
         }
     }
-    return { settingBtn, descBtn, programBtn, settingPanel , descriptionPanel , programPanel};
+    return { settingBtn, descBtn, programBtn, settingPanel, descriptionPanel, programPanel };
 }
