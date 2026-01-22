@@ -147,12 +147,11 @@ export class LoginScene extends Phaser.Scene {
             (newVideo) => { this.activeVideo = newVideo; }
         );
 
-        // 延遲後轉 Scene (可選)
-        /*
-        this.time.delayedCall(3000, () => {
-            this.scene.start('MainStreetScene');
+        // go to transition scene-> main street
+        this.time.delayedCall(4200, () => {
+            this.scene.start('TransitionScene');
         });
-        */
+
     }
 
 }

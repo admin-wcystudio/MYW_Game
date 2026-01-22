@@ -1,6 +1,7 @@
 import { CustomButton } from '../UI/Button.js';
 import UIHelper from '../UI/UIHelper.js';
 import { CustomPanel, SettingPanel } from '../UI/Panel.js';
+import NpcHelper from '../Character/NpcHelper.js';
 
 export class MainStreetScene extends Phaser.Scene {
     constructor() {
@@ -10,7 +11,6 @@ export class MainStreetScene extends Phaser.Scene {
         //background
         this.add.image(300, 540, 'stage1').setDepth(5);
         this.add.image(1620, 540, 'stage2').setDepth(4);
-
         const descriptionPages = [
             {
                 content: 'game_description_p1',
@@ -56,6 +56,11 @@ export class MainStreetScene extends Phaser.Scene {
 
         // Set UI depth to 200 (example, adjust as needed)
         const ui = UIHelper.createCommonUI(this, programPages, descriptionPages, 200);
+
+        // NPCs
+        NpcHelper.createNpc(this, 900, 300, 1200, 180, 0.8,'npc1', true, 'npc1_bubble_1',6);
+        NpcHelper.createNpc(this, 330, 650, 1200, 180,1,'npc4',false, 6);
+
 
     }
 

@@ -82,6 +82,7 @@ export class BootScene extends Phaser.Scene {
         this.load.video('transition', loginPath + 'transition.webm');
 
         //main street
+
         this.load.image('stage', 'assets/MainStreet/stage.png');
         this.load.image('stage1', 'assets/MainStreet/stage1.png');
         this.load.image('stage2', 'assets/MainStreet/stage2.png');
@@ -94,30 +95,6 @@ export class BootScene extends Phaser.Scene {
         this.load.image('gameintro_bag_click', 'assets/MainStreet/gameintro_bag_click.png');
         this.load.image('gameintro_closebutton', 'assets/MainStreet/gameintro_closebutton.png');
         this.load.image('gameintro_closebutton_click', 'assets/MainStreet/gameintro_closebutton_click.png');
-
-        this.load.video('boy_left_talk', 'assets/MainStreet/Boy/mainboycharacter_lefttalking.webm');
-        this.load.video('boy_right_talk', 'assets/MainStreet/Boy/mainboycharacter_righttalking.webm');
-        this.load.video('boy_left_walk', 'assets/MainStreet/Boy/mainboycharacter_leftwalking.webm');
-        this.load.video('boy_right_walk', 'assets/MainStreet/Boy/mainboycharacter_rightwalking.webm');
-
-        this.load.video('girl_left_talk', 'assets/MainStreet/Girl/maingirlcharacter_lefttalking.webm');
-        this.load.video('girl_right_talk', 'assets/MainStreet/Girl/maingirlcharacter_righttalking.webm');
-        this.load.video('girl_left_walk', 'assets/MainStreet/Girl/maingirlcharacter_leftwalking.webm');
-        this.load.video('girl_right_walk', 'assets/MainStreet/Girl/maingirlcharacter_rightwalking.webm');
-
-
-        //npcs
-        this.load.video('npc1', 'assets/MainStreet/NPCs/game1_npc.webm');
-        this.load.image('npc1_bubble_1', 'assets/MainStreet/NPCs/game1_npc1_bubble.png');
-        this.load.image('npc1_bubble_2', 'assets/MainStreet/NPCs/game1_npc2_bubble.png');
-        this.load.image('npc1_bubble_3', 'assets/MainStreet/NPCs/game1_npc3_bubble.png');
-
-        this.load.video('npc4', 'assets/MainStreet/NPCs/game4_npc.webm');
-        this.load.image('npc4_bubble_1', 'assets/MainStreet/NPCs/game4_npc1_bubble.png');
-        this.load.image('npc4_bubble_2', 'assets/MainStreet/NPCs/game4_npc2_bubble.png');
-        this.load.image('npc4_bubble_3', 'assets/MainStreet/NPCs/game4_npc3_bubble.png');
-        this.load.image('npc4_bubble_4', 'assets/MainStreet/NPCs/game4_npc4_bubble.png');
-
     }
 
     create() {
@@ -132,7 +109,7 @@ export class BootScene extends Phaser.Scene {
 
             this.registry.set('globalSettings', settings);
         }
-        this.scene.start('MainStreetScene');
+        this.scene.start('LoginScene');
     }
 
 }
