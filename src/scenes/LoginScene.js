@@ -78,8 +78,18 @@ export class LoginScene extends Phaser.Scene {
 
         this.selectedGender = 'M';
 
-        this.add.image(960, 540, 'boy_galaxy');
-        this.add.image(960, 540, 'girl_galaxy');
+        this.video = this.add.video(620, 540, 'boy_galaxy')
+                    .play(true)
+                    .setDepth(10)
+                    .setScrollFactor(0);
+
+        this.video = this.add.video(1300, 560, 'girl_galaxy')
+                            .play(true)
+                            .setDepth(10)
+                            .setScrollFactor(0);
+
+        this.add.image(340, 350,'bubble1').setDepth(11);
+        this.add.image(1650, 360,'bubble2').setDepth(11);
 
         const boyBtn = new CustomButton(
             this, 620, 950,
