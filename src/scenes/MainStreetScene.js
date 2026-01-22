@@ -11,7 +11,7 @@ export class MainStreetScene extends Phaser.Scene {
         this.add.image(300, 540, 'stage1').setDepth(5);
         this.add.image(1620, 540, 'stage2').setDepth(4);
 
-         const descriptionPages = [
+        const descriptionPages = [
             {
                 content: 'game_description_p1',
                 nextBtn: 'next_button', nextBtnClick: 'next_button_click',
@@ -53,7 +53,7 @@ export class MainStreetScene extends Phaser.Scene {
             }
 
         ]
-        
+
         // Set UI depth to 200 (example, adjust as needed)
         const ui = UIHelper.createCommonUI(this, programPages, descriptionPages, 200);
 

@@ -6,7 +6,7 @@ export class LoginScene extends Phaser.Scene {
     constructor() {
         super('LoginScene');
     }
-    
+
     create() {
         this.bgVideo = this.add.video(960, 540, 'login_bg_video');
         this.bgVideo.setMute(false);
@@ -55,7 +55,7 @@ export class LoginScene extends Phaser.Scene {
 
         ]
 
-        const ui = UIHelper.createCommonUI(this, programPages, descriptionPages, );
+        const ui = UIHelper.createCommonUI(this, programPages, descriptionPages,);
 
         this.add.image(960, 150, 'login_namebar').setDepth(10);
 
@@ -101,8 +101,8 @@ export class LoginScene extends Phaser.Scene {
             this, 620, 950,
             'login_boy_btn', 'login_boy_btn_click',
             () => {
-                this.savePlayerInfo('M' , boyVideo);
-                girlVideo.setVisible(true);
+                this.savePlayerInfo('M', boyVideo);
+                girlVideo.setVisible(true).resume();
 
             }, () => { });
 
@@ -110,14 +110,14 @@ export class LoginScene extends Phaser.Scene {
             this, 1300, 950,
             'login_girl_btn', 'login_girl_btn_click',
             () => {
-                this.savePlayerInfo('F' , girlVideo);
-                boyVideo.setVisible(true);
+                this.savePlayerInfo('F', girlVideo);
+                boyVideo.setVisible(true).resume();
             }, () => { });
 
     }
 
     savePlayerInfo(gender, defaultVideo) {
-        const playerName = this.nameInput.text; 
+        const playerName = this.nameInput.text;
 
         if (!playerName || playerName.trim() === "") {
             UIHelper.showToast(this, "請先輸入名字"); // 使用 Helper 提示
@@ -127,23 +127,23 @@ export class LoginScene extends Phaser.Scene {
         // 儲存資料
         const player = { name: playerName, gender: gender };
         localStorage.setItem('player', JSON.stringify(player));
-        
+
         // 定義影片 Key (根據你 BootScene 載入嘅名)
         const transitionKey = (gender === 'M') ? 'boy_transition' : 'girl_transition';
         const loopKey = (gender === 'M') ? 'boy_chinese' : 'girl_chinese';
         const posX = (gender === 'M') ? 620 : 1300; // 根據角色位置播放
-        const posY = (gender === 'M') ? 540 : 560; 
-        
-        defaultVideo.setVisible(false);
+        const posY = (gender === 'M') ? 540 : 560;
+
+        defaultVideo.setVisible(false).pause();
         // 呼叫 UIHelper 執行切換邏輯
         this.activeVideo = UIHelper.switchVideo(
             this,
             this.activeVideo,
             transitionKey,
             loopKey,
-            posX, 
+            posX,
             posY,
-            2000, // 過場時間
+            4000, // 過場時間
             (newVideo) => { this.activeVideo = newVideo; }
         );
 

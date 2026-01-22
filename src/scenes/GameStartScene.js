@@ -1,5 +1,5 @@
 import { CustomButton } from '../UI/Button.js';
-import { CustomPanel , SettingPanel } from '../UI/Panel.js';
+import { CustomPanel, SettingPanel } from '../UI/Panel.js';
 import UIHelper from '../UI/UIHelper.js';
 
 export class GameStartScene extends Phaser.Scene {
@@ -13,44 +13,44 @@ export class GameStartScene extends Phaser.Scene {
         this.bgVideo.play(true); // loop
 
         const descriptionPages = [
-            {   
-                content: 'game_description_p1', 
-                nextBtn: 'next_button', nextBtnClick: 'next_button_click', 
-                prevBtn: null , prevBtnClick : null,    
-                closeBtn: 'close_button', closeBtnClick : 'close_button_click'
+            {
+                content: 'game_description_p1',
+                nextBtn: 'next_button', nextBtnClick: 'next_button_click',
+                prevBtn: null, prevBtnClick: null,
+                closeBtn: 'close_button', closeBtnClick: 'close_button_click'
             },
-            { 
-                content: 'game_description_p2', 
-                nextBtn: 'next_button', nextBtnClick: 'next_button_click', 
-                prevBtn: 'prev_button' , prevBtnClick: 'prev_button' , 
-                closeBtn: 'close_button', closeBtnClick : 'close_button_click'
+            {
+                content: 'game_description_p2',
+                nextBtn: 'next_button', nextBtnClick: 'next_button_click',
+                prevBtn: 'prev_button', prevBtnClick: 'prev_button',
+                closeBtn: 'close_button', closeBtnClick: 'close_button_click'
             }
         ];
 
         const programPages = [
-            {   
-                content: 'program_information_p1', 
-                nextBtn: 'next_button', nextBtnClick: 'next_button_click', 
-                prevBtn: 'prev_button' , prevBtnClick : 'prev_button_click',    
-                closeBtn: 'close_button', closeBtnClick : 'close_button_click'
+            {
+                content: 'program_information_p1',
+                nextBtn: 'next_button', nextBtnClick: 'next_button_click',
+                prevBtn: 'prev_button', prevBtnClick: 'prev_button_click',
+                closeBtn: 'close_button', closeBtnClick: 'close_button_click'
             },
-            { 
-                content: 'program_information_p2', 
-                nextBtn: 'next_button', nextBtnClick: 'next_button_click', 
-                prevBtn: 'prev_button' , prevBtnClick: 'prev_button' , 
-                closeBtn: 'close_button', closeBtnClick : 'close_button_click'
+            {
+                content: 'program_information_p2',
+                nextBtn: 'next_button', nextBtnClick: 'next_button_click',
+                prevBtn: 'prev_button', prevBtnClick: 'prev_button',
+                closeBtn: 'close_button', closeBtnClick: 'close_button_click'
             },
-            { 
-                content: 'program_information_p3', 
-                nextBtn: 'next_button', nextBtnClick: 'next_button_click', 
-                prevBtn: 'prev_button' , prevBtnClick: 'prev_button' , 
-                closeBtn: 'close_button', closeBtnClick : 'close_button_click'
+            {
+                content: 'program_information_p3',
+                nextBtn: 'next_button', nextBtnClick: 'next_button_click',
+                prevBtn: 'prev_button', prevBtnClick: 'prev_button',
+                closeBtn: 'close_button', closeBtnClick: 'close_button_click'
             },
-            { 
-                content: 'program_information_p4', 
-                nextBtn: 'next_button', nextBtnClick: 'next_button_click', 
-                prevBtn: 'prev_button' , prevBtnClick: 'prev_button' , 
-                closeBtn: 'close_button', closeBtnClick : 'close_button_click'
+            {
+                content: 'program_information_p4',
+                nextBtn: 'next_button', nextBtnClick: 'next_button_click',
+                prevBtn: 'prev_button', prevBtnClick: 'prev_button',
+                closeBtn: 'close_button', closeBtnClick: 'close_button_click'
             }
 
         ]
@@ -63,7 +63,7 @@ export class GameStartScene extends Phaser.Scene {
         const gameDescrBtn = new CustomButton(this, 960, 800, 'description_button', 'description_button_click', () => {
             descriptionPanel.setVisible(true);
             descriptionPanel.currentPage = 0;
-            descriptionPanel.refresh();   
+            descriptionPanel.refresh();
         });
         gameDescrBtn.needClicked = false;
 
@@ -72,7 +72,7 @@ export class GameStartScene extends Phaser.Scene {
             this.scene.start('LoginScene');
         });
 
-        
-   
+
+
     }
 }

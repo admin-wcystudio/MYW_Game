@@ -78,54 +78,71 @@ export default class UIHelper {
         return { settingBtn, descBtn, programBtn, settingPanel, descriptionPanel, programPanel };
     }
 
-    /**
-     * 新增：通用影片切換函數
-     * @param {Phaser.Scene} scene 
-     * @param {Phaser.GameObjects.Video} currentVideoVar - 目前 Scene 正在追蹤的影片變數
-     * @param {string} transitionKey - 過場影片 Key
-     * @param {string} finalKey - 循環影片 Key
-     * @param {number} x, y - 坐標
-     * @param {number} duration - 過場長度 (ms)
-     * @param {function} onComplete - 切換完成後的回調 (用來更新 Scene 的變數)
-     */
     static switchVideo(scene, currentVideoVar, transitionKey, finalKey, x, y, duration = 2000, onComplete) {
-        // 1. 銷毀舊有的 Video 物件
+        // 1. 先將舊片淡出，然後銷毀
         if (currentVideoVar) {
-            currentVideoVar.stop();
-            currentVideoVar.destroy();
+            scene.tweens.add({
+                targets: currentVideoVar,
+                alpha: 0,
+                duration: 300, // 0.3秒淡出
+                onComplete: () => {
+                    currentVideoVar.stop();
+                    currentVideoVar.destroy();
+                }
+            });
         }
 
-        // 2. 建立並播放過場動畫 (不循環)
+        // 2. 建立過場動畫，初始透明度設為 0 做淡入
         const transitionVideo = scene.add.video(x, y, transitionKey)
             .setDepth(10)
             .setScrollFactor(0)
+            .setAlpha(0) // 初始隱藏
             .play(false);
+
+        // 淡入過場動畫
+        scene.tweens.add({
+            targets: transitionVideo,
+            alpha: 1,
+            duration: 300
+        });
 
         console.log(`UIHelper: 播放過場 ${transitionKey}`);
 
         // 3. 設定定時器切換到最終影片
         scene.time.delayedCall(duration, () => {
             if (transitionVideo) {
-                transitionVideo.stop();
-                transitionVideo.destroy();
+                // 過場片淡出
+                scene.tweens.add({
+                    targets: transitionVideo,
+                    alpha: 0,
+                    duration: 500,
+                    onComplete: () => {
+                        transitionVideo.stop();
+                        transitionVideo.destroy();
+                    }
+                });
             }
 
-            // 建立最終循環影片
+            // 建立最終循環影片，同樣做淡入
             const finalVideo = scene.add.video(x, y, finalKey)
                 .setDepth(10)
                 .setScrollFactor(0)
+                .setAlpha(0)
                 .play(true);
+
+            scene.tweens.add({
+                targets: finalVideo,
+                alpha: 1,
+                duration: 0 // 最終循環影片淡入耐少少，視覺更順
+            });
 
             console.log(`UIHelper: 切換至循環影片 ${finalKey}`);
 
-            // 透過 callback 將新的物件傳回 Scene
             if (onComplete) onComplete(finalVideo);
         });
 
-        // 先回傳過場影片物件，讓 Scene 可以立即追蹤
         return transitionVideo;
     }
-
     /**
      * 新增：取代 alert 的 UI 提示
      */
