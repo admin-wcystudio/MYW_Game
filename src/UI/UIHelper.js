@@ -156,4 +156,48 @@ export default class UIHelper {
 
         scene.time.delayedCall(2000, () => toast.destroy());
     }
+
+    static showTimer(scene, seconds , isStartNow=false) {
+
+        const timerBg = scene.add.image(1640, 80, 'gametimer').setDepth(100).setScrollFactor(0);
+
+        // 2. 建立文字
+        let timeLeft = seconds;
+        
+        // 定義格式化函數
+        const formatTime = (s) => {
+            const minutes = Math.floor(s / 60);
+            const partInSeconds = s % 60;
+            const formattedSeconds = partInSeconds.toString().padStart(2, '0');
+            return `${minutes}:${formattedSeconds}`;
+        };
+
+        const timerText = scene.add.text(1640, 80, formatTime(timeLeft), {
+            fontSize: '60px',
+            color: '#ffffff',
+            fontStyle: 'bold',
+
+        }).setOrigin(0.5).setDepth(101).setScrollFactor(0);
+
+            
+        // 3. 倒數計時
+        const timerEvent = scene.time.addEvent({
+            delay: 1000,
+            callback: () => {
+                if(isStartNow){
+                    timeLeft--;
+                    timerText.setText(formatTime(timeLeft));
+
+                    if (timeLeft <= 0) {
+                        timerEvent.destroy();
+                        // 觸發時間結束事件
+                        scene.events.emit('game-timeout');
+                    }
+                }
+            },
+            loop: true,
+        });
+
+        return { timerBg, timerText, timerEvent };
+    }
 }

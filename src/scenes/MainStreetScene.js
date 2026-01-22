@@ -53,13 +53,29 @@ export class MainStreetScene extends Phaser.Scene {
             }
 
         ]
+        const introPage = [
+            {
+                content: 'gameintro_01',
+                nextBtn: null, nextBtnClick: null,
+                prevBtn: null, prevBtnClick: null,
+                closeBtn: 'gameintro_closebutton', closeBtnClick: 'gameintro_closebutton_click'
+            },
+        ]
+
+        const introPanel = new CustomPanel(this,960, 620, introPage);
+        introPanel.setDepth(100);
+
+        this.gameTimer = UIHelper.showTimer(this, 180, false);
 
         // Set UI depth to 200 (example, adjust as needed)
         const ui = UIHelper.createCommonUI(this, programPages, descriptionPages, 200);
 
+        
+        NpcHelper.createNpc(this, 700, 400, 600, 300, 1, 1.1, 'boy_right_walk', true, 'npc1_bubble_2',7);
+
         // NPCs
-        NpcHelper.createNpc(this, 900, 300, 1200, 180, 0.8,'npc1', true, 'npc1_bubble_1',6);
-        NpcHelper.createNpc(this, 330, 650, 1200, 180,1,'npc4',false, 6);
+        NpcHelper.createNpc(this, 900, 300, 1200, 180, 0.8, 1,'npc1', true, 'npc1_bubble_1',6);
+        NpcHelper.createNpc(this, 330, 650, 1200, 180,1,1,'npc4',false, 6);
 
 
     }

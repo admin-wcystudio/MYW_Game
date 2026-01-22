@@ -89,7 +89,7 @@ export class BootScene extends Phaser.Scene {
         this.load.image('stage4', 'assets/MainStreet/stage4.png');
         this.load.image('stage5', 'assets/MainStreet/stage5.png');
         this.load.image('gameintro_01', 'assets/MainStreet/gameintro-01.png');
-        this.load.image('gameintro_02', 'assets/MainStreet/gameintro-02.png');
+        this.load.image('gametimer', 'assets/MainStreet/gameintro-02.png');
         this.load.image('gameintro_bag', 'assets/MainStreet/gameintro_bag.png');
         this.load.image('gameintro_bag_click', 'assets/MainStreet/gameintro_bag_click.png');
         this.load.image('gameintro_closebutton', 'assets/MainStreet/gameintro_closebutton.png');
@@ -97,8 +97,8 @@ export class BootScene extends Phaser.Scene {
 
         this.load.video('boy_left_talk', 'assets/MainStreet/Boy/mainboycharacter_lefttalking.webm');
         this.load.video('boy_right_talk', 'assets/MainStreet/Boy/mainboycharacter_righttalking.webm');
-        this.load.video('boy_left_walk', 'assets/MainStreet/Boy/mainboycharacter_leftwalking.webm');
-        this.load.video('boy_right_walk', 'assets/MainStreet/Boy/mainboycharacter_rightwalking.webm');
+        this.load.video('boy_left_walk', 'assets/MainStreet/Boy/mainboycharacter_leftwalk.webm');
+        this.load.video('boy_right_walk', 'assets/MainStreet/Boy/mainboycharacter_rightwalk.webm');
 
         this.load.video('girl_left_talk', 'assets/MainStreet/Girl/maingirlcharacter_lefttalking.webm');
         this.load.video('girl_right_talk', 'assets/MainStreet/Girl/maingirlcharacter_righttalking.webm');

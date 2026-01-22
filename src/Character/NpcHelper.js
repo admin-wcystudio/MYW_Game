@@ -1,6 +1,6 @@
 export default class NpcHelper {
 
-    static createNpc(scene, x, y, dialogueX, dialogueY, npcScale,videoKey, 
+    static createNpc(scene, x, y, dialogueX, dialogueY, npcScale = 1, dialogScale = 1, videoKey, 
                     hasDialogue = false, dialogueKey = '',depth = 10) {
 
         const npc = scene.add.video(x, y, videoKey).setDepth(depth+10);
@@ -22,7 +22,7 @@ export default class NpcHelper {
 
                 scene.tweens.add({
                     targets: bubble,
-                    scale: isVisible ? 0 : 1,
+                    scale: isVisible ? 0 :  dialogScale,
                     duration: 300,
                     ease: isVisible ? 'Power2' : 'Back.easeOut', 
                 });
