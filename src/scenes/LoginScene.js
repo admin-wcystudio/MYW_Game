@@ -84,6 +84,7 @@ export class LoginScene extends Phaser.Scene {
             .setDepth(10)
             .setScrollFactor(0);
 
+
         var boyVideo = this.video;
 
         this.video = this.add.video(1300, 560, 'girl_galaxy')
@@ -100,58 +101,58 @@ export class LoginScene extends Phaser.Scene {
             this, 620, 950,
             'login_boy_btn', 'login_boy_btn_click',
             () => {
-                this.selectedGender = 'M';
-                this.savePlayerInfo( boyVideo,'boy_chinese_galaxy', 'boy_chinese', 620, 540);
+                this.savePlayerInfo('M' , boyVideo);
+                girlVideo.setVisible(true);
+
             }, () => { });
 
         const girlBtn = new CustomButton(
             this, 1300, 950,
             'login_girl_btn', 'login_girl_btn_click',
             () => {
-                this.selectedGender = 'F';
-                this.savePlayerInfo( girlVideo,'girl_chinese_galaxy', 1300, 560);
+                this.savePlayerInfo('F' , girlVideo);
+                boyVideo.setVisible(true);
             }, () => { });
 
     }
 
-    savePlayerInfo(oldVideo,videoName, nextVideoName, x, y) {
-        //player input
+    savePlayerInfo(gender, defaultVideo) {
         const playerName = this.nameInput.text; 
 
         if (!playerName || playerName.trim() === "") {
-            console.warn("請先輸入名字");
+            UIHelper.showToast(this, "請先輸入名字"); // 使用 Helper 提示
             return;
         }
-        const player = {
-            name: playerName,
-            gender: this.selectedGender
-        };
 
+        // 儲存資料
+        const player = { name: playerName, gender: gender };
         localStorage.setItem('player', JSON.stringify(player));
-        console.log('PlayerInfo Saved:', player);
+        
+        // 定義影片 Key (根據你 BootScene 載入嘅名)
+        const transitionKey = (gender === 'M') ? 'boy_transition' : 'girl_transition';
+        const loopKey = (gender === 'M') ? 'boy_chinese' : 'girl_chinese';
+        const posX = (gender === 'M') ? 620 : 1300; // 根據角色位置播放
+        const posY = (gender === 'M') ? 540 : 560; 
+        
+        defaultVideo.setVisible(false);
+        // 呼叫 UIHelper 執行切換邏輯
+        this.activeVideo = UIHelper.switchVideo(
+            this,
+            this.activeVideo,
+            transitionKey,
+            loopKey,
+            posX, 
+            posY,
+            2000, // 過場時間
+            (newVideo) => { this.activeVideo = newVideo; }
+        );
 
-        //switch to other video
-        if (oldVideo) {
-            oldVideo.destroy();
-        }
-        oldVideo = this.add.video(x, y, videoName)
-            .setDepth(10)
-            .setScrollFactor(0);
-
-
-        oldVideo.play(false);
-
-        this.time.delayedCall(2000, () => {
-            oldVideo = this.add.video(x, y, nextVideoName)
-            .setDepth(10)
-            .setScrollFactor(0);
-            oldVideo.play(true);
+        // 延遲後轉 Scene (可選)
+        /*
+        this.time.delayedCall(3000, () => {
+            this.scene.start('MainStreetScene');
         });
-
-        // 建議：等段轉場影片播一陣先轉 Scene
-        this.time.delayedCall(2000, () => {
-            // this.scene.start('MainStreetScene');
-        });
+        */
     }
 
 }
