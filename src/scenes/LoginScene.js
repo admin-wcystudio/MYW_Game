@@ -1,12 +1,12 @@
 import { CustomButton } from '../UI/Button.js';
-import { createCommonUI } from '../UI/UIHelper.js';
 import { CustomPanel, SettingPanel } from '../UI/Panel.js';
+import UIHelper from '../UI/UIHelper.js';
 
 export class LoginScene extends Phaser.Scene {
     constructor() {
         super('LoginScene');
     }
-
+    
     create() {
         this.bgVideo = this.add.video(960, 540, 'login_bg_video');
         this.bgVideo.setMute(false);
@@ -55,18 +55,19 @@ export class LoginScene extends Phaser.Scene {
 
         ]
 
-        createCommonUI(this, programPages, descriptionPages);
+        const ui = UIHelper.createCommonUI(this, programPages, descriptionPages, );
 
         this.add.image(960, 150, 'login_namebar').setDepth(10);
 
         const width = 350;
         const height = 50;
 
+
         this.nameInput = this.add.rexInputText(1080, 190, width, height, {
             type: 'text',
             placeholder: '_',
             fontSize: '48px',
-            color: '#fbb03b', 
+            color: '#fbb03b',
             fontFamily: 'Arial',
             fontWeight: 'bold',
             backgroundColor: 'transparent'
@@ -79,24 +80,28 @@ export class LoginScene extends Phaser.Scene {
         this.selectedGender = 'M';
 
         this.video = this.add.video(620, 540, 'boy_galaxy')
-                    .play(true)
-                    .setDepth(10)
-                    .setScrollFactor(0);
+            .play(true)
+            .setDepth(10)
+            .setScrollFactor(0);
+
+        var boyVideo = this.video;
 
         this.video = this.add.video(1300, 560, 'girl_galaxy')
-                            .play(true)
-                            .setDepth(10)
-                            .setScrollFactor(0);
+            .play(true)
+            .setDepth(10)
+            .setScrollFactor(0);
 
-        this.add.image(340, 350,'bubble1').setDepth(11);
-        this.add.image(1650, 360,'bubble2').setDepth(11);
+        var girlVideo = this.video;
+
+        this.add.image(340, 350, 'bubble1').setDepth(11);
+        this.add.image(1650, 360, 'bubble2').setDepth(11);
 
         const boyBtn = new CustomButton(
             this, 620, 950,
             'login_boy_btn', 'login_boy_btn_click',
             () => {
                 this.selectedGender = 'M';
-                this.savePlayerInfo();
+                this.savePlayerInfo( boyVideo,'boy_chinese_galaxy', 'boy_chinese', 620, 540);
             }, () => { });
 
         const girlBtn = new CustomButton(
@@ -104,16 +109,17 @@ export class LoginScene extends Phaser.Scene {
             'login_girl_btn', 'login_girl_btn_click',
             () => {
                 this.selectedGender = 'F';
-                this.savePlayerInfo();
+                this.savePlayerInfo( girlVideo,'girl_chinese_galaxy', 1300, 560);
             }, () => { });
 
     }
 
-    savePlayerInfo() {
-        const playerName = this.nameInput.text; // 讀取玩家輸入的文字
+    savePlayerInfo(oldVideo,videoName, nextVideoName, x, y) {
+        //player input
+        const playerName = this.nameInput.text; 
 
         if (!playerName || playerName.trim() === "") {
-            alert("請先輸入名字");
+            console.warn("請先輸入名字");
             return;
         }
         const player = {
@@ -124,8 +130,28 @@ export class LoginScene extends Phaser.Scene {
         localStorage.setItem('player', JSON.stringify(player));
         console.log('PlayerInfo Saved:', player);
 
-        // 進入下一關
-        this.scene.start('MainStreetScene');
+        //switch to other video
+        if (oldVideo) {
+            oldVideo.destroy();
+        }
+        oldVideo = this.add.video(x, y, videoName)
+            .setDepth(10)
+            .setScrollFactor(0);
+
+
+        oldVideo.play(false);
+
+        this.time.delayedCall(2000, () => {
+            oldVideo = this.add.video(x, y, nextVideoName)
+            .setDepth(10)
+            .setScrollFactor(0);
+            oldVideo.play(true);
+        });
+
+        // 建議：等段轉場影片播一陣先轉 Scene
+        this.time.delayedCall(2000, () => {
+            // this.scene.start('MainStreetScene');
+        });
     }
 
 }

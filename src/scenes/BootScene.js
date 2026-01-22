@@ -73,18 +73,21 @@ export class BootScene extends Phaser.Scene {
         this.load.image('bubble1', loginPath + 'choosepage_bubble1.png');
         this.load.image('bubble2', loginPath + 'choosepage_bubble2.png');
 
-        this.load.video('boy_chinese_img', loginPath + 'choosepage_boy_chinese.webm');
-        this.load.video('girl_chinese_img', loginPath + 'choosepage_girl_chinese.webm');
+        this.load.video('boy_chinese', loginPath + 'choosepage_boy_chinese.webm');
+        this.load.video('girl_chinese', loginPath + 'choosepage_girl_chinese.webm');
         this.load.video('boy_galaxy', loginPath + 'choosepage_boy_galaxy.webm');
         this.load.video('girl_galaxy', loginPath + 'choosepage_girl_galaxy.webm');
-
-
-
+        this.load.video('boy_chinese_galaxy', loginPath + 'choosepage_boy_galaxytochinese_transition.webm');
+        this.load.video('girl_chinese_galaxy', loginPath + 'choosepage_girl_galaxytochinese_transition.webm');
 
         //main street
 
-        // 主街場景
         this.load.image('stage', 'assets/MainStreet/stage.png');
+        this.load.image('stage1', 'assets/MainStreet/stage1.png');
+        this.load.image('stage2', 'assets/MainStreet/stage2.png');
+        this.load.image('stage3', 'assets/MainStreet/stage3.png');
+        this.load.image('stage4', 'assets/MainStreet/stage4.png');
+        this.load.image('stage5', 'assets/MainStreet/stage5.png');
         this.load.image('gameintro_01', 'assets/MainStreet/gameintro-01.png');
         this.load.image('gameintro_02', 'assets/MainStreet/gameintro-02.png');
         this.load.image('gameintro_bag', 'assets/MainStreet/gameintro_bag.png');
