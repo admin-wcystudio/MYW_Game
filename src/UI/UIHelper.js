@@ -8,17 +8,17 @@ export default class UIHelper {
         // Panels
         const settingPanel = new SettingPanel(scene, 960, 540);
         settingPanel.setVisible(false);
-        settingPanel.setDepth(depth + 10); // Setting panel above others by default
+        settingPanel.setDepth(depth + 30); // Setting panel above others by default
         scene.add.existing(settingPanel);
 
         const descriptionPanel = new CustomPanel(scene, 960, 540, descriptionPages);
         descriptionPanel.setVisible(false);
-        descriptionPanel.setDepth(depth);
+        descriptionPanel.setDepth(depth + 30);
         scene.add.existing(descriptionPanel);
 
         const programPanel = new CustomPanel(scene, 960, 540, programPages);
         programPanel.setVisible(false);
-        programPanel.setDepth(depth);
+        programPanel.setDepth(depth + 30);
         scene.add.existing(programPanel);
 
         const allButtons = [];

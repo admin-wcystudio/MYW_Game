@@ -55,6 +55,8 @@ export class GameStartScene extends Phaser.Scene {
 
         ]
 
+        const ui = UIHelper.createCommonUI(this, programPages, descriptionPages, 100);
+
         const descriptionPanel = new CustomPanel(this, 960, 540, descriptionPages);
         descriptionPanel.setVisible(false);
         descriptionPanel.setDepth(100);

@@ -71,10 +71,10 @@ export class MainStreetScene extends Phaser.Scene {
         const ui = UIHelper.createCommonUI(this, programPages, descriptionPages, 200);
 
         
-        NpcHelper.createNpc(this, 700, 400, 600, 300, 1, 1.1, 'boy_right_walk', true, 'npc1_bubble_2',7);
+        NpcHelper.createNpc(this, 700, 400, 600, 300, 1, 1.1, 'boy_right_walk', true, 'npc1_bubble_2', false, 7);
 
         // NPCs
-        NpcHelper.createNpc(this, 900, 300, 1200, 180, 0.8, 1,'npc1', true, 'npc1_bubble_1',6);
+        NpcHelper.createNpc(this, 900, 300, 1200, 180, 0.8, 1,'npc1', true, 'npc1_bubble_1', true,  6);
         NpcHelper.createNpc(this, 330, 650, 1200, 180,1,1,'npc4',false, 6);
 
 
