@@ -50,7 +50,6 @@ export class CustomButton extends Phaser.GameObjects.Image {
         });
     }
 
-    // 抽離出嚟方便管理樣式
     setPressedState() {
         if (this.pressedKey) this.setTexture(this.pressedKey);
         this.setScale(0.95);

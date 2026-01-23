@@ -1,4 +1,4 @@
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          import { CustomButton } from '../UI/Button.js';
+import { CustomButton } from '../UI/Button.js';
 import UIHelper from '../UI/UIHelper.js';
 import { CustomPanel, SettingPanel } from '../UI/Panel.js';
 import NpcHelper from '../Character/NpcHelper.js';
@@ -8,9 +8,23 @@ export class MainStreetScene extends Phaser.Scene {
         super('MainStreetScene');
     }
     create() {
+
+        const gender = localStorage.getItem('player') ? JSON.parse(localStorage.getItem('player')).gender : 'M';
+        const genderKey = gender === 'M' ? 'boy' : 'girl';
+
+        const bgKeys = ['stage1', 'stage2', 'stage3', 'stage4'];
+        let currentX = 0;
         //background
-        this.add.image(300, 540, 'stage1').setDepth(5);
-        this.add.image(1620, 540, 'stage2').setDepth(4);
+        bgKeys.forEach((key, index) => {
+            const bg = this.add.image(currentX, 540, key).setOrigin(0, 0.5).setDepth(1);
+            currentX += bg.width; // 累加寬度，讓下一張接在後面
+        });
+
+        // 設定相機邊界為總長度 8414px
+        this.cameras.main.setBounds(0, 0, 8414, 1080);
+
+
+
         const descriptionPages = [
             {
                 content: 'game_description_p1',
@@ -62,22 +76,85 @@ export class MainStreetScene extends Phaser.Scene {
             },
         ]
 
-        const introPanel = new CustomPanel(this,960, 620, introPage);
-        introPanel.setDepth(100);
+        const introPanel = new CustomPanel(this, 960, 620, introPage);
+        //introPanel.setDepth(100);
 
-        this.gameTimer = UIHelper.showTimer(this, 180, false);
+        //this.gameTimer = UIHelper.showTimer(this, 180, false);
 
         // Set UI depth to 200 (example, adjust as needed)
         const ui = UIHelper.createCommonUI(this, programPages, descriptionPages, 200, 'gameintro_bag', 'gameintro_bag_click');
 
-        
-        NpcHelper.createNpc(this, 700, 400, 600, 300, 1, 1.1, 'boy_stand', true, 'npc1_bubble_2', false, 7);
-
         // NPCs
-        NpcHelper.createNpc(this, 900, 300, 1200, 180, 0.8, 1,'npc1', true, 'npc1_bubble_1', true,  6);
-        NpcHelper.createNpc(this, 330, 650, 1200, 180,1,1,'npc4',false, 6);
+        NpcHelper.createNpc(this, 900, 300, 1200, 180, 0.8, 1, 'npc1', true, 'npc1_bubble_1', false, 6);
+        NpcHelper.createNpc(this, 330, 650, 1200, 180, 1, 1, 'npc4', false, 6);
 
 
+        this.player = NpcHelper.createCharacter(this, 400, 800, 400, 650, 1, 1, 'boy_idle', true, 'player_bubble_1', false, 50);
+        this.handleAnimation(genderKey, false, false);
+
+        // 將相機鎖定在玩家身上
+        this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
+        this.cursors = this.input.keyboard.createCursorKeys();
+
+        this.wasd = this.input.keyboard.addKeys({
+            up: Phaser.Input.Keyboard.KeyCodes.W,
+            down: Phaser.Input.Keyboard.KeyCodes.S,
+            left: Phaser.Input.Keyboard.KeyCodes.A,
+            right: Phaser.Input.Keyboard.KeyCodes.D
+        });
+
+    }
+
+    update() {
+        const speed = 4;
+        let isMoving = false;
+        let isLeft = this.player.lastDirectionLeft || false;
+
+        // 支援 WASD 與 方向鍵
+        if (this.cursors.left.isDown || this.wasd.left.isDown) {
+            this.player.x -= speed;
+            isLeft = true;
+            isMoving = true;
+        } else if (this.cursors.right.isDown || this.wasd.right.isDown) {
+            this.player.x += speed;
+            isLeft = false;
+            isMoving = true;
+        }
+
+        this.player.lastDirectionLeft = isLeft;
+
+        const gender = localStorage.getItem('player') ? JSON.parse(localStorage.getItem('player')).gender : 'M';
+        const genderKey = gender === 'M' ? 'boy' : 'girl';
+
+        this.handleAnimation(genderKey, isMoving, isLeft);
+
+        // 限制角色不走出 8414px 邊界
+        this.player.x = Phaser.Math.Clamp(this.player.x, 100, 8314);
+
+        // 同步對話框
+        if (this.player.bubble) {
+            this.player.bubble.x = this.player.x + (isLeft ? -this.player.bubbleOffset.x : this.player.bubbleOffset.x);
+            this.player.bubble.y = this.player.y + this.player.bubbleOffset.y;
+        }
+    }
+
+    handleAnimation(gender, isMoving, isLeft) {
+        const walkKey = isLeft ? `${gender}_left_walk` : `${gender}_right_walk`;
+        const idleKey = `${gender}_idle`;
+
+        // 檢查 videoKey (這是我們手動存在物件裡的屬性)
+        if (isMoving && this.player.videoKey !== walkKey) {
+            this.changePlayerVideo(walkKey);
+        } else if (!isMoving && this.player.videoKey !== idleKey) {
+            this.changePlayerVideo(idleKey);
+        }
+    }
+
+    changePlayerVideo(key) {
+        this.player.stop();
+        this.player.changeSource(key); // 更換影片源
+        this.player.play(true);
+        this.player.videoKey = key;
     }
 
 }

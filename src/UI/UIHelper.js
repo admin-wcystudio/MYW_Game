@@ -4,7 +4,7 @@ import { CustomPanel, SettingPanel } from './Panel.js';
 export default class UIHelper {
 
     //create common ui button
-    static createCommonUI(scene, programPages, descriptionPages, depth = 100 , newProgramBtn = 'program_btn', newProgramClickBtn = 'program_btn_click') {
+    static createCommonUI(scene, programPages, descriptionPages, depth = 100, newProgramBtn = 'program_btn', newProgramClickBtn = 'program_btn_click') {
         // Panels
         const settingPanel = new SettingPanel(scene, 960, 540);
         settingPanel.setVisible(false);
@@ -157,13 +157,13 @@ export default class UIHelper {
         scene.time.delayedCall(2000, () => toast.destroy());
     }
 
-    static showTimer(scene, seconds , isStartNow=false) {
+    static showTimer(scene, seconds, isStartNow = false) {
 
         const timerBg = scene.add.image(1640, 80, 'gametimer').setDepth(100).setScrollFactor(0);
 
         // 2. 建立文字
         let timeLeft = seconds;
-        
+
         // 定義格式化函數
         const formatTime = (s) => {
             const minutes = Math.floor(s / 60);
@@ -179,12 +179,12 @@ export default class UIHelper {
 
         }).setOrigin(0.5).setDepth(101).setScrollFactor(0);
 
-            
+
         // 3. 倒數計時
         const timerEvent = scene.time.addEvent({
             delay: 1000,
             callback: () => {
-                if(isStartNow){
+                if (isStartNow) {
                     timeLeft--;
                     timerText.setText(formatTime(timeLeft));
 
@@ -199,5 +199,19 @@ export default class UIHelper {
         });
 
         return { timerBg, timerText, timerEvent };
+    }
+
+    static changeVideo(videoObject, newKey) {
+        if (!videoObject || videoObject.videoKey === newKey) return;
+
+        console.log(`切換影片至: ${newKey}`);
+
+        // 1. 停止舊片並更換來源
+        videoObject.stop();
+        videoObject.changeSource(newKey); // Phaser 3 內建方法更換影片源
+        videoObject.play(true); // 循環播放
+
+        // 2. 記錄當前 Key 方便下次對比
+        videoObject.videoKey = newKey;
     }
 }
