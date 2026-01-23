@@ -95,11 +95,13 @@ export class BootScene extends Phaser.Scene {
         this.load.image('gameintro_closebutton', 'assets/MainStreet/gameintro_closebutton.png');
         this.load.image('gameintro_closebutton_click', 'assets/MainStreet/gameintro_closebutton_click.png');
 
+        this.load.video('boy_stand', 'assets/MainStreet/Boy/maincharacter_boy_middlestand.webm');
         this.load.video('boy_left_talk', 'assets/MainStreet/Boy/mainboycharacter_lefttalking.webm');
         this.load.video('boy_right_talk', 'assets/MainStreet/Boy/mainboycharacter_righttalking.webm');
         this.load.video('boy_left_walk', 'assets/MainStreet/Boy/mainboycharacter_leftwalk.webm');
         this.load.video('boy_right_walk', 'assets/MainStreet/Boy/mainboycharacter_rightwalk.webm');
 
+        this.load.video('girl_stand', 'assets/MainStreet/Boy/maincharacter_girl_middlestand.webm');
         this.load.video('girl_left_talk', 'assets/MainStreet/Girl/maingirlcharacter_lefttalking.webm');
         this.load.video('girl_right_talk', 'assets/MainStreet/Girl/maingirlcharacter_righttalking.webm');
         this.load.video('girl_left_walk', 'assets/MainStreet/Girl/maingirlcharacter_leftwalking.webm');

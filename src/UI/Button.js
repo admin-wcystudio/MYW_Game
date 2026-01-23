@@ -31,6 +31,13 @@ export class CustomButton extends Phaser.GameObjects.Image {
             }
         });
 
+
+    this.on('pointerover', () => {
+        if (!this.isClicked) {
+            this.setPressedState();
+        }
+    });
+
         this.on('pointerup', () => {
             if (!this.needClicked) {
                 this.setNormalState();
@@ -39,9 +46,7 @@ export class CustomButton extends Phaser.GameObjects.Image {
         });
 
         this.on('pointerout', () => {
-            if (!this.needClicked) {
-                this.setNormalState();
-            }
+            this.setNormalState();     
         });
     }
 

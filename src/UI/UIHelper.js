@@ -4,7 +4,7 @@ import { CustomPanel, SettingPanel } from './Panel.js';
 export default class UIHelper {
 
     //create common ui button
-    static createCommonUI(scene, programPages, descriptionPages, depth = 100) {
+    static createCommonUI(scene, programPages, descriptionPages, depth = 100 , newProgramBtn = 'program_btn', newProgramClickBtn = 'program_btn_click') {
         // Panels
         const settingPanel = new SettingPanel(scene, 960, 540);
         settingPanel.setVisible(false);
@@ -40,7 +40,7 @@ export default class UIHelper {
         descBtn.setDepth(depth + 20);
         allButtons.push(descBtn);
 
-        const programBtn = new CustomButton(scene, 400, 100, 'program_btn', 'program_btn_click', () => {
+        const programBtn = new CustomButton(scene, 400, 100, newProgramBtn, newProgramClickBtn, () => {
             openPanel(programPanel, programBtn);
         }, () => {
             programPanel.setVisible(false);
