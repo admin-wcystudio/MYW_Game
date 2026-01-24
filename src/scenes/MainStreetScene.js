@@ -77,8 +77,23 @@ export class MainStreetScene extends Phaser.Scene {
         ]
 
         const introPanel = new CustomPanel(this, 960, 620, introPage);
-        //introPanel.setDepth(100);
 
+        //button
+        this.isLeftDown = false;
+        this.isRightDown = false;
+
+        this.btnLeft = new CustomButton(this, 150, 900, 'btn_left_normal', 'btn_left_pressed', 
+            () => { this.isLeftDown = true; },  
+            () => { this.isLeftDown = false; } 
+        ).setScrollFactor(0).setDepth(100);
+
+        this.btnRight = new CustomButton(this, 350, 900, 'btn_right_normal', 'btn_right_pressed', 
+            () => { this.isRightDown = true; }, 
+            () => { this.isRightDown = false; }
+        ).setScrollFactor(0).setDepth(100);
+
+
+        //introPanel.setDepth(100);
         //this.gameTimer = UIHelper.showTimer(this, 180, false);
 
         // Set UI depth to 200 (example, adjust as needed)
@@ -94,46 +109,39 @@ export class MainStreetScene extends Phaser.Scene {
 
         // 將相機鎖定在玩家身上
         this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
-        this.cursors = this.input.keyboard.createCursorKeys();
-
-        this.wasd = this.input.keyboard.addKeys({
-            up: Phaser.Input.Keyboard.KeyCodes.W,
-            down: Phaser.Input.Keyboard.KeyCodes.S,
-            left: Phaser.Input.Keyboard.KeyCodes.A,
-            right: Phaser.Input.Keyboard.KeyCodes.D
-        });
-
     }
 
     update() {
-        const speed = 4;
+        const speed = 5;
         let isMoving = false;
-        let isLeft = this.player.lastDirectionLeft || false;
+        let isLeft = this.player.lastDirectionLeft; // 保持最後的方向狀態
 
-        // 支援 WASD 與 方向鍵
-        if (this.cursors.left.isDown || this.wasd.left.isDown) {
+        // 純按鈕判定
+        if (this.isLeftDown) {
             this.player.x -= speed;
             isLeft = true;
             isMoving = true;
-        } else if (this.cursors.right.isDown || this.wasd.right.isDown) {
+        } else if (this.isRightDown) {
             this.player.x += speed;
             isLeft = false;
             isMoving = true;
         }
 
+        // 紀錄最後方向供 handleAnimation 使用
         this.player.lastDirectionLeft = isLeft;
 
-        const gender = localStorage.getItem('player') ? JSON.parse(localStorage.getItem('player')).gender : 'M';
+        const playerData = localStorage.getItem('player');
+        const gender = playerData ? JSON.parse(playerData).gender : 'M';
         const genderKey = gender === 'M' ? 'boy' : 'girl';
 
         this.handleAnimation(genderKey, isMoving, isLeft);
 
-        // 限制角色不走出 8414px 邊界
+
         this.player.x = Phaser.Math.Clamp(this.player.x, 100, 8314);
 
-        // 同步對話框
         if (this.player.bubble) {
-            this.player.bubble.x = this.player.x + (isLeft ? -this.player.bubbleOffset.x : this.player.bubbleOffset.x);
+            const offsetX = isLeft ? -Math.abs(this.player.bubbleOffset.x) : Math.abs(this.player.bubbleOffset.x);
+            this.player.bubble.x = this.player.x + offsetX;
             this.player.bubble.y = this.player.y + this.player.bubbleOffset.y;
         }
     }
