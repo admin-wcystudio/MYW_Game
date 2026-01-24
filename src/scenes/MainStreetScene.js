@@ -15,7 +15,7 @@ export class MainStreetScene extends Phaser.Scene {
         const gender = localStorage.getItem('player') ? JSON.parse(localStorage.getItem('player')).gender : 'M';
         const genderKey = gender === 'M' ? 'boy' : 'girl';
 
-        const bgKeys = ['stage1', 'stage2', 'stage3', 'stage4'];
+        const bgKeys = ['stage1', 'stage2', 'stage3', 'stage4', 'stage5'];
         let currentX = 0;
         //background
         bgKeys.forEach((key, index) => {
@@ -100,7 +100,6 @@ export class MainStreetScene extends Phaser.Scene {
         //this.gameTimer = UIHelper.showTimer(this, 180, false);
 
         const ui = UIHelper.createCommonUI(this, programPages, descriptionPages, 200, 'gameintro_bag', 'gameintro_bag_click');
-
         // NPCs
         NpcHelper.createNpc(this, 900, 300, 1200, 180, 0.8, 1, 'npc1', true, 'npc1_bubble_1', false, 6);
         NpcHelper.createNpc(this, 330, 650, 1200, 180, 1, 1, 'npc4', false, 6);
@@ -155,10 +154,9 @@ export class MainStreetScene extends Phaser.Scene {
         const walkKey = isLeft ? `${gender}_left_walk` : `${gender}_right_walk`;
         const idleKey = `${gender}_idle`;
 
-        // 檢查 videoKey (這是我們手動存在物件裡的屬性)
-        if (isMoving && this.player.videoKey !== walkKey) {
+        if (isMoving) {
             this.changePlayerVideo(walkKey);
-        } else if (!isMoving && this.player.videoKey !== idleKey) {
+        } else if (!isMoving) {
             this.changePlayerVideo(idleKey);
         }
     }
