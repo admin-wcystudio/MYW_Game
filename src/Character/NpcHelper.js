@@ -52,6 +52,8 @@ export default class NpcHelper {
         character.setScale(npcScale);
         character.play(true);
 
+        character.videoKey = videoKey;
+
         // 如果需要對話框
         if (hasDialogue && dialogueKey) {
             const bubble = scene.add.image(dialogueX, dialogueY, dialogueKey)
@@ -62,8 +64,6 @@ export default class NpcHelper {
             character.bubble = bubble; // 將對話框綁定在角色身上
             character.bubbleOffset = { x: dialogueX - x, y: dialogueY - y }; // 記錄相對坐標
         }
-
-
 
         return character;
     }

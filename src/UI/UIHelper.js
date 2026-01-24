@@ -68,13 +68,13 @@ export default class UIHelper {
                     btn.resetStatus?.();
                 }
             });
-            // 開啟目標 Panel
             if (targetPanel) {
                 targetPanel.setVisible(true);
                 targetPanel.currentPage = 0;
                 if (targetPanel.refresh) targetPanel.refresh();
             }
         }
+        
         return { settingBtn, descBtn, programBtn, settingPanel, descriptionPanel, programPanel };
     }
 

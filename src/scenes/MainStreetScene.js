@@ -9,6 +9,9 @@ export class MainStreetScene extends Phaser.Scene {
     }
     create() {
 
+        const width = this.cameras.main.width;
+        const height = this.cameras.main.height;
+
         const gender = localStorage.getItem('player') ? JSON.parse(localStorage.getItem('player')).gender : 'M';
         const genderKey = gender === 'M' ? 'boy' : 'girl';
 
@@ -78,16 +81,16 @@ export class MainStreetScene extends Phaser.Scene {
 
         const introPanel = new CustomPanel(this, 960, 620, introPage);
 
-        //button
+        //buttons
         this.isLeftDown = false;
         this.isRightDown = false;
 
-        this.btnLeft = new CustomButton(this, 150, 900, 'btn_left_normal', 'btn_left_pressed', 
+        this.btnLeft = new CustomButton(this, 150, height/2, 'prev_button', 'prev_button_click', 
             () => { this.isLeftDown = true; },  
             () => { this.isLeftDown = false; } 
         ).setScrollFactor(0).setDepth(100);
 
-        this.btnRight = new CustomButton(this, 350, 900, 'btn_right_normal', 'btn_right_pressed', 
+        this.btnRight = new CustomButton(this, width - 150, height /2, 'next_button', 'next_button_click', 
             () => { this.isRightDown = true; }, 
             () => { this.isRightDown = false; }
         ).setScrollFactor(0).setDepth(100);
@@ -96,7 +99,6 @@ export class MainStreetScene extends Phaser.Scene {
         //introPanel.setDepth(100);
         //this.gameTimer = UIHelper.showTimer(this, 180, false);
 
-        // Set UI depth to 200 (example, adjust as needed)
         const ui = UIHelper.createCommonUI(this, programPages, descriptionPages, 200, 'gameintro_bag', 'gameintro_bag_click');
 
         // NPCs
@@ -104,7 +106,7 @@ export class MainStreetScene extends Phaser.Scene {
         NpcHelper.createNpc(this, 330, 650, 1200, 180, 1, 1, 'npc4', false, 6);
 
 
-        this.player = NpcHelper.createCharacter(this, 400, 800, 400, 650, 1, 1, 'boy_idle', true, 'player_bubble_1', false, 50);
+        this.player = NpcHelper.createCharacter(this, 600, 400, 400, 650, 1, 1, `${genderKey}_idle`, true, 'player_bubble_1', true, 50);
         this.handleAnimation(genderKey, false, false);
 
         // 將相機鎖定在玩家身上
@@ -125,6 +127,9 @@ export class MainStreetScene extends Phaser.Scene {
             this.player.x += speed;
             isLeft = false;
             isMoving = true;
+        }else {
+            isLeft = false;
+            isMoving =false;
         }
 
         // 紀錄最後方向供 handleAnimation 使用
