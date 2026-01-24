@@ -109,16 +109,53 @@ export class BootScene extends Phaser.Scene {
 
 
         //npcs
-        this.load.video('npc1', 'assets/MainStreet/NPCs/game1_npc.webm');
-        this.load.image('npc1_bubble_1', 'assets/MainStreet/NPCs/game1_npc1_bubble.png');
-        this.load.image('npc1_bubble_2', 'assets/MainStreet/NPCs/game1_npc2_bubble.png');
-        this.load.image('npc1_bubble_3', 'assets/MainStreet/NPCs/game1_npc3_bubble.png');
+        this.load.video('npc1', 'assets/MainStreet/NPCs/NPC_1/game1_npc.webm');
+        this.load.image('npc1_bubble_1', 'assets/MainStreet/NPCs/NPC_1/game1_npc1_bubble.png');
+        this.load.image('npc1_bubble_2', 'assets/MainStreet/NPCs/NPC_1/game1_npc2_bubble.png');
+        this.load.image('npc1_bubble_3', 'assets/MainStreet/NPCs/NPC_1/game1_npc3_bubble.png');
 
-        this.load.video('npc4', 'assets/MainStreet/NPCs/game4_npc.webm');
-        this.load.image('npc4_bubble_1', 'assets/MainStreet/NPCs/game4_npc1_bubble.png');
-        this.load.image('npc4_bubble_2', 'assets/MainStreet/NPCs/game4_npc2_bubble.png');
-        this.load.image('npc4_bubble_3', 'assets/MainStreet/NPCs/game4_npc3_bubble.png');
-        this.load.image('npc4_bubble_4', 'assets/MainStreet/NPCs/game4_npc4_bubble.png');
+        this.load.video('npc2', 'assets/MainStreet/NPCs/NPC_2/game2_npc.webm');
+        this.load.image('npc2_bubble_1', 'assets/MainStreet/NPCs/NPC_2/game2_npc1_bubble.png');
+        this.load.image('npc2_bubble_2', 'assets/MainStreet/NPCs/NPC_2/game2_npc2_bubble.png');
+
+        this.load.video('npc3', 'assets/MainStreet/NPCs/NPC_3/game3_npc.webm');
+        this.load.image('npc3_bubble_1', 'assets/MainStreet/NPCs/NPC_3/game3_npc1_bubble.png');
+        this.load.image('npc3_bubble_2', 'assets/MainStreet/NPCs/NPC_3/game3_npc2_bubble.png');
+        this.load.image('npc3_bubble_3', 'assets/MainStreet/NPCs/NPC_3/game3_npc3_bubble.png');
+        this.load.image('npc3_bubble_4', 'assets/MainStreet/NPCs/NPC_3/game3_npc4_bubble.png');
+
+        this.load.video('npc4', 'assets/MainStreet/NPCs/NPC_4/game4_npc.webm');
+        this.load.image('npc4_bubble_1', 'assets/MainStreet/NPCs/NPC_4/game4_npc1_bubble.png');
+        this.load.image('npc4_bubble_2', 'assets/MainStreet/NPCs/NPC_4/game4_npc2_bubble.png');
+        this.load.image('npc4_bubble_3', 'assets/MainStreet/NPCs/NPC_4/game4_npc3_bubble.png');
+        this.load.image('npc4_bubble_4', 'assets/MainStreet/NPCs/NPC_4/game4_npc4_bubble.png');
+
+        this.load.video('npc5', 'assets/MainStreet/NPCs/NPC_5/game5_npc.webm');
+        this.load.image('npc5_bubble_1', 'assets/MainStreet/NPCs/NPC_5/game5_npc1_bubble.png');
+        this.load.image('npc5_bubble_2', 'assets/MainStreet/NPCs/NPC_5/game5_npc2_bubble.png');
+        this.load.image('npc5_bubble_3', 'assets/MainStreet/NPCs/NPC_5/game5_npc3_bubble.png');
+
+        this.load.video('npc6', 'assets/MainStreet/NPCs/NPC_6/game6_npc.webm');
+        this.load.image('npc6_bubble_1', 'assets/MainStreet/NPCs/NPC_6/game6_npc1_bubble.png');
+        this.load.image('npc6_bubble_2', 'assets/MainStreet/NPCs/NPC_6/game6_npc2_bubble.png');
+        this.load.image('npc6_bubble_3', 'assets/MainStreet/NPCs/NPC_6/game6_npc3_bubble.png');
+
+        this.load.video('fake_npc_1', 'assets/MainStreet/NPCs/NPC_only/fakenpc1.webm');
+        this.load.video('fake_npc_2', 'assets/MainStreet/NPCs/NPC_only/fakenpc2.webm');
+        this.load.video('fake_npc_3', 'assets/MainStreet/NPCs/NPC_only/fakenpc3.webm');
+        this.load.video('fake_npc_4', 'assets/MainStreet/NPCs/NPC_only/fakenpc4.webm');
+        this.load.video('fake_npc_5', 'assets/MainStreet/NPCs/NPC_only/fakenpc5.webm');
+
+        this.load.image('fake_npc_1_bubble', 'assets/MainStreet/NPCs/NPC_only/fakenpc1_bubble.png');
+        this.load.image('fake_npc_1_bubble1', 'assets/MainStreet/NPCs/NPC_only/fakenpc1_bubble1.png');
+        this.load.image('fake_npc_1_bubble2', 'assets/MainStreet/NPCs/NPC_only/fakenpc1_bubble2.png');
+
+        this.load.image('fake_npc_3_bubble', 'assets/MainStreet/NPCs/NPC_only/fakenpc3_bubble.png');
+        this.load.image('fake_npc_4_bubble1', 'assets/MainStreet/NPCs/NPC_only/fakenpc4_bubble1.png');
+        this.load.image('fake_npc_4_bubble2', 'assets/MainStreet/NPCs/NPC_only/fakenpc4_bubble2.png');
+
+        this.load.image('fake_npc_5_bubble', 'assets/MainStreet/NPCs/NPC_only/fakenpc5_bubble.png');
+
 
     }
 
