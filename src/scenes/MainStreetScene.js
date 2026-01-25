@@ -100,12 +100,22 @@ export class MainStreetScene extends Phaser.Scene {
         //this.gameTimer = UIHelper.showTimer(this, 180, false);
 
         const ui = UIHelper.createCommonUI(this, programPages, descriptionPages, 200, 'gameintro_bag', 'gameintro_bag_click');
-        // NPCs
-        NpcHelper.createNpc(this, 900, 300, 1200, 180, 0.8, 1, 'npc1', true, 'npc1_bubble_1', false, 6);
+        // NPCs (trigger game)
+        NpcHelper.createNpc(this, 1000, 300, 1200, 180, 0.8, 1, 'npc1', true, 'npc1_bubble_1', false, 6);
+        NpcHelper.createNpc(this, 4000, 450, 1200, 180, 1, 1, 'npc2', false, 6);
+        NpcHelper.createNpc(this, 2000, 450, 1200, 180, 1, 1, 'npc3', false, 6);
         NpcHelper.createNpc(this, 330, 650, 1200, 180, 1, 1, 'npc4', false, 6);
+        NpcHelper.createNpc(this, 5100, 750, 1200, 180, 1, 1, 'npc5', false, 7);
+        NpcHelper.createNpc(this, 7900, 420, 1200, 180, 1, 1, 'npc6', false, 6);
 
+        //fake npc
+        NpcHelper.createNpc(this, 2800, 480, 1200, 180, 1, 1, 'fake_npc_1', false, 6);
+        NpcHelper.createNpc(this, 3400, 440, 1200, 180, 1, 1, 'fake_npc_2', false, 6);
+        NpcHelper.createNpc(this, 3250, 300, 1200, 180, 1, 1, 'fake_npc_3', false, 6);
+        NpcHelper.createNpc(this, 4000, 850, 1200, 180, 1, 1, 'fake_npc_4', false, 6);
+        NpcHelper.createNpc(this, 4450, 350, 1200, 180, 1, 1, 'fake_npc_5', false, 6);
 
-        this.player = NpcHelper.createCharacter(this, 600, 400, 400, 650, 1, 1, `${genderKey}_idle`, true, 'player_bubble_1', true, 50);
+        this.player = NpcHelper.createCharacter(this, 700, 400, 400, 650, 1, 1, `${genderKey}_idle`, true, 'player_bubble_1', true, 50);
         this.handleAnimation(genderKey, false, false);
 
         // 將相機鎖定在玩家身上
