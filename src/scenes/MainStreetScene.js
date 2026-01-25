@@ -100,22 +100,28 @@ export class MainStreetScene extends Phaser.Scene {
         //this.gameTimer = UIHelper.showTimer(this, 180, false);
 
         const ui = UIHelper.createCommonUI(this, programPages, descriptionPages, 200, 'gameintro_bag', 'gameintro_bag_click');
+
         // NPCs (trigger game)
-        NpcHelper.createNpc(this, 1000, 300, 1200, 180, 0.8, 1, 'npc1', true, 'npc1_bubble_1', false, 6);
-        NpcHelper.createNpc(this, 4000, 450, 1200, 180, 1, 1, 'npc2', false, 6);
-        NpcHelper.createNpc(this, 2000, 450, 1200, 180, 1, 1, 'npc3', false, 6);
-        NpcHelper.createNpc(this, 330, 650, 1200, 180, 1, 1, 'npc4', false, 6);
-        NpcHelper.createNpc(this, 5100, 750, 1200, 180, 1, 1, 'npc5', false, 7);
-        NpcHelper.createNpc(this, 7900, 420, 1200, 180, 1, 1, 'npc6', false, 6);
+        
+        const gnpc1_bubbles = [];
+
+
+        NpcHelper.createNpc(this, 1000, 450, 1, 'npc1', gnpc1_bubbles , 6);
+        NpcHelper.createNpc(this, 4000, 450, 1, 'npc2', gnpc1_bubbles, 6);
+        NpcHelper.createNpc(this, 2000, 550, 1, 'npc3', gnpc1_bubbles, 6);
+        NpcHelper.createNpc(this, 330, 650,  1, 'npc4', gnpc1_bubbles, 6);
+        NpcHelper.createNpc(this, 5100, 750, 1, 'npc5', gnpc1_bubbles, 15);
+        NpcHelper.createNpc(this, 7900, 420, 1, 'npc6', gnpc1_bubbles, 6);
 
         //fake npc
-        NpcHelper.createNpc(this, 2800, 480, 1200, 180, 1, 1, 'fake_npc_1', false, 6);
-        NpcHelper.createNpc(this, 3400, 440, 1200, 180, 1, 1, 'fake_npc_2', false, 6);
-        NpcHelper.createNpc(this, 3250, 300, 1200, 180, 1, 1, 'fake_npc_3', false, 6);
-        NpcHelper.createNpc(this, 4000, 850, 1200, 180, 1, 1, 'fake_npc_4', false, 6);
-        NpcHelper.createNpc(this, 4450, 350, 1200, 180, 1, 1, 'fake_npc_5', false, 6);
+        NpcHelper.createNpc(this, 2800, 500, 1, 'fake_npc_1', true, 6);
+        NpcHelper.createNpc(this, 3400, 440, 1, 'fake_npc_2', false, 6);
+        NpcHelper.createNpc(this, 3250, 300, 1, 'fake_npc_3', false, 6);
+        NpcHelper.createNpc(this, 4000, 850, 1, 'fake_npc_4', false, 15);
+        NpcHelper.createNpc(this, 4450, 350, 1, 'fake_npc_5', false, 6);
 
-        this.player = NpcHelper.createCharacter(this, 700, 400, 400, 650, 1, 1, `${genderKey}_idle`, true, 'player_bubble_1', true, 50);
+        this.player = NpcHelper.createCharacter(this, 800, 600, 400, 650, 
+        1, 1, `${genderKey}_idle`, true, 'player_bubble_1', true, 10);
         this.handleAnimation(genderKey, false, false);
 
         // 將相機鎖定在玩家身上
@@ -176,6 +182,43 @@ export class MainStreetScene extends Phaser.Scene {
         this.player.changeSource(key); // 更換影片源
         this.player.play(true);
         this.player.videoKey = key;
+    }
+
+    toggleNPCDialogue (dialogues, isFake) {
+
+        if (dialogues.length > 0) {
+            if(isFake) {
+            npc.setInteractive({ useHandCursor: true });
+
+            // 2. 建立對話框，初始縮放設為 0
+            const bubble = scene.add.image(dialogueX, dialogueY, dialogueKey)
+                .setDepth(depth + 20)
+                .setScale(0) // 預設先隱藏，透過動畫彈出
+                .setOrigin(0.5, 1);
+
+            // 定義一個內部的彈出/隱藏函數，方便重複使用
+            const toggleDialogue = (show) => {
+                scene.tweens.add({
+                    targets: bubble,
+                    scale: show ? dialogScale : 0,
+                    duration: 300,
+                    ease: show ? 'Back.easeOut' : 'Power2',
+                });
+            };
+
+            // 3. 如果 isVisible 為 true，則直接執行彈出動畫
+            if (isVisible) {
+                toggleDialogue(true);
+            }
+
+            // 4. 點擊 NPC 依然可以切換對話框狀態
+                npc.on('pointerdown', () => {
+                    const currentlyVisible = bubble.scale > 0;
+                    toggleDialogue(!currentlyVisible);
+                });
+            }
+        }
+
     }
 
 }

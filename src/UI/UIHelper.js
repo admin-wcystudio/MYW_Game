@@ -24,33 +24,39 @@ export default class UIHelper {
         const allButtons = [];
 
         // Buttons
-        const settingBtn = new CustomButton(scene, 100, 100, 'setting_btn', 'setting_btn_click', () => {
+        const settingBtn = new CustomButton(scene, 100, 100, 'setting_btn', 'setting_btn_click', 
+        () => {
             openPanel(settingPanel, settingBtn);
         }, () => {
             settingPanel.setVisible(false);
-        });
+        }).setScrollFactor(0);
+
         settingBtn.setDepth(depth + 20); // Buttons above panels
         allButtons.push(settingBtn);
 
-        const descBtn = new CustomButton(scene, 250, 100, 'desc_button', 'desc_button_click', () => {
+        const descBtn = new CustomButton(scene, 250, 100, 'desc_button', 'desc_button_click', 
+        () => {
             openPanel(descriptionPanel, descBtn);
         }, () => {
             descriptionPanel.setVisible(false);
-        });
+        }).setScrollFactor(0);
+
         descBtn.setDepth(depth + 20);
         allButtons.push(descBtn);
 
-        const programBtn = new CustomButton(scene, 400, 100, newProgramBtn, newProgramClickBtn, () => {
+        const programBtn = new CustomButton(scene, 400, 100, newProgramBtn, newProgramClickBtn, 
+        () => {
             openPanel(programPanel, programBtn);
         }, () => {
             programPanel.setVisible(false);
-        });
+        }).setScrollFactor(0);
         programBtn.setDepth(depth + 20);
         allButtons.push(programBtn);
 
         settingBtn.needClicked = true;
         descBtn.needClicked = true;
         programBtn.needClicked = true;
+
 
         descriptionPanel.toggleBtn = descBtn;
         programPanel.toggleBtn = programBtn;
@@ -67,6 +73,7 @@ export default class UIHelper {
                 if (btn !== activeBtn) {
                     btn.resetStatus?.();
                 }
+                btn.setScrollFactor(0);
             });
             if (targetPanel) {
                 targetPanel.setVisible(true);
