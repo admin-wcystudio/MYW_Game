@@ -6,17 +6,17 @@ export default class UIHelper {
     //create common ui button
     static createCommonUI(scene, programPages, descriptionPages, depth = 100, newProgramBtn = 'program_btn', newProgramClickBtn = 'program_btn_click') {
         // Panels
-        const settingPanel = new SettingPanel(scene, 960, 540);
+        const settingPanel = new SettingPanel(scene, 960, 540).setScrollFactor(0);
         settingPanel.setVisible(false);
         settingPanel.setDepth(depth + 30); // Setting panel above others by default
         scene.add.existing(settingPanel);
 
-        const descriptionPanel = new CustomPanel(scene, 960, 540, descriptionPages);
+        const descriptionPanel = new CustomPanel(scene, 960, 540, descriptionPages).setScrollFactor(0);
         descriptionPanel.setVisible(false);
         descriptionPanel.setDepth(depth + 30);
         scene.add.existing(descriptionPanel);
 
-        const programPanel = new CustomPanel(scene, 960, 540, programPages);
+        const programPanel = new CustomPanel(scene, 960, 540, programPages).setScrollFactor(0);
         programPanel.setVisible(false);
         programPanel.setDepth(depth + 30);
         scene.add.existing(programPanel);

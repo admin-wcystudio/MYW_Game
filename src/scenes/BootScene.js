@@ -107,7 +107,6 @@ export class BootScene extends Phaser.Scene {
         this.load.video('girl_left_walk', 'assets/MainStreet/Girl/maingirlcharacter_leftwalking.webm');
         this.load.video('girl_right_walk', 'assets/MainStreet/Girl/maingirlcharacter_rightwalking.webm');
 
-
         //npcs
         this.load.video('npc1', 'assets/MainStreet/NPCs/NPC_1/game1_npc.webm');
         this.load.image('npc1_bubble_1', 'assets/MainStreet/NPCs/NPC_1/game1_npc1_bubble.png');
@@ -156,6 +155,9 @@ export class BootScene extends Phaser.Scene {
 
         this.load.image('fake_npc_5_bubble', 'assets/MainStreet/NPCs/NPC_only/fakenpc5_bubble.png');
 
+        // load game scenes assets
+        this.load.image('game1_bg', 'assets/Game_1/game1_bg.png');
+
 
     }
 
@@ -171,7 +173,7 @@ export class BootScene extends Phaser.Scene {
 
             this.registry.set('globalSettings', settings);
         }
-        this.scene.start('MainStreetScene');
+        this.scene.start('GameScene_1');
     }
 
 }
