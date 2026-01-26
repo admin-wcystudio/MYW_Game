@@ -128,6 +128,17 @@ export class LoginScene extends Phaser.Scene {
         const player = { name: playerName, gender: gender };
         localStorage.setItem('player', JSON.stringify(player));
 
+        const allGamesResult = [
+            { round : 1 , isFinished: false, seconds : 0 },
+            { round : 2 , isFinished: false, seconds : 0 },
+            { round : 3 , isFinished: false, seconds : 0 },
+            { round : 4 , isFinished: false, seconds : 0 },
+            { round : 5 , isFinished: false, seconds : 0 },
+            { round : 6 , isFinished: false, seconds : 0 },
+            { round : 7 , isFinished: false, seconds : 0 },
+        ];
+        localStorage.setItem('allGamesResult' , JSON.stringify(allGamesResult));
+
         // 定義影片 Key (根據你 BootScene 載入嘅名)
         const transitionKey = (gender === 'M') ? 'boy_transition' : 'girl_transition';
         const loopKey = (gender === 'M') ? 'boy_chinese' : 'girl_chinese';

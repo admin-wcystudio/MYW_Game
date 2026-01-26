@@ -96,9 +96,6 @@ export class MainStreetScene extends Phaser.Scene {
         ).setScrollFactor(0).setDepth(100);
 
 
-        //introPanel.setDepth(100);
-        //this.gameTimer = UIHelper.showTimer(this, 180, false);
-
         const ui = UIHelper.createCommonUI(this, programPages, descriptionPages, 200, 'gameintro_bag', 'gameintro_bag_click');
 
         // NPCs (trigger game)

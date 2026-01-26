@@ -155,8 +155,14 @@ export class BootScene extends Phaser.Scene {
 
         this.load.image('fake_npc_5_bubble', 'assets/MainStreet/NPCs/NPC_only/fakenpc5_bubble.png');
 
-        // load game scenes assets
-        this.load.image('game1_bg', 'assets/Game_1/game1_bg.png');
+        // load game scenes assets ( general )
+        const path = 'assets/Game_1/';
+        
+        this.load.image('game_success', `${path}game1_success.png`);
+        this.load.image('game_success_icon', `${path}game1_success_icon.png`);
+        this.load.image('game_fail', `${path}game1_fail.png`);
+        this.load.image('game_fail_icon', `${path}game1_fail_icon.png`);
+        this.load.image('game_gamechance', `${path}game1_gamechance.png`);
 
 
     }
@@ -165,6 +171,9 @@ export class BootScene extends Phaser.Scene {
         console.log('Global Assets Loaded');
 
         const savedData = localStorage.getItem('gameSettings');
+
+        const savedGameResultData = localStorage.getItem('allGamesResult');
+
 
         if (savedData) {
             const settings = JSON.parse(savedData);

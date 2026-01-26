@@ -24,32 +24,32 @@ export default class UIHelper {
         const allButtons = [];
 
         // Buttons
-        const settingBtn = new CustomButton(scene, 100, 100, 'setting_btn', 'setting_btn_click', 
-        () => {
-            openPanel(settingPanel, settingBtn);
-        }, () => {
-            settingPanel.setVisible(false);
-        }).setScrollFactor(0);
+        const settingBtn = new CustomButton(scene, 100, 100, 'setting_btn', 'setting_btn_click',
+            () => {
+                openPanel(settingPanel, settingBtn);
+            }, () => {
+                settingPanel.setVisible(false);
+            }).setScrollFactor(0);
 
         settingBtn.setDepth(depth + 20); // Buttons above panels
         allButtons.push(settingBtn);
 
-        const descBtn = new CustomButton(scene, 250, 100, 'desc_button', 'desc_button_click', 
-        () => {
-            openPanel(descriptionPanel, descBtn);
-        }, () => {
-            descriptionPanel.setVisible(false);
-        }).setScrollFactor(0);
+        const descBtn = new CustomButton(scene, 250, 100, 'desc_button', 'desc_button_click',
+            () => {
+                openPanel(descriptionPanel, descBtn);
+            }, () => {
+                descriptionPanel.setVisible(false);
+            }).setScrollFactor(0);
 
         descBtn.setDepth(depth + 20);
         allButtons.push(descBtn);
 
-        const programBtn = new CustomButton(scene, 400, 100, newProgramBtn, newProgramClickBtn, 
-        () => {
-            openPanel(programPanel, programBtn);
-        }, () => {
-            programPanel.setVisible(false);
-        }).setScrollFactor(0);
+        const programBtn = new CustomButton(scene, 400, 100, newProgramBtn, newProgramClickBtn,
+            () => {
+                openPanel(programPanel, programBtn);
+            }, () => {
+                programPanel.setVisible(false);
+            }).setScrollFactor(0);
         programBtn.setDepth(depth + 20);
         allButtons.push(programBtn);
 
@@ -81,7 +81,89 @@ export default class UIHelper {
                 if (targetPanel.refresh) targetPanel.refresh();
             }
         }
-        
+
+        return { settingBtn, descBtn, programBtn, settingPanel, descriptionPanel, programPanel };
+    }
+
+
+    static createGameCommonUI(scene, itemPage, descriptionPages, depth = 10,) {
+        // Panels
+        const settingPanel = new SettingPanel(scene, 960, 540).setScrollFactor(0);
+        settingPanel.setVisible(false);
+        settingPanel.setDepth(depth + 30); // Setting panel above others by default
+        scene.add.existing(settingPanel);
+
+        const descriptionPanel = new CustomPanel(scene, 960, 540, descriptionPages).setScrollFactor(0);
+        descriptionPanel.setVisible(false);
+        descriptionPanel.setDepth(depth + 30);
+        scene.add.existing(descriptionPanel);
+
+        const itemPanel = new CustomPanel(scene, 960, 540, programPages).setScrollFactor(0);
+        programPanel.setVisible(false);
+        programPanel.setDepth(depth + 30);
+        scene.add.existing(programPanel);
+
+        const allButtons = [];
+
+        // Buttons
+        const settingBtn = new CustomButton(scene, 100, 100, 'setting_btn', 'setting_btn_click',
+            () => {
+                openPanel(settingPanel, settingBtn);
+            }, () => {
+                settingPanel.setVisible(false);
+            }).setScrollFactor(0);
+
+        settingBtn.setDepth(depth + 20); // Buttons above panels
+        allButtons.push(settingBtn);
+
+        const descBtn = new CustomButton(scene, 250, 100, 'desc_button', 'desc_button_click',
+            () => {
+                openPanel(descriptionPanel, descBtn);
+            }, () => {
+                descriptionPanel.setVisible(false);
+            }).setScrollFactor(0);
+
+        descBtn.setDepth(depth + 20);
+        allButtons.push(descBtn);
+
+        const programBtn = new CustomButton(scene, 400, 100, newProgramBtn, newProgramClickBtn,
+            () => {
+                openPanel(programPanel, programBtn);
+            }, () => {
+                programPanel.setVisible(false);
+            }).setScrollFactor(0);
+        programBtn.setDepth(depth + 20);
+        allButtons.push(programBtn);
+
+        settingBtn.needClicked = true;
+        descBtn.needClicked = true;
+        programBtn.needClicked = true;
+
+
+        descriptionPanel.toggleBtn = descBtn;
+        programPanel.toggleBtn = programBtn;
+        settingPanel.toggleBtn = settingBtn;
+
+
+        function openPanel(targetPanel, activeBtn) {
+            [settingPanel, descriptionPanel, programPanel]
+                .forEach(p => {
+                    if (p) p.setVisible(false);
+                });
+            // --- 重設所有按鈕狀態 ---
+            allButtons.forEach(btn => {
+                if (btn !== activeBtn) {
+                    btn.resetStatus?.();
+                }
+                btn.setScrollFactor(0);
+            });
+            if (targetPanel) {
+                targetPanel.setVisible(true);
+                targetPanel.currentPage = 0;
+                if (targetPanel.refresh) targetPanel.refresh();
+            }
+        }
+
         return { settingBtn, descBtn, programBtn, settingPanel, descriptionPanel, programPanel };
     }
 

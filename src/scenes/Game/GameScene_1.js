@@ -1,6 +1,7 @@
 import { CustomButton } from '../../UI/Button.js';
 import { CustomPanel, SettingPanel } from '../../UI/Panel.js';
 import UIHelper from '../../UI/UIHelper.js';
+import GameManager from '../GameManager.js';
 
 export class GameScene_1 extends Phaser.Scene {
     constructor() {
@@ -40,9 +41,14 @@ export class GameScene_1 extends Phaser.Scene {
     create() {
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
-        
-        // ====background
-        this.add.image(width / 2, height / 2, 'game1_bg').setDepth(1);
+
+        const npc_bubbles = [
+            'game1_npc_box1',
+            'game1_npc_box2',
+            'game1_npc_box3'
+        ];
+
+        this.loadCurrentBubble(0, npc_bubbles, width,height);
 
         //====puzzles
         const defaultpuzzles = [
@@ -58,89 +64,41 @@ export class GameScene_1 extends Phaser.Scene {
 
         defaultpuzzles.forEach(data => {
             const piece = this.add.image(data.offsetX, data.offsetY, data.content)
-                .setAngle(data.rotate) 
+                .setAngle(data.rotate)
                 .setInteractive({ draggable: true })
                 .setDepth(50);
-            
+
             piece.on('pointerdown', () => {
-                piece.angle += 90; 
-            }); 
+                piece.angle += 90;
+            });
         });
-
-        // ====round status result
-        const currentRound = 1; 
-        const roundStates = [
-            { round: 1 , content : 'game_gamechance' , isSuccess : false},
-            { round: 2 , content : 'game_gamechance' , isSuccess : false},
-            { round: 3 , content : 'game_gamechance' , isSuccess : false}
-        ];
-        let space = 145;
-        roundStates.forEach(data => {
-            const stateImage = this.add.image(1900 -space, 225  , data.content)
-            .setScale(0.9)
-            .setDepth(60);
-            space += 145;
-        })
-
-
-        //==== timer
-        this.gameTimer = UIHelper.showTimer(this, 30, false);
-
-
         //====panel
-
         const descriptionPages = [
             {
                 content: 'game1_description',
-                nextBtn: 'next_button', nextBtnClick: 'next_button_click',
+                nextBtn: null, nextBtnClick: null,
                 prevBtn: null, prevBtnClick: null,
                 closeBtn: 'close_button', closeBtnClick: 'close_button_click'
             }
         ];
 
-        const programPages = [
-            {
-                content: 'program_information_p1',
-                nextBtn: 'next_button', nextBtnClick: 'next_button_click',
-                prevBtn: 'prev_button', prevBtnClick: 'prev_button_click',
-                closeBtn: 'close_button', closeBtnClick: 'close_button_click'
-            },
-            {
-                content: 'program_information_p2',
-                nextBtn: 'next_button', nextBtnClick: 'next_button_click',
-                prevBtn: 'prev_button', prevBtnClick: 'prev_button',
-                closeBtn: 'close_button', closeBtnClick: 'close_button_click'
-            },
-            {
-                content: 'program_information_p3',
-                nextBtn: 'next_button', nextBtnClick: 'next_button_click',
-                prevBtn: 'prev_button', prevBtnClick: 'prev_button',
-                closeBtn: 'close_button', closeBtnClick: 'close_button_click'
-            },
-            {
-                content: 'program_information_p4',
-                nextBtn: 'next_button', nextBtnClick: 'next_button_click',
-                prevBtn: 'prev_button', prevBtnClick: 'prev_button',
-                closeBtn: 'close_button', closeBtnClick: 'close_button_click'
-            }
+        const descriptionPanel = new CustomPanel(this, 960, 540, descriptionPages);
+        descriptionPanel.setVisible(false);
+        descriptionPanel.setDepth(100);
 
-        ]
-        const introPage = [
-            {
-                content: 'gameintro_01',
-                nextBtn: null, nextBtnClick: null,
-                prevBtn: null, prevBtnClick: null,
-                closeBtn: 'gameintro_closebutton', closeBtnClick: 'gameintro_closebutton_click'
-            },
-        ]
 
-        const ui = UIHelper.createCommonUI(this, programPages, descriptionPages,
-            200, 'gameintro_bag', 'gameintro_bag_click');
-
+        const gameUI = GameManager.createGameCommonUI(this, 'game1_bg', 'game1_title', descriptionPages);
 
     }
-    update () {
-        
+    update() {
+
+    }
+
+    loadCurrentBubble(index = 0 , npc_bubbles, width, height) {
+        const bubble = npc_bubbles[index];
+        console.log ("Load bubble" + bubble);
+        this.add.image( width/2, 900, bubble).setDepth(10);
+
     }
 
     randomPuzzlePosition(puzzles) {
@@ -152,8 +110,8 @@ export class GameScene_1 extends Phaser.Scene {
         for (let i = 0; i < puzzles.length; i++) {
             // 隨機產生 -50 到 50 的偏移量
             let randomX = Phaser.Math.Between(-300, 300);
-            let randomY = Phaser.Math.Between(-400, 400);
-            
+            let randomY = Phaser.Math.Between(-200, 200);
+
             let randomRotate = Phaser.Utils.Array.GetRandom(allowedRotations);
 
             // 賦值
