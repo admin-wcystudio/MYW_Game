@@ -95,6 +95,18 @@ export class BootScene extends Phaser.Scene {
         this.load.image('gameintro_bag_click', 'assets/MainStreet/gameintro_bag_click.png');
         this.load.image('gameintro_closebutton', 'assets/MainStreet/gameintro_closebutton.png');
         this.load.image('gameintro_closebutton_click', 'assets/MainStreet/gameintro_closebutton_click.png');
+
+
+        const path = 'assets/Game_1/';
+        // game general assets
+        this.load.image('game_gamechance', `${path}game1_gamechance.png`);
+        this.load.image('game_success', `${path}game1_success.png`);
+        this.load.image('game_success_icon', `${path}game1_success_icon.png`);
+        this.load.image('game_fail', `${path}game1_fail.png`);
+        this.load.image('game_fail_icon', `${path}game1_fail_icon.png`);
+        this.load.image('game_closebutton', `${path}game1_closebutton.png`);
+        this.load.image('game_closebutton_select', `${path}game1_closebutton_select.png`);
+        this.load.image('game_timer', `${path}game1_timer.png`);
     }
 
     create() {

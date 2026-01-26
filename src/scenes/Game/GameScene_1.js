@@ -19,10 +19,6 @@ export class GameScene_1 extends Phaser.Scene {
         this.load.image('game1_description', `${path}game1_description.png`);
         this.load.image('game1_object_description', `${path}game1_object_description.png`);
 
-        // --- 按鈕 ---
-        this.load.image('game1_closebutton', `${path}game1_closebutton.png`);
-        this.load.image('game1_closebutton_select', `${path}game1_closebutton_select.png`);
-
         // --- NPC 對話框 ---
         this.load.image('game1_npc_box1', `${path}game1_npc_box1.png`);
         this.load.image('game1_npc_box2', `${path}game1_npc_box2.png`);
@@ -37,13 +33,6 @@ export class GameScene_1 extends Phaser.Scene {
         this.load.image('game1_puzzle4', `${path}game1_puzzle4.png`);
         this.load.image('game1_puzzle5', `${path}game1_puzzle5.png`);
         this.load.image('game1_puzzle6', `${path}game1_puzzle6.png`);
-
-        // --- 狀態反饋 (成功/失敗) ---
-        this.load.image('game1_success', `${path}game1_success.png`);
-        this.load.image('game1_success_icon', `${path}game1_success_icon.png`);
-        this.load.image('game1_fail', `${path}game1_fail.png`);
-        this.load.image('game1_fail_icon', `${path}game1_fail_icon.png`);
-        this.load.image('game1_gamechance', `${path}game1_gamechance.png`);
 
         this.load.video('game1_success_preview', `${path}game1_success_preview.webm`);
     }
@@ -81,9 +70,9 @@ export class GameScene_1 extends Phaser.Scene {
         // ====round status result
         const currentRound = 1; 
         const roundStates = [
-            { round: 1 , content : 'game1_gamechance' , isSuccess : false},
-            { round: 2 , content : 'game1_gamechance' , isSuccess : false},
-            { round: 3 , content : 'game1_gamechance' , isSuccess : false}
+            { round: 1 , content : 'game_gamechance' , isSuccess : false},
+            { round: 2 , content : 'game_gamechance' , isSuccess : false},
+            { round: 3 , content : 'game_gamechance' , isSuccess : false}
         ];
         let space = 145;
         roundStates.forEach(data => {
