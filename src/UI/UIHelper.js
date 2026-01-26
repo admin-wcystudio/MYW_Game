@@ -246,14 +246,11 @@ export default class UIHelper {
         scene.time.delayedCall(2000, () => toast.destroy());
     }
 
-    static showTimer(scene, seconds, isStartNow = false) {
+    static showTimer(scene, seconds, isStartNow = false, onComplete) {
 
         const timerBg = scene.add.image(1640, 80, 'gametimer').setDepth(100).setScrollFactor(0);
 
-        // 2. 建立文字
         let timeLeft = seconds;
-
-        // 定義格式化函數
         const formatTime = (s) => {
             const minutes = Math.floor(s / 60);
             const partInSeconds = s % 60;
@@ -279,7 +276,7 @@ export default class UIHelper {
 
                     if (timeLeft <= 0) {
                         timerEvent.destroy();
-                        // 觸發時間結束事件
+                        if (onComplete) onComplete();
                         scene.events.emit('game-timeout');
                     }
                 }
@@ -287,7 +284,11 @@ export default class UIHelper {
             loop: true,
         });
 
-        return { timerBg, timerText, timerEvent };
+        const stop = () => {
+            timerEvent.destroy();
+        }
+
+        return { timerBg, timerText, timerEvent ,stop};
     }
 
     static changeVideo(videoObject, newKey) {

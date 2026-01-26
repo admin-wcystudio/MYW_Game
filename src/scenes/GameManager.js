@@ -24,10 +24,6 @@ export default class GameManager {
             space += 145;
         })
 
-        //timer
-        scene.gameTimer = UIHelper.showTimer(scene, 30, false);
-
-
         const ui = UIHelper.createCommonUI(scene, descriptionPages, descriptionPages,
             200, 'gameintro_bag', 'gameintro_bag_click');
 

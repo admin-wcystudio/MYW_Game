@@ -44,13 +44,13 @@ export class GameScene_1 extends Phaser.Scene {
         const centerX = this.cameras.main.width / 2;
         const centerY = this.cameras.main.height / 2;
 
-        const npc_bubbles = [
-            'game1_npc_box1',
-            'game1_npc_box2',
-            'game1_npc_box3'
-        ];
+        const roundIndex = 0;
 
-        this.loadCurrentBubble(0, npc_bubbles, width,height);
+        this.gameTimer = UIHelper.showTimer(this, 30, true, ()=> {
+            this.handleTimeUp();
+        });
+
+        this.loadBubble(0);
 
         //====panel=====================================================
         const descriptionPages = [
@@ -139,29 +139,29 @@ export class GameScene_1 extends Phaser.Scene {
         });
 
         //==== Debug Graphics ===========================================================
-        const debugGraphics = this.add.graphics().setDepth(2); // 擺喺背景上面，物件下面
-        debugGraphics.lineStyle(2, 0xff0000, 1); // 紅色線，粗度 2
+        // const debugGraphics = this.add.graphics().setDepth(2); // 擺喺背景上面，物件下面
+        // debugGraphics.lineStyle(2, 0xff0000, 1); // 紅色線，粗度 2
 
-        defaultpuzzles.forEach(data => {
-            const rectSize = 200; 
-            const startX = data.targetX - rectSize / 2;
-            const startY = data.targetY - rectSize / 2;
+        // defaultpuzzles.forEach(data => {
+        //     const rectSize = 200; 
+        //     const startX = data.targetX - rectSize / 2;
+        //     const startY = data.targetY - rectSize / 2;
 
-            // 畫出目標區域矩形
-            debugGraphics.strokeRect(startX, startY, rectSize, rectSize);
+        //     // 畫出目標區域矩形
+        //     debugGraphics.strokeRect(startX, startY, rectSize, rectSize);
 
-            // 喺方框旁邊寫低係邊塊 Puzzle，方便對號入座
-            this.add.text(startX, startY - 20, data.content, { 
-                fontSize: '16px', 
-                fill: '#ff0000' 
-            }).setDepth(1);
-        });
+        //     // 喺方框旁邊寫低係邊塊 Puzzle，方便對號入座
+        //     this.add.text(startX, startY - 20, data.content, { 
+        //         fontSize: '16px', 
+        //         fill: '#ff0000' 
+        //     }).setDepth(1);
+        // });
 
-        const tolerance = 40; // 同你 checkSnap 裡面個數值一樣
-        defaultpuzzles.forEach(data => {
-            debugGraphics.lineStyle(1, 0x00ff00, 0.5); // 綠色虛線感
-            debugGraphics.strokeCircle(data.targetX, data.targetY, tolerance);
-        });
+        // const tolerance = 40; // 同你 checkSnap 裡面個數值一樣
+        // defaultpuzzles.forEach(data => {
+        //     debugGraphics.lineStyle(1, 0x00ff00, 0.5); // 綠色虛線感
+        //     debugGraphics.strokeCircle(data.targetX, data.targetY, tolerance);
+        // });
 
     }
     selectPuzzle(piece) {
@@ -170,12 +170,9 @@ export class GameScene_1 extends Phaser.Scene {
             this.selectedPuzzle.setScale(1); // 恢復大小
         }
 
-        // 2. 更新當前選中的拼圖
         this.selectedPuzzle = piece;
 
-        // 3. 加入視覺反饋 (例如變深色少少或者放大)
         piece.setTint(0xaaaaaa); 
-        piece.setScale(1.1);
         
         console.log("選中了拼圖:", piece.texture.key);
     }
@@ -206,16 +203,64 @@ export class GameScene_1 extends Phaser.Scene {
         const allCorrect = this.puzzleGroup.getChildren().every(p => p.getData('isCorrect'));
 
         if (allCorrect) {
-            console.log("恭喜！全部拼圖完成！");
-            // 喺度彈出 game1_success 介面
+            if (this.gameTimer && this.gameTimer.stop) {
+                this.gameTimer.stop(); // 停止倒數
+            }
+            this.showSuccess(this.puzzleGroup);
         }
     }
 
-    loadCurrentBubble(index = 0 , npc_bubbles, width, height) {
+
+    loadBubble(index = 0) {    
+        const centerX = this.cameras.main.width / 2;
+        const centerY = this.cameras.main.height / 2;
+        const npc_bubbles = [
+            'game1_npc_box1',
+            'game1_npc_box2',
+            'game1_npc_box3'
+        ];
+
         const bubble = npc_bubbles[index];
         console.log ("Load bubble" + bubble);
-        this.add.image( width/2, 900, bubble).setDepth(10);
+        this.add.image( centerX, 900, bubble).setDepth(10);
+    }
 
+    showSuccess(puzzleGroup) {
+        this.loadBubble(1);
+        puzzleGroup.setVisible(false);
+        const successVideo = this.add.video(960, 440, 'game1_success_preview')
+        .setDepth(200)
+        .setScrollFactor(0); 
+        
+        successVideo.play();
+    }
+
+    handleTimeUp() {
+        console.log("時間到！遊戲結束");
+
+        // 1. 鎖定所有拼圖，唔俾再拖曳
+        if (this.puzzleGroup) {
+            this.puzzleGroup.getChildren().forEach(p => p.disableInteractive());
+        }
+
+        // 2. 顯示失敗介面
+        const failBg = this.add.image(960, 540, 'game1_fail')
+            .setDepth(500)
+            .setScrollFactor(0);
+
+        const failIcon = this.add.image(960, 400, 'game1_fail_icon')
+            .setDepth(501)
+            .setScrollFactor(0);
+
+        // 3. 加入「重試」按鈕 (假設你用 game1_rotate 做暫時嘅重試掣)
+        const retryBtn = this.add.image(960, 700, 'game1_rotate')
+            .setInteractive({ useHandCursor: true })
+            .setDepth(502)
+            .setScrollFactor(0);
+
+        retryBtn.on('pointerdown', () => {
+            this.scene.restart(); // 重新開始呢一關
+        });
     }
 
     randomPuzzlePosition(puzzles) {
@@ -223,18 +268,15 @@ export class GameScene_1 extends Phaser.Scene {
         const centerY = this.cameras.main.height / 2;
         const allowedRotations = [90, 180, 270, 360];
 
-        // 2. 修正迴圈條件：i < puzzles.length (避免 index out of bounds)
         for (let i = 0; i < puzzles.length; i++) {
-            // 隨機產生 -50 到 50 的偏移量
             let randomX = Phaser.Math.Between(-400, 400);
             let randomY = Phaser.Math.Between(-300, 100);
 
             let randomRotate = Phaser.Utils.Array.GetRandom(allowedRotations);
-            // 賦值
+
             puzzles[i].offsetX = centerX + randomX;
             puzzles[i].offsetY = centerY + randomY;
             puzzles[i].rotate = randomRotate;
         }
-        let puzzleIndex = Phaser.Math.Between(0,3);
     }
 }
