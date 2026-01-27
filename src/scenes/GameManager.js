@@ -62,4 +62,11 @@ export default class GameManager {
         });
     }
 
+    static switchToGameScene(scene, gameSceneKey) {
+        scene.cameras.main.fadeOut(500, 0, 0, 0);
+        scene.cameras.main.once('camerafadeoutcomplete', () => {
+            scene.scene.start(gameSceneKey);
+        });
+    }
+
 }

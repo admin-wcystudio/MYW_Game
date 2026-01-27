@@ -8,7 +8,7 @@ export default class NpcHelper {
         npc.bubbles = bubbles;
         npc.setInteractive({ useHandCursor: true });
 
-        npc.proximityDistance = 200;
+        npc.proximityDistance = 100;
 
         return npc;
     }

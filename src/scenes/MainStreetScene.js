@@ -2,6 +2,7 @@ import { CustomButton } from '../UI/Button.js';
 import UIHelper from '../UI/UIHelper.js';
 import { CustomPanel, SettingPanel } from '../UI/Panel.js';
 import NpcHelper from '../Character/NpcHelper.js';
+import GameManager from './GameManager.js';
 
 export class MainStreetScene extends Phaser.Scene {
     constructor() {
@@ -98,35 +99,55 @@ export class MainStreetScene extends Phaser.Scene {
 
         const ui = UIHelper.createCommonUI(this, programPages, descriptionPages, 200, 'gameintro_bag', 'gameintro_bag_click');
 
+        const npc1_bubbles = ['npc1_bubble_1', 'npc1_bubble_2', 'npc1_bubble_3'];
+        const npc2_bubbles = ['npc2_bubble_1', 'npc2_bubble_2'];
+        const npc3_bubbles = ['npc3_bubble_1', 'npc3_bubble_2', 'npc3_bubble_3', 'npc3_bubble_4'];
+        const npc4_bubbles = ['npc4_bubble_1', 'npc4_bubble_2', 'npc4_bubble_3', 'npc4_bubble_4'];
+        const npc5_bubbles = ['npc5_bubble_1', 'npc5_bubble_2', 'npc5_bubble_3'];
+        const npc6_bubbles = ['npc6_bubble_1', 'npc6_bubble_2', 'npc6_bubble_3'];
+
+        const fake_npc1_bubbles = ['fake_npc_1_bubble1', 'fake_npc_1_bubble2'];
+        const fake_npc3_bubbles = ['fake_npc_3_bubble'];
+        const fake_npc4_bubbles = ['fake_npc_4_bubble1', 'fake_npc_4_bubble2'];
+        const fake_npc5_bubbles = ['fake_npc_5_bubble'];
+
         // NPCs (trigger game)
         this.interactiveNpcs = [];
         this.fakeNpcs = [];
 
 
-        const n1 = NpcHelper.createNpc(this, 1000, 450, 1, 'npc1', gnpc1_bubbles, 6);
+        const n1 = NpcHelper.createNpc(this, 1000, 450, 1, 'npc1', npc1_bubbles, 6);
+        const n2 = NpcHelper.createNpc(this, 4000, 550, 1, 'npc2', npc2_bubbles, 6);
+        const n3 = NpcHelper.createNpc(this, 2000, 650, 1, 'npc3', npc3_bubbles, 6);
+        const n4 = NpcHelper.createNpc(this, 330, 750, 1, 'npc4', npc4_bubbles, 6);
+        const n5 = NpcHelper.createNpc(this, 5100, 750, 1, 'npc5', npc5_bubbles, 15);
+        const n6 = NpcHelper.createNpc(this, 7900, 420, 1, 'npc6', npc6_bubbles, 6);
+
         this.interactiveNpcs.push(n1);
+        this.interactiveNpcs.push(n2);
+        this.interactiveNpcs.push(n3);
+        this.interactiveNpcs.push(n4);
+        this.interactiveNpcs.push(n5);
+        this.interactiveNpcs.push(n6);
 
-        const f1 = NpcHelper.createNpc(this, 2800, 500, 1, 'fake_npc_1', true, 6);
+        // Fake NPCs (random talk)
+        const f1 = NpcHelper.createNpc(this, 2800, 500, 1, 'fake_npc_1', fake_npc1_bubbles, 6);
+        const f2 = NpcHelper.createNpc(this, 3400, 440, 1, 'fake_npc_2', null, 6);
+        const f3 = NpcHelper.createNpc(this, 3250, 300, 1, 'fake_npc_3', fake_npc3_bubbles, 6);
+        const f4 = NpcHelper.createNpc(this, 4000, 850, 1, 'fake_npc_4', fake_npc4_bubbles, 15);
+        const f5 = NpcHelper.createNpc(this, 4450, 350, 1, 'fake_npc_5', fake_npc5_bubbles, 6);
+
         this.fakeNpcs.push(f1);
-
-        // NpcHelper.createNpc(this, 4000, 450, 1, 'npc2', gnpc1_bubbles, 6);
-        // NpcHelper.createNpc(this, 2000, 550, 1, 'npc3', gnpc1_bubbles, 6);
-        // NpcHelper.createNpc(this, 330, 650, 1, 'npc4', gnpc1_bubbles, 6);
-        // NpcHelper.createNpc(this, 5100, 750, 1, 'npc5', gnpc1_bubbles, 15);
-        // NpcHelper.createNpc(this, 7900, 420, 1, 'npc6', gnpc1_bubbles, 6);
-
-        // //fake npc
-        // NpcHelper.createNpc(this, 2800, 500, 1, 'fake_npc_1', true, 6);
-        // NpcHelper.createNpc(this, 3400, 440, 1, 'fake_npc_2', false, 6);
-        // NpcHelper.createNpc(this, 3250, 300, 1, 'fake_npc_3', false, 6);
-        // NpcHelper.createNpc(this, 4000, 850, 1, 'fake_npc_4', false, 15);
-        // NpcHelper.createNpc(this, 4450, 350, 1, 'fake_npc_5', false, 6);
+        this.fakeNpcs.push(f2);
+        this.fakeNpcs.push(f3);
+        this.fakeNpcs.push(f4);
+        this.fakeNpcs.push(f5);
 
         this.interactiveNpcs.forEach(npc => {
             npc.on('pointerdown', () => {
                 if (npc.canInteract) {
-                    // 傳入 index 0 代表第一段對話，並帶入遊戲啟動邏輯
-                    this.loadBubble(0, this.gender);
+                    const npcIndex = this.interactiveNpcs.indexOf(npc) + 1;
+                    this.loadBubble(0, npc.bubbles, `Game${npcIndex}Scene`);
                 }
             });
         });
@@ -184,34 +205,27 @@ export class MainStreetScene extends Phaser.Scene {
             this.player.bubble.x = this.player.x + offsetX;
             this.player.bubble.y = this.player.y + this.player.bubbleOffset.y;
         }
-
-        this.npcs.forEach(npc => {
-            const dist = Phaser.Math.Distance.Between(this.player.x, this.player.y, npc.x, npc.y);
-
-            const range = 200;
-
-            if (dist < range) {
-                npc.setTint(0xffffff); // 靠近時變亮 (視覺回饋)
-                npc.canInteract = true;
-            } else {
-                npc.setTint(0x888888); // 太遠時變暗
-                npc.canInteract = false;
-            }
-        });
-
-
+        // 檢查 NPC 距離以決定是否可互動
         const allNpcs = [...this.interactiveNpcs, ...this.fakeNpcs];
 
+        this.currentNpcActivated = null;
+
         allNpcs.forEach(npc => {
-            const dist = Phaser.Math.Distance.Between(this.player.x, this.player.y, npc.x, npc.y);
+            const dist = Math.abs(this.player.x - npc.x);
 
             if (dist < npc.proximityDistance) {
                 npc.canInteract = true;
+                this.currentNpcActivated = npc;
                 npc.setTint(0xffffff); // 靠近變亮
             } else {
                 npc.canInteract = false;
                 npc.setTint(0x888888); // 遠離變暗
+                if (this.currentBubbleImg) {
+                    this.currentBubbleImg.destroy();
+                    this.currentBubbleImg = null;
+                }
             }
+
         });
     }
 
@@ -233,31 +247,56 @@ export class MainStreetScene extends Phaser.Scene {
         this.player.videoKey = key;
     }
 
-    loadBubble(index = 0, gender) {
+    loadBubble(index = 0, bubbles, sceneKey) {
         const centerX = this.cameras.main.width / 2;
-        const centerY = 900; // 對話框固定的 Y 座標
+        const centerY = 900;
 
+        let currentBubbleImg = this.add.image(centerX, centerY, bubbles[index])
+            .setDepth(200)
+            .setScrollFactor(0)
+            .setInteractive({ useHandCursor: true });
+
+        currentBubbleImg.once('pointerdown', () => {
+            currentBubbleImg.setTexture(bubbles[index + 1]);
+        });
+
+        if (index + 1 >= bubbles.length) {
+            currentBubbleImg.once('pointerdown', () => {
+                currentBubbleImg.destroy();
+                // 啟動遊戲
+                GameManager.switchToGameScene(this, sceneKey);
+            });
+
+            // If a bubble is open and the player moves out of proximity from the activated NPC, close the bubble
+            if (this.currentNpcActivated && this.currentBubbleImg) {
+                const dist = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.currentNpcActivated.x, this.currentNpcActivated.y);
+                if (dist > this.currentNpcActivated.proximityDistance) {
+                    this.currentBubbleImg.destroy();
+                    this.currentBubbleImg = null;
+                    this.currentNpcActivated = null;
+                }
+            }
+        }
     }
 
-    popRandomBubble() {
-        const random_bubbles = ['game1_npc_box1', 'game1_npc_box2', 'game1_npc_box3'];
-        const randomKey = Phaser.Utils.Array.GetRandom(random_bubbles);
+    popRandomBubble(bubbles) {
+        const randomKey = Phaser.Utils.Array.GetRandom(bubbles);
 
-        const bubble = this.add.image(this.cameras.main.width / 2, 900, randomKey)
+        this.currentBubbleImg = this.add.image(this.cameras.main.width / 2, 900, randomKey)
             .setDepth(200)
             .setScrollFactor(0)
             .setInteractive({ useHandCursor: true });
 
         // 動畫彈出
         this.tweens.add({
-            targets: bubble,
+            targets: this.currentBubbleImg,
             scale: { from: 0.5, to: 1 },
             duration: 200,
             ease: 'Back.easeOut'
         });
 
         // 點擊後直接消失
-        bubble.once('pointerdown', () => bubble.destroy());
+        bubble.once('pointerdown', () => this.currentBubbleImg.destroy());
     }
 
 }
