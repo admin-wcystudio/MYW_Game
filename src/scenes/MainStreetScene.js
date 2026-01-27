@@ -99,23 +99,46 @@ export class MainStreetScene extends Phaser.Scene {
         const ui = UIHelper.createCommonUI(this, programPages, descriptionPages, 200, 'gameintro_bag', 'gameintro_bag_click');
 
         // NPCs (trigger game)
+        this.interactiveNpcs = [];
+        this.fakeNpcs = [];
 
-        const gnpc1_bubbles = [];
 
+        const n1 = NpcHelper.createNpc(this, 1000, 450, 1, 'npc1', gnpc1_bubbles, 6);
+        this.interactiveNpcs.push(n1);
 
-        NpcHelper.createNpc(this, 1000, 450, 1, 'npc1', gnpc1_bubbles, 6);
-        NpcHelper.createNpc(this, 4000, 450, 1, 'npc2', gnpc1_bubbles, 6);
-        NpcHelper.createNpc(this, 2000, 550, 1, 'npc3', gnpc1_bubbles, 6);
-        NpcHelper.createNpc(this, 330, 650, 1, 'npc4', gnpc1_bubbles, 6);
-        NpcHelper.createNpc(this, 5100, 750, 1, 'npc5', gnpc1_bubbles, 15);
-        NpcHelper.createNpc(this, 7900, 420, 1, 'npc6', gnpc1_bubbles, 6);
+        const f1 = NpcHelper.createNpc(this, 2800, 500, 1, 'fake_npc_1', true, 6);
+        this.fakeNpcs.push(f1);
 
-        //fake npc
-        NpcHelper.createNpc(this, 2800, 500, 1, 'fake_npc_1', true, 6);
-        NpcHelper.createNpc(this, 3400, 440, 1, 'fake_npc_2', false, 6);
-        NpcHelper.createNpc(this, 3250, 300, 1, 'fake_npc_3', false, 6);
-        NpcHelper.createNpc(this, 4000, 850, 1, 'fake_npc_4', false, 15);
-        NpcHelper.createNpc(this, 4450, 350, 1, 'fake_npc_5', false, 6);
+        // NpcHelper.createNpc(this, 4000, 450, 1, 'npc2', gnpc1_bubbles, 6);
+        // NpcHelper.createNpc(this, 2000, 550, 1, 'npc3', gnpc1_bubbles, 6);
+        // NpcHelper.createNpc(this, 330, 650, 1, 'npc4', gnpc1_bubbles, 6);
+        // NpcHelper.createNpc(this, 5100, 750, 1, 'npc5', gnpc1_bubbles, 15);
+        // NpcHelper.createNpc(this, 7900, 420, 1, 'npc6', gnpc1_bubbles, 6);
+
+        // //fake npc
+        // NpcHelper.createNpc(this, 2800, 500, 1, 'fake_npc_1', true, 6);
+        // NpcHelper.createNpc(this, 3400, 440, 1, 'fake_npc_2', false, 6);
+        // NpcHelper.createNpc(this, 3250, 300, 1, 'fake_npc_3', false, 6);
+        // NpcHelper.createNpc(this, 4000, 850, 1, 'fake_npc_4', false, 15);
+        // NpcHelper.createNpc(this, 4450, 350, 1, 'fake_npc_5', false, 6);
+
+        this.interactiveNpcs.forEach(npc => {
+            npc.on('pointerdown', () => {
+                if (npc.canInteract) {
+                    // 傳入 index 0 代表第一段對話，並帶入遊戲啟動邏輯
+                    this.loadBubble(0, this.gender);
+                }
+            });
+        });
+
+        // 設定 Fake NPC 點擊行為：彈出隨機對話
+        this.fakeNpcs.forEach(npc => {
+            npc.on('pointerdown', () => {
+                if (npc.canInteract) {
+                    this.popRandomBubble();
+                }
+            });
+        });
 
         this.player = NpcHelper.createCharacter(this, 800, 600, 400, 650,
             1, 1, `${genderKey}_idle`, true, 'player_bubble_1', true, 10);
@@ -161,6 +184,35 @@ export class MainStreetScene extends Phaser.Scene {
             this.player.bubble.x = this.player.x + offsetX;
             this.player.bubble.y = this.player.y + this.player.bubbleOffset.y;
         }
+
+        this.npcs.forEach(npc => {
+            const dist = Phaser.Math.Distance.Between(this.player.x, this.player.y, npc.x, npc.y);
+
+            const range = 200;
+
+            if (dist < range) {
+                npc.setTint(0xffffff); // 靠近時變亮 (視覺回饋)
+                npc.canInteract = true;
+            } else {
+                npc.setTint(0x888888); // 太遠時變暗
+                npc.canInteract = false;
+            }
+        });
+
+
+        const allNpcs = [...this.interactiveNpcs, ...this.fakeNpcs];
+
+        allNpcs.forEach(npc => {
+            const dist = Phaser.Math.Distance.Between(this.player.x, this.player.y, npc.x, npc.y);
+
+            if (dist < npc.proximityDistance) {
+                npc.canInteract = true;
+                npc.setTint(0xffffff); // 靠近變亮
+            } else {
+                npc.canInteract = false;
+                npc.setTint(0x888888); // 遠離變暗
+            }
+        });
     }
 
     handleAnimation(gender, isMoving, isLeft) {
@@ -181,41 +233,31 @@ export class MainStreetScene extends Phaser.Scene {
         this.player.videoKey = key;
     }
 
-    toggleNPCDialogue(dialogues, isFake) {
+    loadBubble(index = 0, gender) {
+        const centerX = this.cameras.main.width / 2;
+        const centerY = 900; // 對話框固定的 Y 座標
 
-        if (dialogues.length > 0) {
-            if (isFake) {
-                npc.setInteractive({ useHandCursor: true });
+    }
 
-                // 2. 建立對話框，初始縮放設為 0
-                const bubble = scene.add.image(dialogueX, dialogueY, dialogueKey)
-                    .setDepth(depth + 20)
-                    .setScale(0) // 預設先隱藏，透過動畫彈出
-                    .setOrigin(0.5, 1);
+    popRandomBubble() {
+        const random_bubbles = ['game1_npc_box1', 'game1_npc_box2', 'game1_npc_box3'];
+        const randomKey = Phaser.Utils.Array.GetRandom(random_bubbles);
 
-                // 定義一個內部的彈出/隱藏函數，方便重複使用
-                const toggleDialogue = (show) => {
-                    scene.tweens.add({
-                        targets: bubble,
-                        scale: show ? dialogScale : 0,
-                        duration: 300,
-                        ease: show ? 'Back.easeOut' : 'Power2',
-                    });
-                };
+        const bubble = this.add.image(this.cameras.main.width / 2, 900, randomKey)
+            .setDepth(200)
+            .setScrollFactor(0)
+            .setInteractive({ useHandCursor: true });
 
-                // 3. 如果 isVisible 為 true，則直接執行彈出動畫
-                if (isVisible) {
-                    toggleDialogue(true);
-                }
+        // 動畫彈出
+        this.tweens.add({
+            targets: bubble,
+            scale: { from: 0.5, to: 1 },
+            duration: 200,
+            ease: 'Back.easeOut'
+        });
 
-                // 4. 點擊 NPC 依然可以切換對話框狀態
-                npc.on('pointerdown', () => {
-                    const currentlyVisible = bubble.scale > 0;
-                    toggleDialogue(!currentlyVisible);
-                });
-            }
-        }
-
+        // 點擊後直接消失
+        bubble.once('pointerdown', () => bubble.destroy());
     }
 
 }

@@ -6,9 +6,12 @@ export default class NpcHelper {
         npc.setScale(npcScale);
         npc.play(true);
         npc.bubbles = bubbles;
+        npc.setInteractive({ useHandCursor: true });
+
+        npc.proximityDistance = 200;
+
         return npc;
     }
-
 
     static createCharacter(scene, x, y, dialogueX, dialogueY, npcScale = 1, dialogScale = 1,
         videoKey, hasDialogue = false, dialogueKey = '', isVisible = false, depth = 10) {

@@ -43,13 +43,8 @@ export class GameScene_1 extends Phaser.Scene {
         const height = this.cameras.main.height;
         const centerX = this.cameras.main.width / 2;
         const centerY = this.cameras.main.height / 2;
-
         this.maxChances = 3;
-        this.currentChances = 3;
-
-        this.gameTimer = UIHelper.showTimer(this, 30, false, () => {
-            this.handleTimeUp();
-        });
+        this.currentRound = 0;
 
         const gender = localStorage.getItem('player') ? JSON.parse(localStorage.getItem('player')).gender : 'M';
         this.loadBubble(0, gender);
@@ -70,6 +65,11 @@ export class GameScene_1 extends Phaser.Scene {
         descriptionPanel.setDepth(100);
 
         const gameUI = GameManager.createGameCommonUI(this, 'game1_bg', 'game1_title', descriptionPages);
+
+        //== timer
+        this.gameTimer = UIHelper.showTimer(this, 5, false, () => {
+            this.handleTimeUp(gameUI);
+        });
 
         //====puzzles=====================================================
         const defaultpuzzles = [
@@ -167,6 +167,7 @@ export class GameScene_1 extends Phaser.Scene {
         // });
 
     }
+
     selectPuzzle(piece) {
         if (this.selectedPuzzle) {
             this.selectedPuzzle.clearTint(); // 移除變色
@@ -210,6 +211,8 @@ export class GameScene_1 extends Phaser.Scene {
                 this.gameTimer.stop(); // 停止倒數
             }
             this.showSuccess(this.puzzleGroup);
+        } else {
+
         }
     }
 
@@ -236,7 +239,6 @@ export class GameScene_1 extends Phaser.Scene {
         if (index === 0) {
             currentBubbleImg.on('pointerdown', () => {
 
-
                 const playerKey = (gender === 'M') ? player_bubbles[0] : player_bubbles[1];
                 currentBubbleImg.setTexture(playerKey);
 
@@ -246,12 +248,23 @@ export class GameScene_1 extends Phaser.Scene {
                     this.startGameLogic();
                 });
             });
-        } else {
-            // 如果是其他 index，點擊直接關閉
+            // try again
+        } else if (index === 2) {
+            if (this.roundIndex < 2) { // 仲有機會 (0, 1)
+                this.roundIndex++;
+                this.resetPuzzlePositions(); // 需要呢個 function 嚟打亂拼圖
+                this.startGameLogic();
+            } else {
+
+                this.showFinalFail();
+            }
+        }
+        else {
             currentBubbleImg.once('pointerdown', () => {
                 currentBubbleImg.destroy();
             });
         }
+
 
         this.tweens.add({
             targets: currentBubbleImg,
@@ -275,6 +288,7 @@ export class GameScene_1 extends Phaser.Scene {
 
         console.log("計時器正式啟動！");
     }
+
 
     showSuccess(puzzleGroup) {
         this.loadBubble(1);
@@ -303,19 +317,25 @@ export class GameScene_1 extends Phaser.Scene {
 
     }
 
-    handleTimeUp(gameUI, roundIndex) {
-        console.log("時間到！遊戲結束");
+    handleTimeUp(gameUI) {
+        console.log(`第 ${this.roundIndex + 1} 局時間到`);
 
-        // 1. 鎖定所有拼圖，唔俾再拖曳
+        // 1. 停止計時器 (避免重複觸發)
+        if (this.gameTimer) this.gameTimer.stop();
+
+        // 2. 鎖定拼圖
         if (this.puzzleGroup) {
             this.puzzleGroup.getChildren().forEach(p => p.disableInteractive());
         }
 
-        gameUI.roundStates[roundIndex].setTexture('game_fail');
+        // 3. 更新 UI (例如將粒星/心變灰)
+        if (gameUI && gameUI.roundStates[this.roundIndex]) {
+            gameUI.roundStates[this.roundIndex].setTexture('game_fail');
+        }
 
+        // 4. 彈出失敗對話框
         this.loadBubble(2);
     }
-
 
     randomPuzzlePosition(puzzles) {
         const centerX = this.cameras.main.width / 2;
