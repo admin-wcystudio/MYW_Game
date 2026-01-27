@@ -10,6 +10,7 @@ import { GameScene_4 } from './scenes/Game/GameScene_4.js';
 import { GameScene_5 } from './scenes/Game/GameScene_5.js';
 import { GameScene_6 } from './scenes/Game/GameScene_6.js';
 import { GameScene_7 } from './scenes/Game/GameScene_7.js';
+import { ItemsScene } from './scenes/ItemsScene.js';
 
 
 var config = {
@@ -33,7 +34,8 @@ var config = {
         GameScene_4,
         GameScene_5,
         GameScene_6,
-        GameScene_7
+        GameScene_7,
+        ItemsScene
     ],
     scale: {
         mode: Phaser.Scale.FIT,

@@ -99,9 +99,9 @@ export default class UIHelper {
         scene.add.existing(descriptionPanel);
 
         const itemPanel = new CustomSinglePanel(scene, 960, 540, 'programPages').setScrollFactor(0);
-        programPanel.setVisible(false);
-        programPanel.setDepth(depth + 30);
-        scene.add.existing(programPanel);
+        itemPanel.setVisible(false);
+        itemPanel.setDepth(depth + 30);
+        scene.add.existing(itemPanel);
 
         const allButtons = [];
 
@@ -249,7 +249,7 @@ export default class UIHelper {
     static showTimer(scene, seconds, isStartNow = false, onComplete) {
         const timerBg = scene.add.image(1640, 80, 'gametimer').setDepth(100).setScrollFactor(0);
         let timeLeft = seconds;
-        
+
         const formatTime = (s) => {
             const minutes = Math.floor(s / 60);
             const partInSeconds = s % 60;
@@ -290,7 +290,7 @@ export default class UIHelper {
 
         // 把 Event 存入 Controller
         timerController.timerEvent = timerEvent;
-        
+
         return timerController;
     }
 

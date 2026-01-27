@@ -254,3 +254,40 @@ export class SettingPanel extends Phaser.GameObjects.Container {
         }
     }
 }
+
+export class CustomDescriptionPanel extends Phaser.GameObjects.Container {
+    constructor(scene, x, y, pageKeys, onClose) {
+        super(scene, x, y);
+        this.scene = scene;
+        this.pageKeys = pageKeys; // 這是一個陣列，例如 ['item1_p1', 'item1_p2']
+        this.currentPage = 0;
+
+        // 主背景圖片
+        this.contentImage = scene.add.image(0, 0, this.pageKeys[this.currentPage]);
+        this.add(this.contentImage);
+
+        // 關閉按鈕
+        this.closeBtn = new CustomButton(scene, 625, -295, 'close_button', 'close_button_click', () => {
+            this.destroy(); // 直接銷毀面板
+            if (onClose) onClose();
+        });
+
+        // 如果有多於一頁，加入「下一頁」按鈕
+        if (this.pageKeys.length > 1) {
+            this.nextBtn = new CustomButton(scene, 400, 250, 'next_button', null, () => this.nextPage());
+            this.add(this.nextBtn);
+        }
+
+        this.add(this.closeBtn);
+        scene.add.existing(this);
+    }
+
+    nextPage() {
+        this.currentPage++;
+        if (this.currentPage < this.pageKeys.length) {
+            this.contentImage.setTexture(this.pageKeys[this.currentPage]);
+        } else {
+            this.destroy(); // 最後一頁點擊後關閉
+        }
+    }
+}
