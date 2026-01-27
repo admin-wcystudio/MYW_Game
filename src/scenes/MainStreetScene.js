@@ -118,7 +118,7 @@ export class MainStreetScene extends Phaser.Scene {
 
         const n1 = NpcHelper.createNpc(this, 1000, 450, 1, 'npc1', npc1_bubbles, 6);
         const n2 = NpcHelper.createNpc(this, 4000, 550, 1, 'npc2', npc2_bubbles, 6);
-        const n3 = NpcHelper.createNpc(this, 2000, 650, 1, 'npc3', npc3_bubbles, 6);
+        const n3 = NpcHelper.createNpc(this, 2000, 550, 1, 'npc3', npc3_bubbles, 6);
         const n4 = NpcHelper.createNpc(this, 330, 750, 1, 'npc4', npc4_bubbles, 6);
         const n5 = NpcHelper.createNpc(this, 5100, 750, 1, 'npc5', npc5_bubbles, 15);
         const n6 = NpcHelper.createNpc(this, 7900, 420, 1, 'npc6', npc6_bubbles, 6);
@@ -143,20 +143,20 @@ export class MainStreetScene extends Phaser.Scene {
         this.fakeNpcs.push(f4);
         this.fakeNpcs.push(f5);
 
-        this.interactiveNpcs.forEach(npc => {
+        this.interactiveNpcs.forEach((npc, index) => {
             npc.on('pointerdown', () => {
                 if (npc.canInteract) {
-                    const npcIndex = this.interactiveNpcs.indexOf(npc) + 1;
-                    this.loadBubble(0, npc.bubbles, `Game${npcIndex}Scene`);
+                    const gameNumber = index + 1;
+                    const sceneKey = `GameScene_${gameNumber}`;
+                    this.loadBubble(0, npc.bubbles, sceneKey, npc);
                 }
             });
         });
 
-        // 設定 Fake NPC 點擊行為：彈出隨機對話
         this.fakeNpcs.forEach(npc => {
             npc.on('pointerdown', () => {
                 if (npc.canInteract) {
-                    this.popRandomBubble();
+                    this.popRandomBubble(npc);
                 }
             });
         });
@@ -215,14 +215,15 @@ export class MainStreetScene extends Phaser.Scene {
 
             if (dist < npc.proximityDistance) {
                 npc.canInteract = true;
-                this.currentNpcActivated = npc;
                 npc.setTint(0xffffff); // 靠近變亮
             } else {
                 npc.canInteract = false;
                 npc.setTint(0x888888); // 遠離變暗
-                if (this.currentBubbleImg) {
-                    this.currentBubbleImg.destroy();
-                    this.currentBubbleImg = null;
+
+                if (this.currentActiveBubble && this.currentActiveBubble.ownerNpc === npc) {
+                    this.currentActiveBubble.destroy();
+                    this.currentActiveBubble = null;
+                    console.log("玩家遠離，自動關閉對話框");
                 }
             }
 
@@ -247,56 +248,71 @@ export class MainStreetScene extends Phaser.Scene {
         this.player.videoKey = key;
     }
 
-    loadBubble(index = 0, bubbles, sceneKey) {
+    loadBubble(index = 0, bubbles, sceneKey, targetNpc) {
+
+        if (this.currentActiveBubble) {
+            this.currentActiveBubble.destroy();
+        }
+
         const centerX = this.cameras.main.width / 2;
         const centerY = 900;
 
-        let currentBubbleImg = this.add.image(centerX, centerY, bubbles[index])
+        // 2. 生成新的對話框
+        let bubbleImg = this.add.image(centerX, centerY, bubbles[index])
             .setDepth(200)
             .setScrollFactor(0)
             .setInteractive({ useHandCursor: true });
 
-        currentBubbleImg.once('pointerdown', () => {
-            currentBubbleImg.setTexture(bubbles[index + 1]);
-        });
+        // 綁定當前 NPC 到對話框，方便 update 檢查距離
+        bubbleImg.ownerNpc = targetNpc;
+        this.currentActiveBubble = bubbleImg;
 
-        if (index + 1 >= bubbles.length) {
-            currentBubbleImg.once('pointerdown', () => {
-                currentBubbleImg.destroy();
-                // 啟動遊戲
-                GameManager.switchToGameScene(this, sceneKey);
-            });
-
-            // If a bubble is open and the player moves out of proximity from the activated NPC, close the bubble
-            if (this.currentNpcActivated && this.currentBubbleImg) {
-                const dist = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.currentNpcActivated.x, this.currentNpcActivated.y);
-                if (dist > this.currentNpcActivated.proximityDistance) {
-                    this.currentBubbleImg.destroy();
-                    this.currentBubbleImg = null;
-                    this.currentNpcActivated = null;
+        // 處理點擊邏輯
+        bubbleImg.on('pointerdown', () => {
+            index++;
+            if (index < bubbles.length) {
+                bubbleImg.setTexture(bubbles[index]);
+            } else {
+                // 對話結束
+                bubbleImg.destroy();
+                this.currentActiveBubble = null;
+                if (sceneKey) {
+                    GameManager.switchToGameScene(this, sceneKey);
                 }
             }
-        }
+        });
+
+        // 彈出動畫
+        this.tweens.add({
+            targets: bubbleImg,
+            scale: { from: 0.5, to: 1 },
+            duration: 200,
+            ease: 'Back.easeOut'
+        });
     }
 
-    popRandomBubble(bubbles) {
+    popRandomBubble(bubbles, targetNpc) {
         const randomKey = Phaser.Utils.Array.GetRandom(bubbles);
 
-        this.currentBubbleImg = this.add.image(this.cameras.main.width / 2, 900, randomKey)
+        let bubbleImg = this.add.image(this.cameras.main.width / 2, 900, randomKey)
             .setDepth(200)
             .setScrollFactor(0)
             .setInteractive({ useHandCursor: true });
 
-        // 動畫彈出
+        bubbleImg.ownerNpc = targetNpc;
+        this.currentActiveBubble = bubbleImg;
+
         this.tweens.add({
-            targets: this.currentBubbleImg,
+            targets: bubbleImg,
             scale: { from: 0.5, to: 1 },
             duration: 200,
             ease: 'Back.easeOut'
         });
 
-        // 點擊後直接消失
-        bubble.once('pointerdown', () => this.currentBubbleImg.destroy());
+        bubble.once('pointerdown', () => {
+            bubbleImg.destroy();
+            this.currentActiveBubble = null;
+        });
     }
 
 }
