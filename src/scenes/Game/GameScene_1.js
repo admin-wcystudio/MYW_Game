@@ -264,8 +264,6 @@ export class GameScene_1 extends Phaser.Scene {
                 currentBubbleImg.destroy();
             });
         }
-
-
         this.tweens.add({
             targets: currentBubbleImg,
             scale: { from: 0.5, to: 1 },
