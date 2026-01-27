@@ -31,4 +31,35 @@ export default class GameManager {
             roundStates, ui
         };
     }
+
+    static saveGameResult(sceneIndex, isCompleted, seconds = 0) {
+        const savedGameResultData = localStorage.getItem('allGamesResult');
+        let allGamesResult = savedGameResultData ? JSON.parse(savedGameResultData) : [
+            { game: 1, isFinished: false, seconds: 0 },
+            { game: 2, isFinished: false, seconds: 0 },
+            { game: 3, isFinished: false, seconds: 0 },
+            { game: 4, isFinished: false, seconds: 0 },
+            { game: 5, isFinished: false, seconds: 0 },
+            { game: 6, isFinished: false, seconds: 0 },
+            { game: 7, isFinished: false, seconds: 0 },
+        ];
+
+        const gameResult = allGamesResult.find(g => g.game === sceneIndex);
+        if (gameResult) {
+            gameResult.isFinished = isCompleted;
+            gameResult.seconds = seconds;
+        }
+        console.log("儲存遊戲結果:", allGamesResult);
+        localStorage.setItem('allGamesResult', JSON.stringify(allGamesResult));
+
+    }
+
+    static backToMainStreet(scene) {
+        scene.cameras.main.fadeOut(500, 0, 0, 0);
+
+        scene.cameras.main.once('camerafadeoutcomplete', () => {
+            scene.scene.start('MainStreetScene');
+        });
+    }
+
 }

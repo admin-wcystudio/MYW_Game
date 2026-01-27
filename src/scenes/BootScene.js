@@ -157,7 +157,7 @@ export class BootScene extends Phaser.Scene {
 
         // load game scenes assets ( general )
         const path = 'assets/Game_1/';
-        
+
         this.load.image('game_success', `${path}game1_success.png`);
         this.load.image('game_success_icon', `${path}game1_success_icon.png`);
         this.load.image('game_fail', `${path}game1_fail.png`);

@@ -98,7 +98,7 @@ export default class UIHelper {
         descriptionPanel.setDepth(depth + 30);
         scene.add.existing(descriptionPanel);
 
-        const itemPanel = new CustomPanel(scene, 960, 540, programPages).setScrollFactor(0);
+        const itemPanel = new CustomSinglePanel(scene, 960, 540, 'programPages').setScrollFactor(0);
         programPanel.setVisible(false);
         programPanel.setDepth(depth + 30);
         scene.add.existing(programPanel);
@@ -247,10 +247,9 @@ export default class UIHelper {
     }
 
     static showTimer(scene, seconds, isStartNow = false, onComplete) {
-
         const timerBg = scene.add.image(1640, 80, 'gametimer').setDepth(100).setScrollFactor(0);
-
         let timeLeft = seconds;
+        
         const formatTime = (s) => {
             const minutes = Math.floor(s / 60);
             const partInSeconds = s % 60;
@@ -262,15 +261,20 @@ export default class UIHelper {
             fontSize: '60px',
             color: '#ffffff',
             fontStyle: 'bold',
-
         }).setOrigin(0.5).setDepth(101).setScrollFactor(0);
 
+        // 建立一個控制器物件
+        const timerController = {
+            isRunning: isStartNow, // 使用這個屬性來控制開關
+            stop: () => timerEvent.destroy(),
+            start: () => { timerController.isRunning = true; } // 增加一個啟動方法
+        };
 
-        // 3. 倒數計時
         const timerEvent = scene.time.addEvent({
             delay: 1000,
             callback: () => {
-                if (isStartNow) {
+                // 關鍵修改：檢查 controller 的狀態
+                if (timerController.isRunning) {
                     timeLeft--;
                     timerText.setText(formatTime(timeLeft));
 
@@ -284,11 +288,10 @@ export default class UIHelper {
             loop: true,
         });
 
-        const stop = () => {
-            timerEvent.destroy();
-        }
-
-        return { timerBg, timerText, timerEvent ,stop};
+        // 把 Event 存入 Controller
+        timerController.timerEvent = timerEvent;
+        
+        return timerController;
     }
 
     static changeVideo(videoObject, newKey) {

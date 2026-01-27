@@ -85,13 +85,13 @@ export class MainStreetScene extends Phaser.Scene {
         this.isLeftDown = false;
         this.isRightDown = false;
 
-        this.btnLeft = new CustomButton(this, 150, height/2, 'prev_button', 'prev_button_click', 
-            () => { this.isLeftDown = true; },  
-            () => { this.isLeftDown = false; } 
+        this.btnLeft = new CustomButton(this, 150, height / 2, 'prev_button', 'prev_button_click',
+            () => { this.isLeftDown = true; },
+            () => { this.isLeftDown = false; }
         ).setScrollFactor(0).setDepth(100);
 
-        this.btnRight = new CustomButton(this, width - 150, height /2, 'next_button', 'next_button_click', 
-            () => { this.isRightDown = true; }, 
+        this.btnRight = new CustomButton(this, width - 150, height / 2, 'next_button', 'next_button_click',
+            () => { this.isRightDown = true; },
             () => { this.isRightDown = false; }
         ).setScrollFactor(0).setDepth(100);
 
@@ -99,14 +99,14 @@ export class MainStreetScene extends Phaser.Scene {
         const ui = UIHelper.createCommonUI(this, programPages, descriptionPages, 200, 'gameintro_bag', 'gameintro_bag_click');
 
         // NPCs (trigger game)
-        
+
         const gnpc1_bubbles = [];
 
 
-        NpcHelper.createNpc(this, 1000, 450, 1, 'npc1', gnpc1_bubbles , 6);
+        NpcHelper.createNpc(this, 1000, 450, 1, 'npc1', gnpc1_bubbles, 6);
         NpcHelper.createNpc(this, 4000, 450, 1, 'npc2', gnpc1_bubbles, 6);
         NpcHelper.createNpc(this, 2000, 550, 1, 'npc3', gnpc1_bubbles, 6);
-        NpcHelper.createNpc(this, 330, 650,  1, 'npc4', gnpc1_bubbles, 6);
+        NpcHelper.createNpc(this, 330, 650, 1, 'npc4', gnpc1_bubbles, 6);
         NpcHelper.createNpc(this, 5100, 750, 1, 'npc5', gnpc1_bubbles, 15);
         NpcHelper.createNpc(this, 7900, 420, 1, 'npc6', gnpc1_bubbles, 6);
 
@@ -117,8 +117,8 @@ export class MainStreetScene extends Phaser.Scene {
         NpcHelper.createNpc(this, 4000, 850, 1, 'fake_npc_4', false, 15);
         NpcHelper.createNpc(this, 4450, 350, 1, 'fake_npc_5', false, 6);
 
-        this.player = NpcHelper.createCharacter(this, 800, 600, 400, 650, 
-        1, 1, `${genderKey}_idle`, true, 'player_bubble_1', true, 10);
+        this.player = NpcHelper.createCharacter(this, 800, 600, 400, 650,
+            1, 1, `${genderKey}_idle`, true, 'player_bubble_1', true, 10);
         this.handleAnimation(genderKey, false, false);
 
         // 將相機鎖定在玩家身上
@@ -139,9 +139,9 @@ export class MainStreetScene extends Phaser.Scene {
             this.player.x += speed;
             isLeft = false;
             isMoving = true;
-        }else {
+        } else {
             isLeft = false;
-            isMoving =false;
+            isMoving = false;
         }
 
         // 紀錄最後方向供 handleAnimation 使用
@@ -181,34 +181,34 @@ export class MainStreetScene extends Phaser.Scene {
         this.player.videoKey = key;
     }
 
-    toggleNPCDialogue (dialogues, isFake) {
+    toggleNPCDialogue(dialogues, isFake) {
 
         if (dialogues.length > 0) {
-            if(isFake) {
-            npc.setInteractive({ useHandCursor: true });
+            if (isFake) {
+                npc.setInteractive({ useHandCursor: true });
 
-            // 2. 建立對話框，初始縮放設為 0
-            const bubble = scene.add.image(dialogueX, dialogueY, dialogueKey)
-                .setDepth(depth + 20)
-                .setScale(0) // 預設先隱藏，透過動畫彈出
-                .setOrigin(0.5, 1);
+                // 2. 建立對話框，初始縮放設為 0
+                const bubble = scene.add.image(dialogueX, dialogueY, dialogueKey)
+                    .setDepth(depth + 20)
+                    .setScale(0) // 預設先隱藏，透過動畫彈出
+                    .setOrigin(0.5, 1);
 
-            // 定義一個內部的彈出/隱藏函數，方便重複使用
-            const toggleDialogue = (show) => {
-                scene.tweens.add({
-                    targets: bubble,
-                    scale: show ? dialogScale : 0,
-                    duration: 300,
-                    ease: show ? 'Back.easeOut' : 'Power2',
-                });
-            };
+                // 定義一個內部的彈出/隱藏函數，方便重複使用
+                const toggleDialogue = (show) => {
+                    scene.tweens.add({
+                        targets: bubble,
+                        scale: show ? dialogScale : 0,
+                        duration: 300,
+                        ease: show ? 'Back.easeOut' : 'Power2',
+                    });
+                };
 
-            // 3. 如果 isVisible 為 true，則直接執行彈出動畫
-            if (isVisible) {
-                toggleDialogue(true);
-            }
+                // 3. 如果 isVisible 為 true，則直接執行彈出動畫
+                if (isVisible) {
+                    toggleDialogue(true);
+                }
 
-            // 4. 點擊 NPC 依然可以切換對話框狀態
+                // 4. 點擊 NPC 依然可以切換對話框狀態
                 npc.on('pointerdown', () => {
                     const currentlyVisible = bubble.scale > 0;
                     toggleDialogue(!currentlyVisible);

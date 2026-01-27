@@ -1,5 +1,5 @@
 import { CustomButton } from '../../UI/Button.js';
-import { CustomPanel, SettingPanel } from '../../UI/Panel.js';
+import { CustomPanel, SettingPanel, CustomSinglePanel } from '../../UI/Panel.js';
 import UIHelper from '../../UI/UIHelper.js';
 import GameManager from '../GameManager.js';
 
@@ -44,13 +44,16 @@ export class GameScene_1 extends Phaser.Scene {
         const centerX = this.cameras.main.width / 2;
         const centerY = this.cameras.main.height / 2;
 
-        const roundIndex = 0;
+        this.maxChances = 3;
+        this.currentChances = 3;
 
-        this.gameTimer = UIHelper.showTimer(this, 30, true, ()=> {
+        this.gameTimer = UIHelper.showTimer(this, 30, false, () => {
             this.handleTimeUp();
         });
 
-        this.loadBubble(0);
+        const gender = localStorage.getItem('player') ? JSON.parse(localStorage.getItem('player')).gender : 'M';
+        this.loadBubble(0, gender);
+
 
         //====panel=====================================================
         const descriptionPages = [
@@ -70,12 +73,12 @@ export class GameScene_1 extends Phaser.Scene {
 
         //====puzzles=====================================================
         const defaultpuzzles = [
-            { content: 'game1_puzzle1', offsetX: 0, offsetY: 0, rotate: 0, targetX: centerX -100, targetY: 260 },
+            { content: 'game1_puzzle1', offsetX: 0, offsetY: 0, rotate: 0, targetX: centerX - 100, targetY: 260 },
             { content: 'game1_puzzle2', offsetX: 0, offsetY: 0, rotate: 0, targetX: centerX + 100, targetY: 260 },
-            { content: 'game1_puzzle3', offsetX: 0, offsetY: 0, rotate: 0, targetX: centerX -100, targetY: 460 },
-            { content: 'game1_puzzle4', offsetX: 0, offsetY: 0, rotate: 0, targetX: centerX +100, targetY: 460 },
-            { content: 'game1_puzzle5', offsetX: 0, offsetY: 0, rotate: 0, targetX: centerX -100, targetY: 660 },
-            { content: 'game1_puzzle6', offsetX: 0, offsetY: 0, rotate: 0, targetX: centerX +100, targetY: 660 }
+            { content: 'game1_puzzle3', offsetX: 0, offsetY: 0, rotate: 0, targetX: centerX - 100, targetY: 460 },
+            { content: 'game1_puzzle4', offsetX: 0, offsetY: 0, rotate: 0, targetX: centerX + 100, targetY: 460 },
+            { content: 'game1_puzzle5', offsetX: 0, offsetY: 0, rotate: 0, targetX: centerX - 100, targetY: 660 },
+            { content: 'game1_puzzle6', offsetX: 0, offsetY: 0, rotate: 0, targetX: centerX + 100, targetY: 660 }
         ];
 
         this.randomPuzzlePosition(defaultpuzzles);
@@ -85,13 +88,13 @@ export class GameScene_1 extends Phaser.Scene {
         defaultpuzzles.forEach(data => {
             const piece = this.add.image(data.offsetX, data.offsetY, data.content)
                 .setAngle(data.rotate)
-                .setInteractive({ useHandCursor: true})
+                .setInteractive({ useHandCursor: true })
                 .setDepth(50);
-            
+
             piece.setData('targetX', data.targetX);
             piece.setData('targetY', data.targetY);
             piece.setData('isCorrect', false);
-            
+
             this.input.setDraggable(piece);
             this.puzzleGroup.add(piece);
             piece.on('pointerdown', () => {
@@ -105,37 +108,37 @@ export class GameScene_1 extends Phaser.Scene {
             if (this.selectedPuzzle !== gameObject) {
                 this.selectPuzzle(gameObject);
             }
-                gameObject.x = dragX;
-                gameObject.y = dragY;
-                gameObject.setDepth(100);
-            });
+            gameObject.x = dragX;
+            gameObject.y = dragY;
+            gameObject.setDepth(100);
+        });
 
-            this.input.on('dragend', (pointer, gameObject) => {
-                gameObject.setDepth(50); 
-                
-                this.checkSnap(gameObject);
-            });
+        this.input.on('dragend', (pointer, gameObject) => {
+            gameObject.setDepth(50);
 
-        const rotateButton = new CustomButton(this, width -200, height -200, 
-                            'game1_rotate',null,
-                            ()=>{
-                                if (this.selectedPuzzle) {
-                                    this.selectedPuzzle.angle += 90; 
-                                    } else {
-                                    console.log("請先點擊選擇一塊拼圖！");
-                                }
-                            },);
+            this.checkSnap(gameObject);
+        });
+
+        const rotateButton = new CustomButton(this, width - 200, height - 200,
+            'game1_rotate', null,
+            () => {
+                if (this.selectedPuzzle) {
+                    this.selectedPuzzle.angle += 90;
+                } else {
+                    console.log("請先點擊選擇一塊拼圖！");
+                }
+            },);
         rotateButton.setDepth(100);
 
         this.input.on('pointerdown', (pointer, gameObject) => {
-        // 如果點擊嘅位置冇任何 Game Object (即係點中背景)
-        if (gameObject.length === 0) {
-            if (this.selectedPuzzle) {
-                this.selectedPuzzle.clearTint();
-                this.selectedPuzzle.setScale(1);
-                this.selectedPuzzle = null;
+            // 如果點擊嘅位置冇任何 Game Object (即係點中背景)
+            if (gameObject.length === 0) {
+                if (this.selectedPuzzle) {
+                    this.selectedPuzzle.clearTint();
+                    this.selectedPuzzle.setScale(1);
+                    this.selectedPuzzle = null;
+                }
             }
-        }
         });
 
         //==== Debug Graphics ===========================================================
@@ -172,8 +175,8 @@ export class GameScene_1 extends Phaser.Scene {
 
         this.selectedPuzzle = piece;
 
-        piece.setTint(0xaaaaaa); 
-        
+        piece.setTint(0xaaaaaa);
+
         console.log("選中了拼圖:", piece.texture.key);
     }
 
@@ -184,7 +187,7 @@ export class GameScene_1 extends Phaser.Scene {
 
         // 計算距離
         const dist = Phaser.Math.Distance.Between(piece.x, piece.y, tx, ty);
-        
+
         // 檢查座標同角度 (角度必須係 0 或 360)
         const isAngleCorrect = (piece.angle % 360 === 0);
 
@@ -193,7 +196,7 @@ export class GameScene_1 extends Phaser.Scene {
             piece.setData('isCorrect', true);
             piece.disableInteractive(); // 成功後鎖定，唔俾再郁
             piece.setTint(0xffffff); // 恢復正常顏色
-            
+
             this.checkAllDone();
         }
     }
@@ -202,7 +205,7 @@ export class GameScene_1 extends Phaser.Scene {
         // 檢查 Group 入面係咪所有拼圖都 isCorrect
         const allCorrect = this.puzzleGroup.getChildren().every(p => p.getData('isCorrect'));
 
-        if (allCorrect) {
+        if (!allCorrect) {
             if (this.gameTimer && this.gameTimer.stop) {
                 this.gameTimer.stop(); // 停止倒數
             }
@@ -210,32 +213,97 @@ export class GameScene_1 extends Phaser.Scene {
         }
     }
 
-
-    loadBubble(index = 0) {    
+    loadBubble(index = 0, gender) {
         const centerX = this.cameras.main.width / 2;
-        const centerY = this.cameras.main.height / 2;
+        const centerY = 900; // 對話框固定的 Y 座標
+
         const npc_bubbles = [
             'game1_npc_box1',
             'game1_npc_box2',
             'game1_npc_box3'
         ];
 
-        const bubble = npc_bubbles[index];
-        console.log ("Load bubble" + bubble);
-        this.add.image( centerX, 900, bubble).setDepth(10);
+        const player_bubbles = [
+            'game1_npc_box4', // M
+            'game1_npc_box5'  // F
+        ];
+
+        let currentBubbleImg = this.add.image(centerX, centerY, npc_bubbles[index])
+            .setDepth(200) // 確保在拼圖之上
+            .setScrollFactor(0) // 固定在螢幕
+            .setInteractive({ useHandCursor: true });
+
+        if (index === 0) {
+            currentBubbleImg.on('pointerdown', () => {
+
+
+                const playerKey = (gender === 'M') ? player_bubbles[0] : player_bubbles[1];
+                currentBubbleImg.setTexture(playerKey);
+
+                currentBubbleImg.off('pointerdown');
+                currentBubbleImg.once('pointerdown', () => {
+                    currentBubbleImg.destroy();
+                    this.startGameLogic();
+                });
+            });
+        } else {
+            // 如果是其他 index，點擊直接關閉
+            currentBubbleImg.once('pointerdown', () => {
+                currentBubbleImg.destroy();
+            });
+        }
+
+        this.tweens.add({
+            targets: currentBubbleImg,
+            scale: { from: 0.5, to: 1 },
+            duration: 200,
+            ease: 'Back.easeOut'
+        });
+        console.log("Load bubble: " + npc_bubbles[index]);
+    }
+
+    startGameLogic() {
+        // 1. 正式開始倒數
+        if (this.gameTimer) {
+            this.gameTimer.start();
+        }
+
+        // 2. 開放拼圖操作
+        this.puzzleGroup.getChildren().forEach(p => {
+            p.setInteractive({ draggable: true });
+        });
+
+        console.log("計時器正式啟動！");
     }
 
     showSuccess(puzzleGroup) {
         this.loadBubble(1);
         puzzleGroup.setVisible(false);
         const successVideo = this.add.video(960, 440, 'game1_success_preview')
-        .setDepth(200)
-        .setScrollFactor(0); 
-        
+            .setDepth(200)
+            .setScrollFactor(0);
+
         successVideo.play();
+
+        this.time.delayedCall(1000, () => {
+            const objectPanel = new CustomSinglePanel(this, 960, 600, 'game1_object_description');
+
+            objectPanel.setDepth(201)
+                .setScrollFactor(0)
+                .setVisible(true);
+
+            // 呼叫我們剛才在類別中加入的自定義 callback 方法
+            // 傳入 this (當前場景) 給 GameManager
+            objectPanel.setCloseCallBack(() => {
+                console.log("面板已關閉，準備回大地圖");
+                GameManager.backToMainStreet(this);
+            });
+        });
+
+
     }
 
-    handleTimeUp() {
+    handleTimeUp(gameUI, roundIndex) {
         console.log("時間到！遊戲結束");
 
         // 1. 鎖定所有拼圖，唔俾再拖曳
@@ -243,25 +311,11 @@ export class GameScene_1 extends Phaser.Scene {
             this.puzzleGroup.getChildren().forEach(p => p.disableInteractive());
         }
 
-        // 2. 顯示失敗介面
-        const failBg = this.add.image(960, 540, 'game1_fail')
-            .setDepth(500)
-            .setScrollFactor(0);
+        gameUI.roundStates[roundIndex].setTexture('game_fail');
 
-        const failIcon = this.add.image(960, 400, 'game1_fail_icon')
-            .setDepth(501)
-            .setScrollFactor(0);
-
-        // 3. 加入「重試」按鈕 (假設你用 game1_rotate 做暫時嘅重試掣)
-        const retryBtn = this.add.image(960, 700, 'game1_rotate')
-            .setInteractive({ useHandCursor: true })
-            .setDepth(502)
-            .setScrollFactor(0);
-
-        retryBtn.on('pointerdown', () => {
-            this.scene.restart(); // 重新開始呢一關
-        });
+        this.loadBubble(2);
     }
+
 
     randomPuzzlePosition(puzzles) {
         const centerX = this.cameras.main.width / 2;

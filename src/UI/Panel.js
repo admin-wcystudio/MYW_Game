@@ -84,6 +84,58 @@ export class CustomPanel extends Phaser.GameObjects.Container {
     }
 }
 
+export class CustomSinglePanel extends Phaser.GameObjects.Container {
+    constructor(scene, x, y, pageKey, onClose) {
+        super(scene, x, y);
+        this.scene = scene;
+        this.pageKey = pageKey;
+        this.currentPage = 0;
+        this.toggleBtn = null;
+
+        this.contentImage = scene.add.image(0, 0, this.pageKey);
+        this.add(this.contentImage);
+
+        this.closeBtn = new CustomButton(scene, 625, -295, 'close_button', 'close_button_click', () => {
+            this.setVisible(false);
+
+            if (this.toggleBtn) {
+                this.toggleBtn.resetStatus();
+            }
+
+            if (this.onClose) {
+                this.onClose();
+            }
+        });
+
+        this.closeBtn.needClicked = false;
+
+        this.add([this.closeBtn]);
+
+        // 重要：將呢個 Container 加落 Scene
+        scene.add.existing(this);
+
+        this.refresh();
+    }
+
+    setCloseCallBack(callback) {
+        this.onClose = callback;
+    }
+
+    close() {
+        if (typeof this.closeCallback === 'function') {
+            this.closeCallback();
+        }
+    }
+
+    refresh() {
+        if (this.closeBtn) {
+            this.closeBtn.setVisible(true);
+        } else {
+            this.closeBtn.setVisible(false);
+        }
+    }
+}
+
 export class SettingPanel extends Phaser.GameObjects.Container {
     constructor(scene, x, y) {
         super(scene, x, y);
