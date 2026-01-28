@@ -60,7 +60,7 @@ export class QuestionPanel extends Phaser.GameObjects.Container {
             this.showAddOn(q.addOn);
         } else {
             console.log("答錯了，請再試一次");
-            this.scene.cameras.main.shake(200, 0.01); // 錯誤回饋
+            //this.scene.cameras.main.shake(200, 0.01); // 錯誤回饋
         }
     }
 

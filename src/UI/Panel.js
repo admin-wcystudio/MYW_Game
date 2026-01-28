@@ -291,3 +291,81 @@ export class CustomDescriptionPanel extends Phaser.GameObjects.Container {
         }
     }
 }
+
+
+export class ItemsPanel extends Phaser.GameObjects.Container {
+    constructor(scene, x, y) {
+        super(scene, x, y);
+        this.scene = scene;
+        const width = 1920; // 假設開發解析度
+        const height = 1080;
+
+        const itemsContent = [
+            {
+                itemKey: 'itempage_item1',
+                itemSelectKey: 'itempage_item1_select',
+                itemDescriptionKey: 'itempage_item1_description'
+            },
+            {
+                itemKey: 'itempage_item2',
+                itemSelectKey: 'itempage_item2_select',
+                itemDescriptionKey: null
+            },
+            {
+                itemKey: 'itempage_item3',
+                itemSelectKey: 'itempage_item3_select',
+                itemDescriptionKey: 'itempage_item3_description'
+            },
+            {
+                itemKey: 'itempage_item4',
+                itemSelectKey: 'itempage_item4_select',
+                itemDescriptionKey: 'itempage_item4_description',
+                itemDescriptionKey1: 'itempage_item4_description1',
+                itemDescriptionKey2: 'itempage_item4_description2'
+            },
+            {
+                itemKey: 'itempage_item5',
+                itemSelectKey: 'itempage_item5_select',
+                itemDescriptionKey: 'itempage_item5_description'
+            }
+        ];
+
+        // 1. 背景層
+        this.bg = scene.add.image(0, 0, 'itempage_bg').setDepth(1);
+        this.panelBg = scene.add.image(0, 0, 'panel_bg').setDepth(2);
+        this.add([this.bg, this.panelBg]);
+
+        // 2. 產生物品按鈕
+        itemsContent.forEach((item, index) => {
+            const posX = -500 + index * 250; // 調整為 Container 相對座標
+            const posY = -100;
+
+            const itemBtn = new CustomButton(scene, posX, posY, item.itemKey, item.itemSelectKey, () => {
+                const pages = [
+                    item.itemDescriptionKey,
+                    item.itemDescriptionKey1,
+                    item.itemDescriptionKey2
+                ].filter(key => key != null);
+
+                if (pages.length > 0) {
+                    // 彈出詳細描述面板
+                    const descPanel = new CustomDescriptionPanel(scene, 0, 0, pages);
+                    descPanel.setDepth(500);
+                    this.add(descPanel); // 加入到目前 Container 中
+                }
+            }).setDepth(3);
+
+            const itemBox = scene.add.image(posX, 200, 'itempage_item_box').setDepth(3);
+            this.add([itemBtn, itemBox]);
+        });
+
+        // 3. 關閉按鈕
+        this.closeBtn = new CustomButton(scene, 620, -290, 'itempage_close_button', 'itempage_close_button_select', () => {
+            this.setVisible(false);
+            if (this.toggleBtn) this.toggleBtn.resetStatus(); // 讓外部按鈕彈回
+        });
+        this.add(this.closeBtn);
+
+        scene.add.existing(this);
+    }
+}

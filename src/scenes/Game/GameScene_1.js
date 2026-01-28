@@ -131,7 +131,6 @@ export class GameScene_1 extends Phaser.Scene {
         rotateButton.setDepth(100);
 
         this.input.on('pointerdown', (pointer, gameObject) => {
-            // 如果點擊嘅位置冇任何 Game Object (即係點中背景)
             if (gameObject.length === 0) {
                 if (this.selectedPuzzle) {
                     this.selectedPuzzle.clearTint();
@@ -206,13 +205,11 @@ export class GameScene_1 extends Phaser.Scene {
         // 檢查 Group 入面係咪所有拼圖都 isCorrect
         const allCorrect = this.puzzleGroup.getChildren().every(p => p.getData('isCorrect'));
 
-        if (!allCorrect) {
+        if (allCorrect) {
             if (this.gameTimer && this.gameTimer.stop) {
                 this.gameTimer.stop(); // 停止倒數
             }
             this.showSuccess(this.puzzleGroup);
-        } else {
-
         }
     }
 
@@ -256,7 +253,7 @@ export class GameScene_1 extends Phaser.Scene {
                 this.startGameLogic();
             } else {
 
-                this.showFinalFail();
+                this.showFail();
             }
         }
         else {
@@ -274,12 +271,11 @@ export class GameScene_1 extends Phaser.Scene {
     }
 
     startGameLogic() {
-        // 1. 正式開始倒數
+
         if (this.gameTimer) {
             this.gameTimer.start();
         }
 
-        // 2. 開放拼圖操作
         this.puzzleGroup.getChildren().forEach(p => {
             p.setInteractive({ draggable: true });
         });
@@ -311,17 +307,17 @@ export class GameScene_1 extends Phaser.Scene {
                 GameManager.backToMainStreet(this);
             });
         });
+    }
 
-
+    showFail () {
+        
     }
 
     handleTimeUp(gameUI) {
         console.log(`第 ${this.roundIndex + 1} 局時間到`);
 
-        // 1. 停止計時器 (避免重複觸發)
         if (this.gameTimer) this.gameTimer.stop();
 
-        // 2. 鎖定拼圖
         if (this.puzzleGroup) {
             this.puzzleGroup.getChildren().forEach(p => p.disableInteractive());
         }

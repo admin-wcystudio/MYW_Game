@@ -44,33 +44,6 @@ export class MainStreetScene extends Phaser.Scene {
             }
         ];
 
-        const programPages = [
-            {
-                content: 'program_information_p1',
-                nextBtn: 'next_button', nextBtnClick: 'next_button_click',
-                prevBtn: 'prev_button', prevBtnClick: 'prev_button_click',
-                closeBtn: 'close_button', closeBtnClick: 'close_button_click'
-            },
-            {
-                content: 'program_information_p2',
-                nextBtn: 'next_button', nextBtnClick: 'next_button_click',
-                prevBtn: 'prev_button', prevBtnClick: 'prev_button',
-                closeBtn: 'close_button', closeBtnClick: 'close_button_click'
-            },
-            {
-                content: 'program_information_p3',
-                nextBtn: 'next_button', nextBtnClick: 'next_button_click',
-                prevBtn: 'prev_button', prevBtnClick: 'prev_button',
-                closeBtn: 'close_button', closeBtnClick: 'close_button_click'
-            },
-            {
-                content: 'program_information_p4',
-                nextBtn: 'next_button', nextBtnClick: 'next_button_click',
-                prevBtn: 'prev_button', prevBtnClick: 'prev_button',
-                closeBtn: 'close_button', closeBtnClick: 'close_button_click'
-            }
-
-        ]
         const introPage = [
             {
                 content: 'gameintro_01',
@@ -97,7 +70,7 @@ export class MainStreetScene extends Phaser.Scene {
         ).setScrollFactor(0).setDepth(100);
 
 
-        const ui = UIHelper.createCommonUI(this, programPages, descriptionPages, 200, 'gameintro_bag', 'gameintro_bag_click');
+        const ui = UIHelper.createGameCommonUI(this, descriptionPages, 200);
 
         const npc1_bubbles = ['npc1_bubble_1', 'npc1_bubble_2', 'npc1_bubble_3'];
         const npc2_bubbles = ['npc2_bubble_1', 'npc2_bubble_2'];
@@ -215,10 +188,10 @@ export class MainStreetScene extends Phaser.Scene {
 
             if (dist < npc.proximityDistance) {
                 npc.canInteract = true;
-                npc.setTint(0xffffff); // 靠近變亮
+                //npc.setTint(0xffffff); // 靠近變亮
             } else {
                 npc.canInteract = false;
-                npc.setTint(0x888888); // 遠離變暗
+                //npc.setTint(0x888888); // 遠離變暗
 
                 if (this.currentActiveBubble && this.currentActiveBubble.ownerNpc === npc) {
                     this.currentActiveBubble.destroy();
@@ -309,7 +282,7 @@ export class MainStreetScene extends Phaser.Scene {
             ease: 'Back.easeOut'
         });
 
-        bubble.once('pointerdown', () => {
+        bubble.on('pointerdown', () => {
             bubbleImg.destroy();
             this.currentActiveBubble = null;
         });

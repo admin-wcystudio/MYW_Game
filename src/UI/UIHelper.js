@@ -1,5 +1,5 @@
 import { CustomButton } from './Button.js';
-import { CustomPanel, SettingPanel } from './Panel.js';
+import { CustomPanel, ItemsPanel, SettingPanel } from './Panel.js';
 
 export default class UIHelper {
 
@@ -86,7 +86,7 @@ export default class UIHelper {
     }
 
 
-    static createGameCommonUI(scene, itemPage, descriptionPages, depth = 10,) {
+    static createGameCommonUI(scene, descriptionPages, depth = 10) {
         // Panels
         const settingPanel = new SettingPanel(scene, 960, 540).setScrollFactor(0);
         settingPanel.setVisible(false);
@@ -98,7 +98,7 @@ export default class UIHelper {
         descriptionPanel.setDepth(depth + 30);
         scene.add.existing(descriptionPanel);
 
-        const itemPanel = new CustomSinglePanel(scene, 960, 540, 'programPages').setScrollFactor(0);
+        const itemPanel = new ItemsPanel(scene, 960, 540).setScrollFactor(0);
         itemPanel.setVisible(false);
         itemPanel.setDepth(depth + 30);
         scene.add.existing(itemPanel);
@@ -126,27 +126,27 @@ export default class UIHelper {
         descBtn.setDepth(depth + 20);
         allButtons.push(descBtn);
 
-        const programBtn = new CustomButton(scene, 400, 100, newProgramBtn, newProgramClickBtn,
+        const itemBtn = new CustomButton(scene, 400, 100, 'gameintro_bag', 'gameintro_bag_click',
             () => {
-                openPanel(programPanel, programBtn);
+                openPanel(itemPanel, itemBtn);
             }, () => {
-                programPanel.setVisible(false);
+                itemPanel.setVisible(false);
             }).setScrollFactor(0);
-        programBtn.setDepth(depth + 20);
-        allButtons.push(programBtn);
+        itemBtn.setDepth(depth + 20);
+        allButtons.push(itemBtn);
 
         settingBtn.needClicked = true;
         descBtn.needClicked = true;
-        programBtn.needClicked = true;
+        itemBtn.needClicked = true;
 
 
         descriptionPanel.toggleBtn = descBtn;
-        programPanel.toggleBtn = programBtn;
+        itemBtn.toggleBtn = itemBtn;
         settingPanel.toggleBtn = settingBtn;
 
 
         function openPanel(targetPanel, activeBtn) {
-            [settingPanel, descriptionPanel, programPanel]
+            [settingPanel, descriptionPanel, itemPanel]
                 .forEach(p => {
                     if (p) p.setVisible(false);
                 });
@@ -164,9 +164,10 @@ export default class UIHelper {
             }
         }
 
-        return { settingBtn, descBtn, programBtn, settingPanel, descriptionPanel, programPanel };
+        return { settingBtn, descBtn, itemBtn, settingPanel, descriptionPanel, itemPanel };
     }
 
+    //================================ Video switcher with transition ===========================
     static switchVideo(scene, currentVideoVar, transitionKey, finalKey, x, y, duration = 2000, onComplete) {
         // 1. 先將舊片淡出，然後銷毀
         if (currentVideoVar) {

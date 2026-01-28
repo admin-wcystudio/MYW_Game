@@ -165,6 +165,30 @@ export class BootScene extends Phaser.Scene {
         this.load.image('game_gamechance', `${path}game1_gamechance.png`);
 
 
+        const path2 = 'assets/Items/';
+        this.load.image('itempage_bg', path2 + 'itempage_bg.png');
+        this.load.image('itempage_close_button_select', path2 + 'itempage_close_button_select.png');
+        this.load.image('itempage_close_button', path2 + 'itempage_close_button.png');
+        this.load.image('itempage_confirm_button_select', path2 + 'itempage_confirm_button_select.png');
+        this.load.image('itempage_confirm_button', path2 + 'itempage_confirm_button.png');
+        this.load.image('itempage_item_box', path2 + 'itempage_item_box.png');
+        this.load.image('itempage_item1_description', path2 + 'itempage_item1_description.png');
+        this.load.image('itempage_item1_select', path2 + 'itempage_item1_select.png');
+        this.load.image('itempage_item1', path2 + 'itempage_item1.png');
+        this.load.image('itempage_item2_select', path + 'itempage_item2_select.png');
+        this.load.image('itempage_item2', path2 + 'itempage_item2.png');
+        this.load.image('itempage_item3_description', path2 + 'itempage_item3_description.png');
+        this.load.image('itempage_item3_select', path2 + 'itempage_item3_select.png');
+        this.load.image('itempage_item3', path2 + 'itempage_item3.png');
+        this.load.image('itempage_item4_description', path2 + 'itempage_item4_description.png');
+        this.load.image('itempage_item4_description1', path2 + 'itempage_item4_description1.png');
+        this.load.image('itempage_item4_description2', path2 + 'itempage_item4_description2.png');
+        this.load.image('itempage_item4_select', path2 + 'itempage_item4_select.png');
+        this.load.image('itempage_item4', path2 + 'itempage_item4.png');
+        this.load.image('itempage_item5_description', path2 + 'itempage_item5_description.png');
+        this.load.image('itempage_item5_select', path2 + 'itempage_item5_select.png');
+        this.load.image('itempage_item5', path2 + 'itempage_item5.png');
+        this.load.image('panel_bg', path2 + 'itempage_panel_bg.png');
     }
 
     create() {
@@ -182,7 +206,7 @@ export class BootScene extends Phaser.Scene {
 
             this.registry.set('globalSettings', settings);
         }
-        this.scene.start('GameScene_2');
+        this.scene.start('MainStreetScene');
     }
 
 }
