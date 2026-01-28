@@ -64,11 +64,11 @@ export class GameScene_1 extends Phaser.Scene {
         descriptionPanel.setVisible(false);
         descriptionPanel.setDepth(100);
 
-        const gameUI = UIHelper.createGameCommonUI(this, 'game1_bg', 'game1_title', descriptionPages);
+        this.gameUI = UIHelper.createGameCommonUI(this, 'game1_bg', 'game1_title', descriptionPages);
 
         //== timer
         this.gameTimer = UIHelper.showTimer(this, 3, false, () => {
-            this.handleTimeUp(gameUI);
+            this.handleTimeUp(this.gameUI);
         });
 
         //====puzzles=====================================================
@@ -221,6 +221,60 @@ export class GameScene_1 extends Phaser.Scene {
         console.log(`第 ${this.roundIndex + 1} 局正式啟動！`);
     }
 
+    startNextRound() {
+        this.randomPuzzlePosition(this.puzzleGroup.getChildren());
+        this.puzzleGroup.getChildren().forEach(p => p.disableInteractive());
+        this.loadBubble(1);
+    }
+
+    restartCurrentRound(gameUI) {
+        console.log("遊戲從頭開始");
+
+        if (gameUI && gameUI.roundStates) {
+            gameUI.roundStates.forEach((data, index) => {
+                if (data.content && typeof data.content.setTexture === 'function') {
+                    data.content.setTexture('game_gamechance');
+                    data.isSuccess = false;
+                    console.log(`已重置第 ${index + 1} 局圖示`);
+                }
+            });
+        }
+        this.roundIndex = 0;
+
+        // Reset puzzles
+        this.randomPuzzlePosition(this.puzzleGroup.getChildren());
+        this.puzzleGroup.getChildren().forEach(p => p.disableInteractive());
+
+        //reset timer
+        if (this.gameTimer) {
+            this.gameTimer.reset(5);
+        }
+
+        this.startGameLogic();
+    }
+
+    handleTimeUp(gameUI) {
+        if (this.gameTimer) this.gameTimer.stop();
+        this.puzzleGroup.getChildren().forEach(p => p.disableInteractive());
+
+        // Change current round icon to fail
+        if (gameUI && gameUI.roundStates && gameUI.roundStates[this.roundIndex]) {
+            const currentRound = gameUI.roundStates[this.roundIndex];
+
+            if (currentRound.content && typeof currentRound.content.setTexture === 'function') {
+                currentRound.content.setTexture('game_fail'); // 使用正確的圖片 Key
+                currentRound.isSuccess = true;
+            } else {
+                console.error("roundStates.content 不是一個有效的圖片物件");
+            }
+        } else {
+            console.error(`找不到索引為 ${this.roundIndex} 的回合狀態`);
+        }
+
+        // Show NPC fail dialogue then the Fail Panel
+        this.loadBubble(2); // Assuming this triggers showFailPanel on completion
+    }
+
     showSuccess(puzzleGroup, gameUI) {
         if (this.gameTimer) this.gameTimer.stop();
 
@@ -259,68 +313,10 @@ export class GameScene_1 extends Phaser.Scene {
         }
     }
 
-
-    startNextRound() {
-        this.randomPuzzlePosition(this.puzzleGroup.getChildren());
-        this.puzzleGroup.getChildren().forEach(p => p.disableInteractive());
-        this.loadBubble(1);
-    }
-
-    restartCurrentRound(gameUI) {
-        console.log("遊戲從頭開始");
-
-        // 1. 重置回合索引
-        this.roundIndex = 0;
-
-        // 2. 重置所有回合圖示為初始綠色狀態
-        if (gameUI && gameUI.roundStates) {
-            gameUI.roundStates.forEach(data => {
-                if (data.content && data.content.setTexture) {
-                    data.content.setTexture('game3_gamechance'); // 回到初始 Key
-                    data.isSuccess = false;
-                }
-            });
-        }
-
-        // 3. 重新隨機拼圖位置
-        this.randomPuzzlePosition(this.puzzleGroup.getChildren());
-        this.puzzleGroup.getChildren().forEach(p => p.disableInteractive());
-
-        // 4. 使用修正後的 reset 方法重置計時器
-        if (this.gameTimer) {
-            this.gameTimer.reset(60); // 假設每局 60 秒
-        }
-
-        // 5. 重新觸發對話框
-        this.loadBubble(1);
-    }
-
-    handleTimeUp(gameUI) {
-        if (this.gameTimer) this.gameTimer.stop();
-        this.puzzleGroup.getChildren().forEach(p => p.disableInteractive());
-
-        // Change current round icon to fail
-        if (gameUI && gameUI.roundStates && gameUI.roundStates[this.roundIndex]) {
-            const currentRound = gameUI.roundStates[this.roundIndex];
-
-            if (currentRound.content && typeof currentRound.content.setTexture === 'function') {
-                currentRound.content.setTexture('game_fail'); // 使用正確的圖片 Key
-                currentRound.isSuccess = true;
-            } else {
-                console.error("roundStates.content 不是一個有效的圖片物件");
-            }
-        } else {
-            console.error(`找不到索引為 ${this.roundIndex} 的回合狀態`);
-        }
-
-        // Show NPC fail dialogue then the Fail Panel
-        this.loadBubble(2); // Assuming this triggers showFailPanel on completion
-    }
-
     showFailPanel() {
         const popupPanel = new CustomFailPanel(this, 960, 540, () => {
             popupPanel.destroy();
-            this.restartCurrentRound();
+            this.restartCurrentRound(this.gameUI);
 
         }, () => {
             GameManager.backToMainStreet(this);
@@ -401,17 +397,24 @@ export class GameScene_1 extends Phaser.Scene {
     randomPuzzlePosition(puzzles) {
         const centerX = this.cameras.main.width / 2;
         const centerY = this.cameras.main.height / 2;
-        const allowedRotations = [90, 180, 270, 360];
+        const allowedRotations = [0, 90, 180, 270];
 
-        for (let i = 0; i < puzzles.length; i++) {
+        console.log("正在重新隨機分佈拼圖位置與旋轉...");
+
+        puzzles.forEach(puzzle => {
             let randomX = Phaser.Math.Between(-400, 400);
             let randomY = Phaser.Math.Between(-300, 100);
-
             let randomRotate = Phaser.Utils.Array.GetRandom(allowedRotations);
 
-            puzzles[i].offsetX = centerX + randomX;
-            puzzles[i].offsetY = centerY + randomY;
-            puzzles[i].rotate = randomRotate;
-        }
+            puzzle.offsetX = centerX + randomX;
+            puzzle.offsetY = centerY + randomY;
+            puzzle.rotate = randomRotate;
+
+            // Only call setPosition/setAngle if they exist (Phaser image)
+            if (typeof puzzle.setPosition === 'function' && typeof puzzle.setAngle === 'function') {
+                puzzle.setPosition(puzzle.offsetX, puzzle.offsetY);
+                puzzle.setAngle(randomRotate);
+            }
+        });
     }
 }

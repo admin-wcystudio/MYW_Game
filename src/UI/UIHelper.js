@@ -100,7 +100,7 @@ export default class UIHelper {
         ];
         let space = 145;
         roundStates.forEach(data => {
-            const stateImage = scene.add.image(1900 - space, 225, data.content)
+            data.content = scene.add.image(1900 - space, 225, data.content)
                 .setScale(0.9)
                 .setDepth(60);
             space += 145;
@@ -267,39 +267,42 @@ export default class UIHelper {
     }
 
     static showTimer(scene, seconds, isStartNow = false, onComplete) {
-        const timerBg = scene.add.image(1640, 80, 'gametimer').setDepth(100).setScrollFactor(0);
-        let timeLeft = seconds;
+        const timerBg = scene.add.image(1640, 80, 'game_timer_bg').setDepth(100).setScrollFactor(0);
+
+        // 使用 state 物件管理，確保外部 reset 可以改動數值
+        const state = {
+            timeLeft: seconds,
+            isRunning: isStartNow
+        };
 
         const formatTime = (s) => {
             const minutes = Math.floor(s / 60);
             const partInSeconds = s % 60;
-            const formattedSeconds = partInSeconds.toString().padStart(2, '0');
-            return `${minutes}:${formattedSeconds}`;
+            return `${minutes}:${partInSeconds.toString().padStart(2, '0')}`;
         };
 
-        const timerText = scene.add.text(1640, 80, formatTime(timeLeft), {
-            fontSize: '60px',
-            color: '#ffffff',
-            fontStyle: 'bold',
+        const timerText = scene.add.text(1640, 80, formatTime(state.timeLeft), {
+            fontSize: '60px', color: '#ffffff', fontStyle: 'bold'
         }).setOrigin(0.5).setDepth(101).setScrollFactor(0);
 
-        // 建立一個控制器物件
         const timerController = {
-            isRunning: isStartNow, // 使用這個屬性來控制開關
-            stop: () => timerEvent.destroy(),
-            start: () => { timerController.isRunning = true; } // 增加一個啟動方法
+            start: () => { state.isRunning = true; },
+            stop: () => { state.isRunning = false; },
+            reset: (newSeconds) => {
+                state.timeLeft = newSeconds || seconds;
+                state.isRunning = false; // 重置時先停止，等待 startGameLogic 啟動
+                timerText.setText(formatTime(state.timeLeft));
+            }
         };
 
         const timerEvent = scene.time.addEvent({
             delay: 1000,
             callback: () => {
-                // 關鍵修改：檢查 controller 的狀態
-                if (timerController.isRunning) {
-                    timeLeft--;
-                    timerText.setText(formatTime(timeLeft));
-
-                    if (timeLeft <= 0) {
-                        timerEvent.destroy();
+                if (state.isRunning) {
+                    state.timeLeft--;
+                    timerText.setText(formatTime(state.timeLeft));
+                    if (state.timeLeft <= 0) {
+                        state.isRunning = false;
                         if (onComplete) onComplete();
                         scene.events.emit('game-timeout');
                     }
@@ -307,9 +310,6 @@ export default class UIHelper {
             },
             loop: true,
         });
-
-        // 把 Event 存入 Controller
-        timerController.timerEvent = timerEvent;
 
         return timerController;
     }
