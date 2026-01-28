@@ -27,23 +27,6 @@ export class MainStreetScene extends Phaser.Scene {
         // 設定相機邊界為總長度 8414px
         this.cameras.main.setBounds(0, 0, 8414, 1080);
 
-
-
-        const descriptionPages = [
-            {
-                content: 'game_description_p1',
-                nextBtn: 'next_button', nextBtnClick: 'next_button_click',
-                prevBtn: null, prevBtnClick: null,
-                closeBtn: 'close_button', closeBtnClick: 'close_button_click'
-            },
-            {
-                content: 'game_description_p2',
-                nextBtn: 'next_button', nextBtnClick: 'next_button_click',
-                prevBtn: 'prev_button', prevBtnClick: 'prev_button',
-                closeBtn: 'close_button', closeBtnClick: 'close_button_click'
-            }
-        ];
-
         const introPage = [
             {
                 content: 'gameintro_01',
@@ -66,11 +49,11 @@ export class MainStreetScene extends Phaser.Scene {
 
         this.btnRight = new CustomButton(this, width - 150, height / 2, 'next_button', 'next_button_click',
             () => { this.isRightDown = true; },
-            () => { this.isRightDown = false; }
+            () => { thisdisRightDown = false; }
         ).setScrollFactor(0).setDepth(100);
 
 
-        const ui = UIHelper.createGameCommonUI(this, descriptionPages, 200);
+        const ui = UIHelper.createGameCommonUI(this, introPage, 200);
 
         const npc1_bubbles = ['npc1_bubble_1', 'npc1_bubble_2', 'npc1_bubble_3'];
         const npc2_bubbles = ['npc2_bubble_1', 'npc2_bubble_2'];

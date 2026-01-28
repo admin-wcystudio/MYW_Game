@@ -175,8 +175,10 @@ export class BootScene extends Phaser.Scene {
         this.load.image('itempage_item1_description', path2 + 'itempage_item1_description.png');
         this.load.image('itempage_item1_select', path2 + 'itempage_item1_select.png');
         this.load.image('itempage_item1', path2 + 'itempage_item1.png');
-        this.load.image('itempage_item2_select', path + 'itempage_item2_select.png');
+        this.load.image('itempage_item2_select', path2 + 'itempage_item2_click.png');
         this.load.image('itempage_item2', path2 + 'itempage_item2.png');
+        this.load.image('itempage_item2_description1', path2 + 'itempage_item2_description1.png');
+        this.load.image('itempage_item2_description2', path2 + 'itempage_item2_description2.png');
         this.load.image('itempage_item3_description', path2 + 'itempage_item3_description.png');
         this.load.image('itempage_item3_select', path2 + 'itempage_item3_select.png');
         this.load.image('itempage_item3', path2 + 'itempage_item3.png');

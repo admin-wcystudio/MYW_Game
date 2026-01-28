@@ -259,36 +259,65 @@ export class CustomDescriptionPanel extends Phaser.GameObjects.Container {
     constructor(scene, x, y, pageKeys, onClose) {
         super(scene, x, y);
         this.scene = scene;
-        this.pageKeys = pageKeys; // 這是一個陣列，例如 ['item1_p1', 'item1_p2']
+        this.pageKeys = pageKeys;
         this.currentPage = 0;
+        this.onClose = onClose;
 
-        // 主背景圖片
+        // 1. 主背景圖片
         this.contentImage = scene.add.image(0, 0, this.pageKeys[this.currentPage]);
         this.add(this.contentImage);
 
-        // 關閉按鈕
+        // 2. 關閉按鈕
         this.closeBtn = new CustomButton(scene, 625, -295, 'close_button', 'close_button_click', () => {
-            this.destroy(); // 直接銷毀面板
-            if (onClose) onClose();
+            this.closePanel();
         });
-
-        // 如果有多於一頁，加入「下一頁」按鈕
-        if (this.pageKeys.length > 1) {
-            this.nextBtn = new CustomButton(scene, 400, 250, 'next_button', null, () => this.nextPage());
-            this.add(this.nextBtn);
-        }
-
         this.add(this.closeBtn);
+
+        // 3. 上一頁按鈕 (初始隱藏)
+        this.prevBtn = new CustomButton(scene, -800, 250, 'prev_button', null, () => this.prevPage());
+        this.add(this.prevBtn);
+
+        // 4. 下一頁按鈕
+        this.nextBtn = new CustomButton(scene, 800, 250, 'next_button', null, () => this.nextPage());
+        this.add(this.nextBtn);
+
+        // 初始化按鈕可見性
+        this.updateButtons();
+
         scene.add.existing(this);
     }
 
     nextPage() {
-        this.currentPage++;
-        if (this.currentPage < this.pageKeys.length) {
+        if (this.currentPage < this.pageKeys.length - 1) {
+            this.currentPage++;
             this.contentImage.setTexture(this.pageKeys[this.currentPage]);
-        } else {
-            this.destroy(); // 最後一頁點擊後關閉
+            this.updateButtons();
         }
+    }
+
+    prevPage() {
+        if (this.currentPage > 0) {
+            this.currentPage--;
+            this.contentImage.setTexture(this.pageKeys[this.currentPage]);
+            this.updateButtons();
+        }
+    }
+
+    updateButtons() {
+        // 第一頁不顯示「上一頁」
+        this.prevBtn.setVisible(this.currentPage > 0);
+
+        // 如果只有一頁，隱藏下一頁按鈕；或者你可以設定最後一頁時將 nextBtn 變成「完成」圖標
+        if (this.pageKeys.length <= 1) {
+            this.nextBtn.setVisible(false);
+        } else {
+            this.nextBtn.setVisible(this.currentPage < this.pageKeys.length - 1);
+        }
+    }
+
+    closePanel() {
+        if (this.onClose) this.onClose();
+        this.destroy();
     }
 }
 
@@ -309,7 +338,8 @@ export class ItemsPanel extends Phaser.GameObjects.Container {
             {
                 itemKey: 'itempage_item2',
                 itemSelectKey: 'itempage_item2_select',
-                itemDescriptionKey: null
+                itemDescriptionKey: 'itempage_item2_description1',
+                itemDescriptionKey1: 'itempage_item2_description2'
             },
             {
                 itemKey: 'itempage_item3',
@@ -348,10 +378,17 @@ export class ItemsPanel extends Phaser.GameObjects.Container {
                 ].filter(key => key != null);
 
                 if (pages.length > 0) {
-                    // 彈出詳細描述面板
-                    const descPanel = new CustomDescriptionPanel(scene, 0, 0, pages);
-                    descPanel.setDepth(500);
-                    this.add(descPanel); // 加入到目前 Container 中
+
+                    const blocker = scene.add.rectangle(0, 0, 1920, 1080, 0x000000, 0.5).setInteractive();
+
+                    const descPanel = new CustomDescriptionPanel(scene, 0, 0, pages, () => {
+                        blocker.destroy();
+                    });
+
+                    descPanel.setDepth(501);
+                    blocker.setDepth(500);
+
+                    this.add([blocker, descPanel]);
                 }
             }).setDepth(3);
 
