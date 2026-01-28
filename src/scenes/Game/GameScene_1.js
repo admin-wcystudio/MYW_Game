@@ -43,7 +43,8 @@ export class GameScene_1 extends Phaser.Scene {
         const height = this.cameras.main.height;
         const centerX = this.cameras.main.width / 2;
         const centerY = this.cameras.main.height / 2;
-        this.maxChances = 3;
+        this.roundPerSeconds = 35;
+        this.targetRounds = 2;
         this.roundIndex = 0;
 
         const gender = localStorage.getItem('player') ? JSON.parse(localStorage.getItem('player')).gender : 'M';
@@ -67,7 +68,7 @@ export class GameScene_1 extends Phaser.Scene {
         this.gameUI = UIHelper.createGameCommonUI(this, 'game1_bg', 'game1_title', descriptionPages);
 
         //== timer
-        this.gameTimer = UIHelper.showTimer(this, 3, false, () => {
+        this.gameTimer = UIHelper.showTimer(this, this.roundPerSeconds, false, () => {
             this.handleTimeUp(this.gameUI);
         });
 
@@ -100,6 +101,8 @@ export class GameScene_1 extends Phaser.Scene {
             piece.on('pointerdown', () => {
                 this.selectPuzzle(piece);
             });
+
+            piece.disableInteractive();
         });
 
         //====Drag&Drop====================================================
@@ -176,8 +179,6 @@ export class GameScene_1 extends Phaser.Scene {
         this.selectedPuzzle = piece;
 
         piece.setTint(0xaaaaaa);
-
-        console.log("選中了拼圖:", piece.texture.key);
     }
 
     checkSnap(piece) {
@@ -209,10 +210,14 @@ export class GameScene_1 extends Phaser.Scene {
             if (this.gameTimer && this.gameTimer.stop) {
                 this.gameTimer.stop(); // 停止倒數
             }
-            this.showSuccess(this.puzzleGroup);
+
+            this.showSuccess(this.puzzleGroup, this.gameUI);
         }
+
     }
-    startGameLogic() {
+
+    startGame() {
+
         if (this.gameTimer) this.gameTimer.start();
 
         this.puzzleGroup.getChildren().forEach(p => {
@@ -222,12 +227,20 @@ export class GameScene_1 extends Phaser.Scene {
     }
 
     startNextRound() {
+        if (this.gameTimer) {
+            this.gameTimer.reset(this.roundPerSeconds);
+        }
+        this.resetPuzzle(this.puzzleGroup.getChildren());
+
         this.randomPuzzlePosition(this.puzzleGroup.getChildren());
         this.puzzleGroup.getChildren().forEach(p => p.disableInteractive());
-        this.loadBubble(1);
+        this.puzzleGroup.setVisible(true);
+
+        this.roundIndex++;
+        this.startGame();
     }
 
-    restartCurrentRound(gameUI) {
+    restartGame(gameUI) {
         console.log("遊戲從頭開始");
 
         if (gameUI && gameUI.roundStates) {
@@ -242,15 +255,16 @@ export class GameScene_1 extends Phaser.Scene {
         this.roundIndex = 0;
 
         // Reset puzzles
+        this.resetPuzzle(this.puzzleGroup.getChildren());
         this.randomPuzzlePosition(this.puzzleGroup.getChildren());
         this.puzzleGroup.getChildren().forEach(p => p.disableInteractive());
 
         //reset timer
         if (this.gameTimer) {
-            this.gameTimer.reset(5);
+            this.gameTimer.reset(this.roundPerSeconds);
         }
 
-        this.startGameLogic();
+        this.startGame();
     }
 
     handleTimeUp(gameUI) {
@@ -267,12 +281,11 @@ export class GameScene_1 extends Phaser.Scene {
             } else {
                 console.error("roundStates.content 不是一個有效的圖片物件");
             }
+
+            this.loadBubble(2);
         } else {
             console.error(`找不到索引為 ${this.roundIndex} 的回合狀態`);
         }
-
-        // Show NPC fail dialogue then the Fail Panel
-        this.loadBubble(2); // Assuming this triggers showFailPanel on completion
     }
 
     showSuccess(puzzleGroup, gameUI) {
@@ -284,7 +297,7 @@ export class GameScene_1 extends Phaser.Scene {
 
             // 2. 檢查 content 是否為有效的 Phaser Image 物件
             if (currentRound.content && typeof currentRound.content.setTexture === 'function') {
-                currentRound.content.setTexture('game3_success_icon'); // 使用正確的圖片 Key
+                currentRound.content.setTexture('game_success'); // 使用正確的圖片 Key
                 currentRound.isSuccess = true;
             } else {
                 console.error("roundStates.content 不是一個有效的圖片物件");
@@ -297,26 +310,24 @@ export class GameScene_1 extends Phaser.Scene {
             // Advance to next round
             this.roundIndex++;
 
-            // Play intermediate success feedback
-            const successVideo = this.add.video(960, 440, 'game1_success_preview')
-                .setDepth(200).setScrollFactor(0);
-            successVideo.play();
+            this.puzzleGroup.setVisible(false);
 
-            // Wait for video/feedback then start next round
-            this.time.delayedCall(2000, () => {
-                successVideo.destroy();
-                this.restartCurrentRound();
-            });
+            // Play intermediate success feedback
+            this.successVideo = this.add.video(960, 440, 'game1_success_preview')
+                .setDepth(200).setScrollFactor(0);
+            this.successVideo.play();
+            this.loadBubble(1);
+
         } else {
             // Game Complete - Final Reward
-            this.showFinalReward();
+            this.showWin();
         }
     }
 
     showFailPanel() {
         const popupPanel = new CustomFailPanel(this, 960, 540, () => {
             popupPanel.destroy();
-            this.restartCurrentRound(this.gameUI);
+            this.restartGame(this.gameUI);
 
         }, () => {
             GameManager.backToMainStreet(this);
@@ -325,8 +336,8 @@ export class GameScene_1 extends Phaser.Scene {
 
     }
 
-    showFinalReward() {
-        this.add.image(960, 540, 'game1_bg').setDepth(200);
+    showWin() {
+        this.loadBubble(1);
         this.puzzleGroup.setVisible(false);
 
         this.time.delayedCall(1000, () => {
@@ -368,29 +379,31 @@ export class GameScene_1 extends Phaser.Scene {
                 currentBubbleImg.off('pointerdown');
                 currentBubbleImg.once('pointerdown', () => {
                     currentBubbleImg.destroy();
-                    this.startGameLogic();
+                    this.startGame();
                 });
             });
+        } else if (index === 1) {
+            currentBubbleImg.once('pointerdown', () => {
+                this.successVideo.destroy();
+                currentBubbleImg.destroy();
+                this.startNextRound();
+            });
+
             // try again
         } else if (index === 2) {
             currentBubbleImg.once('pointerdown', () => {
                 currentBubbleImg.destroy();
-                //show fail panel
                 this.showFailPanel();
             });
         }
-        else {
-            currentBubbleImg.once('pointerdown', () => {
-                currentBubbleImg.destroy();
-            });
-        }
+
         this.tweens.add({
             targets: currentBubbleImg,
             scale: { from: 0.5, to: 1 },
             duration: 200,
             ease: 'Back.easeOut'
         });
-        console.log("Load bubble: " + npc_bubbles[index]);
+        // console.log("Load bubble: " + npc_bubbles[index]);
     }
 
 
@@ -415,6 +428,12 @@ export class GameScene_1 extends Phaser.Scene {
                 puzzle.setPosition(puzzle.offsetX, puzzle.offsetY);
                 puzzle.setAngle(randomRotate);
             }
+        });
+    }
+
+    resetPuzzle(puzzles) {
+        puzzles.forEach(puzzle => {
+            puzzle.setData('isCorrect', false);
         });
     }
 }
