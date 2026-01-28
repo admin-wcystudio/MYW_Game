@@ -406,3 +406,33 @@ export class ItemsPanel extends Phaser.GameObjects.Container {
         scene.add.existing(this);
     }
 }
+
+export class CustomFailPanel extends Phaser.GameObjects.Container {
+    constructor(scene, x, y, onRestart, onQuit) {
+        super(scene, x, y);
+        this.scene = scene;
+        this.currentPage = 0;
+        this.toggleBtn = null;
+
+        this.contentImage = scene.add.image(0, 0, 'popup_bg').setDepth(200);
+        this.add(this.contentImage);
+
+        this.tryAgainBtn = new CustomButton(scene, 0, -100, 'game_tryagain', 'game_tryagain_click', () => {
+            if (onRestart) onRestart();
+        }).setDepth(201);
+        this.quitBtn = new CustomButton(scene, 0, 100, 'game_quit', 'game_quit_click', () => {
+            if (onQuit) onQuit();
+        }).setDepth(201);
+
+        this.add([this.tryAgainBtn, this.quitBtn]);
+
+        // 重要：將呢個 Container 加落 Scene
+        scene.add.existing(this);
+
+        this.refresh();
+    }
+
+    refresh() {
+
+    }
+}

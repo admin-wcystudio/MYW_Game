@@ -86,7 +86,26 @@ export default class UIHelper {
     }
 
 
-    static createGameCommonUI(scene, descriptionPages, depth = 10) {
+    static createGameCommonUI(scene, bgKey, titleKey, descriptionPages, depth = 10) {
+
+        const width = scene.cameras.main.width;
+        const height = scene.cameras.main.height;
+        scene.add.image(width / 2, height / 2, bgKey).setDepth(1);
+        scene.add.image(width / 2, 80, titleKey).setDepth(3);
+
+        const roundStates = [
+            { round: 1, content: 'game_gamechance', isSuccess: false },
+            { round: 2, content: 'game_gamechance', isSuccess: false },
+            { round: 3, content: 'game_gamechance', isSuccess: false }
+        ];
+        let space = 145;
+        roundStates.forEach(data => {
+            const stateImage = scene.add.image(1900 - space, 225, data.content)
+                .setScale(0.9)
+                .setDepth(60);
+            space += 145;
+        })
+
         // Panels
         const settingPanel = new SettingPanel(scene, 960, 540).setScrollFactor(0);
         settingPanel.setVisible(false);
@@ -164,7 +183,7 @@ export default class UIHelper {
             }
         }
 
-        return { settingBtn, descBtn, itemBtn, settingPanel, descriptionPanel, itemPanel };
+        return { settingBtn, descBtn, itemBtn, settingPanel, descriptionPanel, itemPanel, roundStates };
     }
 
     //================================ Video switcher with transition ===========================

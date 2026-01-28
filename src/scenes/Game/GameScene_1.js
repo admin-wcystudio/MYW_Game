@@ -1,5 +1,5 @@
 import { CustomButton } from '../../UI/Button.js';
-import { CustomPanel, SettingPanel, CustomSinglePanel } from '../../UI/Panel.js';
+import { CustomPanel, SettingPanel, CustomSinglePanel, CustomFailPanel } from '../../UI/Panel.js';
 import UIHelper from '../../UI/UIHelper.js';
 import GameManager from '../GameManager.js';
 
@@ -44,7 +44,7 @@ export class GameScene_1 extends Phaser.Scene {
         const centerX = this.cameras.main.width / 2;
         const centerY = this.cameras.main.height / 2;
         this.maxChances = 3;
-        this.currentRound = 0;
+        this.roundIndex = 0;
 
         const gender = localStorage.getItem('player') ? JSON.parse(localStorage.getItem('player')).gender : 'M';
         this.loadBubble(0, gender);
@@ -64,10 +64,10 @@ export class GameScene_1 extends Phaser.Scene {
         descriptionPanel.setVisible(false);
         descriptionPanel.setDepth(100);
 
-        const gameUI = GameManager.createGameCommonUI(this, 'game1_bg', 'game1_title', descriptionPages);
+        const gameUI = UIHelper.createGameCommonUI(this, 'game1_bg', 'game1_title', descriptionPages);
 
         //== timer
-        this.gameTimer = UIHelper.showTimer(this, 5, false, () => {
+        this.gameTimer = UIHelper.showTimer(this, 3, false, () => {
             this.handleTimeUp(gameUI);
         });
 
@@ -212,6 +212,136 @@ export class GameScene_1 extends Phaser.Scene {
             this.showSuccess(this.puzzleGroup);
         }
     }
+    startGameLogic() {
+        if (this.gameTimer) this.gameTimer.start();
+
+        this.puzzleGroup.getChildren().forEach(p => {
+            p.setInteractive({ draggable: true });
+        });
+        console.log(`第 ${this.roundIndex + 1} 局正式啟動！`);
+    }
+
+    showSuccess(puzzleGroup, gameUI) {
+        if (this.gameTimer) this.gameTimer.stop();
+
+        // Change current round icon to success
+        if (gameUI && gameUI.roundStates && gameUI.roundStates[this.roundIndex]) {
+            const currentRound = gameUI.roundStates[this.roundIndex];
+
+            // 2. 檢查 content 是否為有效的 Phaser Image 物件
+            if (currentRound.content && typeof currentRound.content.setTexture === 'function') {
+                currentRound.content.setTexture('game3_success_icon'); // 使用正確的圖片 Key
+                currentRound.isSuccess = true;
+            } else {
+                console.error("roundStates.content 不是一個有效的圖片物件");
+            }
+        } else {
+            console.error(`找不到索引為 ${this.roundIndex} 的回合狀態`);
+        }
+
+        if (this.roundIndex < 2) {
+            // Advance to next round
+            this.roundIndex++;
+
+            // Play intermediate success feedback
+            const successVideo = this.add.video(960, 440, 'game1_success_preview')
+                .setDepth(200).setScrollFactor(0);
+            successVideo.play();
+
+            // Wait for video/feedback then start next round
+            this.time.delayedCall(2000, () => {
+                successVideo.destroy();
+                this.restartCurrentRound();
+            });
+        } else {
+            // Game Complete - Final Reward
+            this.showFinalReward();
+        }
+    }
+
+
+    startNextRound() {
+        this.randomPuzzlePosition(this.puzzleGroup.getChildren());
+        this.puzzleGroup.getChildren().forEach(p => p.disableInteractive());
+        this.loadBubble(1);
+    }
+
+    restartCurrentRound(gameUI) {
+        console.log("遊戲從頭開始");
+
+        // 1. 重置回合索引
+        this.roundIndex = 0;
+
+        // 2. 重置所有回合圖示為初始綠色狀態
+        if (gameUI && gameUI.roundStates) {
+            gameUI.roundStates.forEach(data => {
+                if (data.content && data.content.setTexture) {
+                    data.content.setTexture('game3_gamechance'); // 回到初始 Key
+                    data.isSuccess = false;
+                }
+            });
+        }
+
+        // 3. 重新隨機拼圖位置
+        this.randomPuzzlePosition(this.puzzleGroup.getChildren());
+        this.puzzleGroup.getChildren().forEach(p => p.disableInteractive());
+
+        // 4. 使用修正後的 reset 方法重置計時器
+        if (this.gameTimer) {
+            this.gameTimer.reset(60); // 假設每局 60 秒
+        }
+
+        // 5. 重新觸發對話框
+        this.loadBubble(1);
+    }
+
+    handleTimeUp(gameUI) {
+        if (this.gameTimer) this.gameTimer.stop();
+        this.puzzleGroup.getChildren().forEach(p => p.disableInteractive());
+
+        // Change current round icon to fail
+        if (gameUI && gameUI.roundStates && gameUI.roundStates[this.roundIndex]) {
+            const currentRound = gameUI.roundStates[this.roundIndex];
+
+            if (currentRound.content && typeof currentRound.content.setTexture === 'function') {
+                currentRound.content.setTexture('game_fail'); // 使用正確的圖片 Key
+                currentRound.isSuccess = true;
+            } else {
+                console.error("roundStates.content 不是一個有效的圖片物件");
+            }
+        } else {
+            console.error(`找不到索引為 ${this.roundIndex} 的回合狀態`);
+        }
+
+        // Show NPC fail dialogue then the Fail Panel
+        this.loadBubble(2); // Assuming this triggers showFailPanel on completion
+    }
+
+    showFailPanel() {
+        const popupPanel = new CustomFailPanel(this, 960, 540, () => {
+            popupPanel.destroy();
+            this.restartCurrentRound();
+
+        }, () => {
+            GameManager.backToMainStreet(this);
+        });
+        popupPanel.setDepth(300);
+
+    }
+
+    showFinalReward() {
+        this.add.image(960, 540, 'game1_bg').setDepth(200);
+        this.puzzleGroup.setVisible(false);
+
+        this.time.delayedCall(1000, () => {
+            const objectPanel = new CustomSinglePanel(this, 960, 600, 'game1_object_description');
+            objectPanel.setDepth(201).setVisible(true);
+            objectPanel.setCloseCallBack(() => {
+                GameManager.backToMainStreet(this);
+            });
+        });
+    }
+
 
     loadBubble(index = 0, gender) {
         const centerX = this.cameras.main.width / 2;
@@ -247,14 +377,11 @@ export class GameScene_1 extends Phaser.Scene {
             });
             // try again
         } else if (index === 2) {
-            if (this.roundIndex < 2) { // 仲有機會 (0, 1)
-                this.roundIndex++;
-                this.resetPuzzlePositions(); // 需要呢個 function 嚟打亂拼圖
-                this.startGameLogic();
-            } else {
-
-                this.showFail();
-            }
+            currentBubbleImg.once('pointerdown', () => {
+                currentBubbleImg.destroy();
+                //show fail panel
+                this.showFailPanel();
+            });
         }
         else {
             currentBubbleImg.once('pointerdown', () => {
@@ -270,66 +397,6 @@ export class GameScene_1 extends Phaser.Scene {
         console.log("Load bubble: " + npc_bubbles[index]);
     }
 
-    startGameLogic() {
-
-        if (this.gameTimer) {
-            this.gameTimer.start();
-        }
-
-        this.puzzleGroup.getChildren().forEach(p => {
-            p.setInteractive({ draggable: true });
-        });
-
-        console.log("計時器正式啟動！");
-    }
-
-
-    showSuccess(puzzleGroup) {
-        this.loadBubble(1);
-        puzzleGroup.setVisible(false);
-        const successVideo = this.add.video(960, 440, 'game1_success_preview')
-            .setDepth(200)
-            .setScrollFactor(0);
-
-        successVideo.play();
-
-        this.time.delayedCall(1000, () => {
-            const objectPanel = new CustomSinglePanel(this, 960, 600, 'game1_object_description');
-
-            objectPanel.setDepth(201)
-                .setScrollFactor(0)
-                .setVisible(true);
-
-            // 呼叫我們剛才在類別中加入的自定義 callback 方法
-            // 傳入 this (當前場景) 給 GameManager
-            objectPanel.setCloseCallBack(() => {
-                console.log("面板已關閉，準備回大地圖");
-                GameManager.backToMainStreet(this);
-            });
-        });
-    }
-
-    showFail () {
-        
-    }
-
-    handleTimeUp(gameUI) {
-        console.log(`第 ${this.roundIndex + 1} 局時間到`);
-
-        if (this.gameTimer) this.gameTimer.stop();
-
-        if (this.puzzleGroup) {
-            this.puzzleGroup.getChildren().forEach(p => p.disableInteractive());
-        }
-
-        // 3. 更新 UI (例如將粒星/心變灰)
-        if (gameUI && gameUI.roundStates[this.roundIndex]) {
-            gameUI.roundStates[this.roundIndex].setTexture('game_fail');
-        }
-
-        // 4. 彈出失敗對話框
-        this.loadBubble(2);
-    }
 
     randomPuzzlePosition(puzzles) {
         const centerX = this.cameras.main.width / 2;

@@ -159,10 +159,20 @@ export class BootScene extends Phaser.Scene {
         const path = 'assets/Game_1/';
 
         this.load.image('game_success', `${path}game1_success.png`);
-        this.load.image('game_success_icon', `${path}game1_success_icon.png`);
+        this.load.image('game_success_label', `${path}game1_success_icon.png`);
         this.load.image('game_fail', `${path}game1_fail.png`);
-        this.load.image('game_fail_icon', `${path}game1_fail_icon.png`);
+        this.load.image('game_fail_label', `${path}game1_fail_icon.png`);
         this.load.image('game_gamechance', `${path}game1_gamechance.png`);
+
+        this.load.image('game_tryagain', `${path}again_button.png`);
+        this.load.image('game_tryagain_click', `${path}again_button_mouseover.png`);
+        this.load.image('game_quit', `${path}leave_button.png`);
+        this.load.image('game_quit_click', `${path}leave_button_mouseover.png`);
+        this.load.image('popup_bg', `${path}popup_bg.png`);
+        this.load.image('game_timer_bg', `${path}game1_timer.png`);
+
+        this.load.image('game_confirm_button', 'assets/Game_3/game3_confirm_button.png');
+        this.load.image('gameconfirm_button_select', 'assets/Game_3/game3_confirm_button_select.png');
 
 
         const path2 = 'assets/Items/';
@@ -208,7 +218,7 @@ export class BootScene extends Phaser.Scene {
 
             this.registry.set('globalSettings', settings);
         }
-        this.scene.start('MainStreetScene');
+        this.scene.start('GameScene_1');
     }
 
 }
