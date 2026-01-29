@@ -1,0 +1,25 @@
+
+        //==== Debug Graphics ===========================================================
+        // const debugGraphics = this.add.graphics().setDepth(2); // 擺喺背景上面，物件下面
+        // debugGraphics.lineStyle(2, 0xff0000, 1); // 紅色線，粗度 2
+
+        // defaultpuzzles.forEach(data => {
+        //     const rectSize = 200; 
+        //     const startX = data.targetX - rectSize / 2;
+        //     const startY = data.targetY - rectSize / 2;
+
+        //     // 畫出目標區域矩形
+        //     debugGraphics.strokeRect(startX, startY, rectSize, rectSize);
+
+        //     // 喺方框旁邊寫低係邊塊 Puzzle，方便對號入座
+        //     this.add.text(startX, startY - 20, data.content, { 
+        //         fontSize: '16px', 
+        //         fill: '#ff0000' 
+        //     }).setDepth(1);
+        // });
+
+        // const tolerance = 40; // 同你 checkSnap 裡面個數值一樣
+        // defaultpuzzles.forEach(data => {
+        //     debugGraphics.lineStyle(1, 0x00ff00, 0.5); // 綠色虛線感
+        //     debugGraphics.strokeCircle(data.targetX, data.targetY, tolerance);
+        // });
