@@ -1,5 +1,5 @@
 import { CustomButton } from '../../UI/Button.js';
-import { CustomPanel, SettingPanel } from '../../UI/Panel.js';
+import { CustomSinglePanel } from '../../UI/Panel.js';
 import { QuestionPanel } from '../../UI/QuestionPanel.js';
 import UIHelper from '../../UI/UIHelper.js';
 import GameManager from '../GameManager.js';
@@ -100,11 +100,31 @@ export class GameScene_2 extends BaseGameScene {
     }
     setupGameObjects() {
         const allQuestions = [
-            { content: 'game2_q1_question', option: ['game2_q1_a_button', 'game2_q1_b_button', 'game2_q1_c_button', 'game2_q1_d_button'], answer: 2, addOn: 'game2_q1_additions' },
-            { content: 'game2_q2_question', option: ['game2_q2_a_button', 'game2_q2_b_button', 'game2_q2_c_button', 'game2_q2_d_button'], answer: 0, addOn: 'game2_q2_additions' },
-            { content: 'game2_q3_question', option: ['game2_q3_a_button', 'game2_q3_b_button', 'game2_q3_c_button', 'game2_q3_d_button'], answer: 3, addOn: 'game2_q3_additions' },
-            { content: 'game2_q4_question', option: ['game2_q4_a_button', 'game2_q4_b_button', 'game2_q4_c_button', 'game2_q4_d_button'], answer: 1, addOn: 'game2_q4_additions' },
-            { content: 'game2_q5_question', option: ['game2_q5_a_button', 'game2_q5_b_button', 'game2_q5_c_button', 'game2_q5_d_button'], answer: 0, addOn: 'game2_q5_additions' }
+            {
+                content: 'game2_q1_question',
+                option: ['game2_q1_a_button', 'game2_q1_b_button', 'game2_q1_c_button', 'game2_q1_d_button'],
+                answer: 2, addOn: 'game2_q1_additions'
+            },
+            {
+                content: 'game2_q2_question',
+                option: ['game2_q2_a_button', 'game2_q2_b_button', 'game2_q2_c_button', 'game2_q2_d_button'],
+                answer: 0, addOn: 'game2_q2_additions'
+            },
+            {
+                content: 'game2_q3_question',
+                option: ['game2_q3_a_button', 'game2_q3_b_button', 'game2_q3_c_button', 'game2_q3_d_button'],
+                answer: 3, addOn: 'game2_q3_additions'
+            },
+            {
+                content: 'game2_q4_question',
+                option: ['game2_q4_a_button', 'game2_q4_b_button', 'game2_q4_c_button', 'game2_q4_d_button'],
+                answer: 1, addOn: 'game2_q4_additions'
+            },
+            {
+                content: 'game2_q5_question',
+                option: ['game2_q5_a_button', 'game2_q5_b_button', 'game2_q5_c_button', 'game2_q5_d_button'],
+                answer: 0, addOn: 'game2_q5_additions'
+            }
         ];
 
         const titles = [
@@ -120,7 +140,7 @@ export class GameScene_2 extends BaseGameScene {
         // 注意：我們把 titles 也傳進去，讓它自己換圖
         this.questionPanel = new QuestionPanel(this, selectedQuestions, titles, () => {
             // 當 3 題都答完時，Panel 會呼叫這個 callback
-            this.handleResult(true);
+            this.handleWinAfterBubble();
         });
 
         this.questionPanel.setDepth(500).setVisible(false);
@@ -147,7 +167,7 @@ export class GameScene_2 extends BaseGameScene {
     }
 
     showWin() {
-        this.loadBubble(1, null, this.sceneIndex);
+        this.questionPanel.setVisible(false);
         this.time.delayedCall(1500, () => {
             const objectPanel = new CustomSinglePanel(this, 960, 600, 'game2_object_description');
             objectPanel.setDepth(600).setVisible(true);

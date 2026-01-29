@@ -32,7 +32,7 @@ export class QuestionPanel extends Phaser.GameObjects.Container {
         const q = this.questions[this.currentIndex];
 
         // 1. 更新標題與內容圖片
-        this.title.setTexture(this.titles[this.currentIndex]);
+        this.title.setTexture(this.titles[this.currentIndex]).setDepth(556);
         this.content.setTexture(q.content).setVisible(true).setDepth(556);
 
         // 2. [重要] 清除「上一題」的所有按鈕
@@ -80,7 +80,7 @@ export class QuestionPanel extends Phaser.GameObjects.Container {
             }
             this.showAddOn(q.addOn);
         } else {
-            console.log("答錯了");
+            console.log("答錯了 , correct : " + q.answer);
             // 呼叫 BaseGameScene 的失敗流程 (彈出 Try Again 泡泡)
             this.scene.handleTimeUp();
         }

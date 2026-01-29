@@ -100,8 +100,8 @@ export default class UIHelper {
 
         for (let i = 0; i < targetRounds; i++) {
             // 由右向左生成物件
-            const icon = scene.add.image(startX - (i * spacing), 225, 'game_gamechance')
-                .setScale(0.9)
+            const icon = scene.add.image(startX - (i * spacing), 200, 'game_gamechance')
+                .setScale(0.8)
                 .setDepth(555);
 
             roundStates.push({
