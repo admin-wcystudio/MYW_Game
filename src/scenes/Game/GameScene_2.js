@@ -97,86 +97,112 @@ export class GameScene_2 extends BaseGameScene {
     create() {
         this.initGame('game2_bg', 'game2_title', 'game2_description');
     }
-
     setupGameObjects() {
-        const questions = [
-            {
-                content: 'game2_q1_question',
-                option: ['game2_q1_a_button', 'game2_q1_b_button', 'game2_q1_c_button', 'game2_q1_d_button'],
-                answer: 2,
-                addOn: 'game2_q1_additions',
-            },
-            {
-                content: 'game2_q2_question',
-                option: ['game2_q2_a_button', 'game2_q2_b_button', 'game2_q2_c_button', 'game2_q2_d_button'],
-                answer: 0,
-                addOn: 'game2_q2_additions',
-            },
-            {
-                content: 'game2_q3_question',
-                option: ['game2_q3_a_button', 'game2_q3_b_button', 'game2_q3_c_button', 'game2_q3_d_button'],
-                answer: 3,
-                addOn: 'game2_q3_additions',
-            },
-            {
-                content: 'game2_q4_question',
-                option: ['game2_q4_a_button', 'game2_q4_b_button', 'game2_q4_c_button', 'game2_q4_d_button'],
-                answer: 1,
-                addOn: 'game2_q4_additions',
-            },
-            {
-                content: 'game2_q5_question',
-                option: ['game2_q5_a_button', 'game2_q5_b_button', 'game2_q5_c_button', 'game2_q5_d_button'],
-                answer: 0,
-                addOn: 'game2_q5_additions',
-            }
+        const allQuestions = [
+            { content: 'game2_q1_question', option: ['game2_q1_a_button', 'game2_q1_b_button', 'game2_q1_c_button', 'game2_q1_d_button'], answer: 2, addOn: 'game2_q1_additions' },
+            { content: 'game2_q2_question', option: ['game2_q2_a_button', 'game2_q2_b_button', 'game2_q2_c_button', 'game2_q2_d_button'], answer: 0, addOn: 'game2_q2_additions' },
+            { content: 'game2_q3_question', option: ['game2_q3_a_button', 'game2_q3_b_button', 'game2_q3_c_button', 'game2_q3_d_button'], answer: 3, addOn: 'game2_q3_additions' },
+            { content: 'game2_q4_question', option: ['game2_q4_a_button', 'game2_q4_b_button', 'game2_q4_c_button', 'game2_q4_d_button'], answer: 1, addOn: 'game2_q4_additions' },
+            { content: 'game2_q5_question', option: ['game2_q5_a_button', 'game2_q5_b_button', 'game2_q5_c_button', 'game2_q5_d_button'], answer: 0, addOn: 'game2_q5_additions' }
         ];
+
         const titles = [
             'game2_q1_question_title',
             'game2_q2_question_title',
             'game2_q3_question_title'
         ];
-        // 2. random select 3 questions
-        const selectedQuestions = Phaser.Utils.Array.Shuffle(questions).slice(0, 3);
 
+        // 1. 隨機選 3 題
+        const selectedQuestions = Phaser.Utils.Array.Shuffle(allQuestions).slice(0, 3);
+
+        // 2. 建立 QuestionPanel，將邏輯全部交給它
+        // 注意：我們把 titles 也傳進去，讓它自己換圖
         this.questionPanel = new QuestionPanel(this, selectedQuestions, titles, () => {
+            // 當 3 題都答完時，Panel 會呼叫這個 callback
             this.handleResult(true);
         });
 
-        const title = this.add.image(960, 150, titles[0]).setScrollFactor(0).setDepth(800);
+        this.questionPanel.setDepth(500).setVisible(false);
+    }
 
-        this.questionPanel.setDepth(500).setVisible(true);
-    }
     startGame() {
-        this.roundIndex = 0;
         this.enableGameInteraction(true);
-        this.gameTimer.start();
+        if (this.gameTimer) this.gameTimer.start();
     }
+
     enableGameInteraction(enable) {
         this.isGameActive = enable;
         if (this.questionPanel) {
             this.questionPanel.setVisible(enable);
         }
-
     }
 
     resetStageForNextRound() {
         if (this.questionPanel) {
             this.questionPanel.destroy();
-            this.setupGameObjects(); // 重新建立題目面板
         }
-    }
-
-    playSuccessFeedback() {
-
+        this.setupGameObjects(); // 重新抽題並建立 Panel
+        this.questionPanel.setVisible(true);
     }
 
     showWin() {
-        this.loadBubble(1, null, this.sceneIndex); // 播放勝利對話
-        this.time.delayedCall(1000, () => {
+        this.loadBubble(1, null, this.sceneIndex);
+        this.time.delayedCall(1500, () => {
             const objectPanel = new CustomSinglePanel(this, 960, 600, 'game2_object_description');
-            objectPanel.setDepth(201).setVisible(true);
+            objectPanel.setDepth(600).setVisible(true);
             objectPanel.setCloseCallBack(() => GameManager.backToMainStreet(this));
         });
+    }
+
+    checkAnswer() {
+        if (this.selectedAnswerIndex === -1) return;
+
+        const q = this.questions[this.currentIndex];
+
+        if (this.selectedAnswerIndex === q.answer) {
+            console.log("答對了");
+            if (this.scene.gameTimer) this.scene.gameTimer.stop();
+
+            // 更新 BaseGameScene UI
+            if (this.scene.updateRoundUI) {
+                this.scene.updateRoundUI(true);
+                this.scene.roundIndex++;
+            }
+
+            this.showAddOn(q.addOn);
+        } else {
+            console.log("答錯了");
+        }
+
+    }
+
+
+
+    showAddOn(addOnKey) {
+        this.optionButtons.forEach(btn => btn.setVisible(false));
+
+        const addOnImg = this.scene.add.image(0, 0, addOnKey)
+            .setInteractive({ useHandCursor: true });
+        this.add(addOnImg);
+
+        addOnImg.once('pointerdown', () => {
+            addOnImg.destroy();
+            this.nextQuestion();
+        });
+    }
+
+    nextQuestion() {
+        this.currentIndex++;
+        if (this.currentIndex < this.questions.length) {
+            // 這裡呼叫 Base 的計時器重置邏輯
+            if (this.scene.gameTimer) {
+                this.scene.gameTimer.reset(this.scene.roundPerSeconds);
+                this.scene.gameTimer.start();
+            }
+            this.showQuestion();
+        } else {
+            this.destroy();
+            if (this.onComplete) this.onComplete();
+        }
     }
 }
