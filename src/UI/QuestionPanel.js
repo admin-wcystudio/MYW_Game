@@ -2,23 +2,29 @@ import { CustomButton } from './Button.js';
 
 export class QuestionPanel extends Phaser.GameObjects.Container {
     constructor(scene, questions, onComplete) {
-        super(scene, 960, 540);
+        super(scene, 960, 540); // 調整至中心點
         this.scene = scene;
         this.questions = questions;
         this.currentIndex = 0;
-        this.onComplete = onComplete; // 全部答完後的 callback
+        this.onComplete = onComplete;
 
-        // 1. 背景底圖 (假設你有一個通用背景)
+        this.selectedAnswerIndex = -1; // 追蹤目前選中的索引
+
+        // 1. 背景
         this.bg = scene.add.image(0, 0, 'game2_question_bg');
         this.add(this.bg);
 
-        // 2. 標題與題目內容
-        this.title = scene.add.image(0, -300, '');
-        this.content = scene.add.image(0, -100, '');
-        this.add([this.title, this.content]);
+        // 2. 標題與題目
+        this.content = scene.add.image(0, 0, '');
+        this.add(this.content);
 
-        // 3. 用來存放按鈕的 Group
+        // 3. 按鈕容器與確認按鈕
         this.optionButtons = [];
+        this.confirmBtn = new CustomButton(scene, 0, 300, 'game2_confirm_button', 'game2_confirm_button_select', () => {
+            this.checkAnswer();
+        });
+        this.confirmBtn.setVisible(true); // 初始隱藏，選了選項才出現
+        this.add(this.confirmBtn);
 
         this.showQuestion();
         scene.add.existing(this);
@@ -26,53 +32,72 @@ export class QuestionPanel extends Phaser.GameObjects.Container {
 
     showQuestion() {
         const q = this.questions[this.currentIndex];
+        this.selectedAnswerIndex = -1;
 
-        // 更新圖片
-        this.title.setTexture(q.title);
         this.content.setTexture(q.content);
 
-        // 清除舊按鈕
         this.optionButtons.forEach(btn => btn.destroy());
         this.optionButtons = [];
 
-        // 生成新按鈕
         q.option.forEach((optKey, index) => {
-            const x = index % 2 === 0 ? -300 : 300;
-            const y = index < 2 ? 0 : 150;
+            const x = index % 2 === 0 ? -250 : 250;
+            const y = index < 2 ? -80 : 80;
 
-            const btn = new CustomButton(this.scene, x, y, optKey, null, () => {
-                this.checkAnswer(index);
-            });
+            // 注意：這裡 CustomButton 的第二個參數是 select 狀態的圖片
+            const btn = new CustomButton(this.scene, x, y + 100, optKey, `${optKey}_select`, () => {
+                this.handleSelect(index);
+            }).setScale(0.9);
             this.add(btn);
             this.optionButtons.push(btn);
         });
     }
 
-    checkAnswer(selectedIndex) {
+    handleSelect(index) {
+        this.selectedAnswerIndex = index;
+
+        // 切換所有按鈕狀態
+        this.optionButtons.forEach((btn, i) => {
+            if (i === index) {
+                btn.setSelect(true); // 假設 CustomButton 有 setSelect 方法，或手動更換 texture
+            } else {
+                btn.setSelect(false);
+            }
+        });
+
+        this.confirmBtn.setVisible(true); // 顯示確認按鈕
+    }
+
+    checkAnswer() {
+        if (this.selectedAnswerIndex === -1) return;
+
         const q = this.questions[this.currentIndex];
 
-        if (selectedIndex === q.answer) {
-            console.log("答對了！");
-            // 1. 停止計時器 (假設計時器在 Scene 層級)
+        if (this.selectedAnswerIndex === q.answer) {
+            console.log("答對了");
             if (this.scene.gameTimer) this.scene.gameTimer.stop();
 
-            // 2. 顯示補充說明 (addOn)
+            // 更新 BaseGameScene UI
+            if (this.scene.updateRoundUI) {
+                this.scene.updateRoundUI(true);
+                this.scene.roundIndex++;
+            }
+
+            this.confirmBtn.setVisible(false);
             this.showAddOn(q.addOn);
         } else {
-            console.log("答錯了，請再試一次");
-            //this.scene.cameras.main.shake(200, 0.01); // 錯誤回饋
+            console.log("答錯了");
+            this.scene.cameras.main.shake(200, 0.01);
+            // 答錯可以選擇重置選取或直接算輸，這裡建議讓玩家重選
         }
     }
 
     showAddOn(addOnKey) {
-        // 隱藏選項，顯示補充說明圖片
         this.optionButtons.forEach(btn => btn.setVisible(false));
 
-        const addOnImg = this.scene.add.image(0, 220, addOnKey)
+        const addOnImg = this.scene.add.image(0, 150, addOnKey)
             .setInteractive({ useHandCursor: true });
         this.add(addOnImg);
 
-        // 點擊補充說明 -> 進入下一題
         addOnImg.once('pointerdown', () => {
             addOnImg.destroy();
             this.nextQuestion();
@@ -82,11 +107,13 @@ export class QuestionPanel extends Phaser.GameObjects.Container {
     nextQuestion() {
         this.currentIndex++;
         if (this.currentIndex < this.questions.length) {
-            // 重新啟動計時器並顯示下一題
-            if (this.scene.gameTimer) this.scene.startTimer();
+            // 這裡呼叫 Base 的計時器重置邏輯
+            if (this.scene.gameTimer) {
+                this.scene.gameTimer.reset(this.scene.roundPerSeconds);
+                this.scene.gameTimer.start();
+            }
             this.showQuestion();
         } else {
-            // 全部完成
             this.destroy();
             if (this.onComplete) this.onComplete();
         }

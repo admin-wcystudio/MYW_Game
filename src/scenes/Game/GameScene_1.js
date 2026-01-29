@@ -35,16 +35,9 @@ export class GameScene_1 extends BaseGameScene {
     }
 
     create() {
-        const gender = localStorage.getItem('player') ? JSON.parse(localStorage.getItem('player')).gender : 'M';
 
-        const descriptionPages = [
-            {
-                content: 'game1_description',
-                closeBtn: 'close_button', closeBtnClick: 'close_button_click'
-            }
-        ];
-
-        this.initGame('game1_bg', 'game1_title', descriptionPages);
+  
+        this.initGame('game1_bg', 'game1_title', 'game1_description');
 
     }
 

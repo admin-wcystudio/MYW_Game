@@ -14,12 +14,18 @@ export default class BaseGameScene extends Phaser.Scene {
         this.sceneIndex = -1;
     }
 
-
     /**
      * 1. 遊戲初始化 (在 Scene create 呼叫)
      */
-    initGame(bgKey, titleKey, descriptionPages) {
+    initGame(bgKey, titleKey, descriptionKey) {
         const gender = localStorage.getItem('player') ? JSON.parse(localStorage.getItem('player')).gender : 'M';
+
+        const descriptionPages = [
+            {
+                content: descriptionKey,
+                closeBtn: 'close_button', closeBtnClick: 'close_button_click'
+            }
+        ];
 
         // 建立通用 UI
         this.gameUI = UIHelper.createGameCommonUI(this, bgKey, titleKey, descriptionPages, this.targetRounds);
@@ -53,7 +59,7 @@ export default class BaseGameScene extends Phaser.Scene {
 
         // 建立初始 NPC 泡泡
         let currentBubbleImg = this.add.image(centerX, centerY, npc_bubbles[type])
-            .setDepth(500)
+            .setDepth(300)
             .setScrollFactor(0)
             .setInteractive({ useHandCursor: true });
 
