@@ -41,7 +41,7 @@ export default class BaseGameScene extends Phaser.Scene {
         this.setupGameObjects();
 
         // 載入第一階段泡泡 (NPC 對話)
-        this.loadBubble(0, gender);
+        this.loadBubble('intro', gender);
     }
 
     /**
@@ -53,14 +53,20 @@ export default class BaseGameScene extends Phaser.Scene {
         const centerY = 900;
 
         // 優先使用傳入的 sceneIndex，若無則抓取 Scene Key 前綴
-        const prefix = this.sceneIndex !== -1 ? `game${this.sceneIndex}` : this.scene.key.toLowerCase().split('scene')[0];
-
+        const prefix = this.sceneIndex !== -1 ? `game${this.sceneIndex}` : 'game1';
         // 定義資源名稱
-        const npc_bubbles = [`${prefix}_npc_box1`, `${prefix}_npc_box2`, `${prefix}_npc_box3`];
+        const bubbleMapping = {
+            'intro': `${prefix}_npc_box_intro`,
+            'win': `${prefix}_npc_box_win`,
+            'tryagain': `${prefix}_npc_box_tryagain`
+        };
+        const targetKey = bubbleMapping[type];
+        console.log('Loading bubble :', targetKey);
+
         const player_bubbles = [`${prefix}_npc_box4`, `${prefix}_npc_box5`];
 
         // 建立初始 NPC 泡泡
-        let currentBubbleImg = this.add.image(centerX, centerY, npc_bubbles[type])
+        let currentBubbleImg = this.add.image(centerX, centerY, targetKey)
             .setDepth(300)
             .setScrollFactor(0)
             .setInteractive({ useHandCursor: true });
@@ -73,7 +79,7 @@ export default class BaseGameScene extends Phaser.Scene {
             ease: 'Back.easeOut'
         });
 
-        if (type === 0) {
+        if (type === 'intro') {
             // 狀態 0: 初始化對話 (NPC -> [Player] -> Start)
             currentBubbleImg.on('pointerdown', () => {
                 // 檢查是否提供了性別，且對應的玩家泡泡圖片資源確實存在於 Cache 中
@@ -94,14 +100,14 @@ export default class BaseGameScene extends Phaser.Scene {
                     this.startGame();
                 }
             });
-        } else if (type === 1) {
+        } else if (type === 'win') {
             // 狀態 1: 回合成功 (Next Round / Win)
             currentBubbleImg.once('pointerdown', () => {
                 if (this.successVideo) this.successVideo.destroy();
                 currentBubbleImg.destroy();
                 this.handleWinAfterBubble();
             });
-        } else if (type === 2) {
+        } else if (type === 'tryagain') {
             // 狀態 2: 失敗 (Fail Panel)
             currentBubbleImg.once('pointerdown', () => {
                 currentBubbleImg.destroy();
@@ -132,7 +138,7 @@ export default class BaseGameScene extends Phaser.Scene {
         this.playSuccessFeedback();
 
         this.time.delayedCall(500, () => {
-            this.loadBubble(1);
+            this.loadBubble('win');
         });
     }
 
@@ -159,7 +165,7 @@ export default class BaseGameScene extends Phaser.Scene {
         if (this.gameTimer) this.gameTimer.stop();
         this.enableGameInteraction(false);
         this.updateRoundUI(false);
-        this.loadBubble(2); // 彈出 Try Again 泡泡
+        this.loadBubble('tryagain'); // 彈出 Try Again 泡泡
     }
 
     updateRoundUI(isSuccess) {
@@ -192,6 +198,7 @@ export default class BaseGameScene extends Phaser.Scene {
 
     // 增加一個重置函數
     resetWholeGame() {
+        console.log('重置整個遊戲');
         this.roundIndex = 0;
         this.gameTimer.reset(this.roundPerSeconds);
         // 重置所有 UI 圓圈

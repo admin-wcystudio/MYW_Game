@@ -22,9 +22,11 @@ export class GameScene_1 extends BaseGameScene {
         this.load.image('game1_object_description', `${path}game1_object_description.png`);
 
         // NPC 泡泡
-        for (let i = 1; i <= 5; i++) {
-            this.load.image(`game1_npc_box${i}`, `${path}game1_npc_box${i}.png`);
-        }
+        this.load.image('game1_npc_box_intro', `${path}game1_npc_box1.png`);
+        this.load.image('game1_npc_box_win', `${path}game1_npc_box2.png`);
+        this.load.image('game1_npc_box_tryagain', `${path}game1_npc_box3.png`);
+        this.load.image('game1_npc_box4', `${path}game1_npc_box4.png`);
+        this.load.image('game1_npc_box5', `${path}game1_npc_box5.png`);
 
         // 拼圖物件
         for (let i = 1; i <= 6; i++) {
@@ -36,7 +38,7 @@ export class GameScene_1 extends BaseGameScene {
 
     create() {
 
-  
+
         this.initGame('game1_bg', 'game1_title', 'game1_description');
 
     }
