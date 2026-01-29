@@ -8,6 +8,7 @@ import BaseGameScene from './BaseGameScene.js';
 export class GameScene_2 extends BaseGameScene {
     constructor() {
         super('GameScene_2');
+        this.depth = 10;
         this.roundPerSeconds = 60;
         this.targetRounds = 3; // 設定這款遊戲需要跑 3 回合
         this.sceneIndex = 2;

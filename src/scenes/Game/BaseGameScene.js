@@ -7,6 +7,7 @@ export default class BaseGameScene extends Phaser.Scene {
     constructor(key) {
         super(key);
         // 預設參數
+        this.depth = 10;
         this.roundPerSeconds = 35;
         this.targetRounds = 3;
         this.roundIndex = 0;
@@ -17,7 +18,7 @@ export default class BaseGameScene extends Phaser.Scene {
     /**
      * 1. 遊戲初始化 (在 Scene create 呼叫)
      */
-    initGame(bgKey, titleKey, descriptionKey) {
+    initGame(bgKey, titleKey, descriptionKey, depth = 10) {
         const gender = localStorage.getItem('player') ? JSON.parse(localStorage.getItem('player')).gender : 'M';
 
         const descriptionPages = [
@@ -28,7 +29,8 @@ export default class BaseGameScene extends Phaser.Scene {
         ];
 
         // 建立通用 UI
-        this.gameUI = UIHelper.createGameCommonUI(this, bgKey, titleKey, descriptionPages, this.targetRounds);
+        this.gameUI = UIHelper.createGameCommonUI(this, bgKey, titleKey,
+            descriptionPages, this.targetRounds, this.depth);
 
         // 建立計時器 (初始不啟動)
         this.gameTimer = UIHelper.showTimer(this, this.roundPerSeconds, false, () => {

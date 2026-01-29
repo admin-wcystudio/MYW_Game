@@ -102,7 +102,7 @@ export default class UIHelper {
             // 由右向左生成物件
             const icon = scene.add.image(startX - (i * spacing), 225, 'game_gamechance')
                 .setScale(0.9)
-                .setDepth(60);
+                .setDepth(555);
 
             roundStates.push({
                 round: i + 1,
@@ -137,7 +137,7 @@ export default class UIHelper {
                 settingPanel.setVisible(false);
             }).setScrollFactor(0);
 
-        settingBtn.setDepth(depth + 20); // Buttons above panels
+        settingBtn.setDepth(999); // Buttons above panels
         allButtons.push(settingBtn);
 
         const descBtn = new CustomButton(scene, 250, 100, 'desc_button', 'desc_button_click',
@@ -147,7 +147,7 @@ export default class UIHelper {
                 descriptionPanel.setVisible(false);
             }).setScrollFactor(0);
 
-        descBtn.setDepth(depth + 20);
+        descBtn.setDepth(999);
         allButtons.push(descBtn);
 
         const itemBtn = new CustomButton(scene, 400, 100, 'gameintro_bag', 'gameintro_bag_click',
@@ -156,7 +156,7 @@ export default class UIHelper {
             }, () => {
                 itemPanel.setVisible(false);
             }).setScrollFactor(0);
-        itemBtn.setDepth(depth + 20);
+        itemBtn.setDepth(999);
         allButtons.push(itemBtn);
 
         settingBtn.needClicked = true;
@@ -271,8 +271,8 @@ export default class UIHelper {
         scene.time.delayedCall(2000, () => toast.destroy());
     }
 
-    static showTimer(scene, seconds, isStartNow = false, onComplete) {
-        const timerBg = scene.add.image(1640, 80, 'game_timer_bg').setDepth(100).setScrollFactor(0);
+    static showTimer(scene, seconds, isStartNow = false, onComplete, depth = 11) {
+        const timerBg = scene.add.image(1640, 80, 'game_timer_bg').setDepth(999).setScrollFactor(0);
 
         // 使用 state 物件管理，確保外部 reset 可以改動數值
         const state = {
@@ -288,7 +288,7 @@ export default class UIHelper {
 
         const timerText = scene.add.text(1640, 80, formatTime(state.timeLeft), {
             fontSize: '60px', color: '#ffffff', fontStyle: 'bold'
-        }).setOrigin(0.5).setDepth(101).setScrollFactor(0);
+        }).setOrigin(0.5).setDepth(999).setScrollFactor(0);
 
         const timerController = {
             start: () => { state.isRunning = true; },

@@ -201,6 +201,7 @@ export class BootScene extends Phaser.Scene {
         this.load.image('itempage_item5_select', path2 + 'itempage_item5_select.png');
         this.load.image('itempage_item5', path2 + 'itempage_item5.png');
         this.load.image('panel_bg', path2 + 'itempage_panel_bg.png');
+
     }
 
     create() {
