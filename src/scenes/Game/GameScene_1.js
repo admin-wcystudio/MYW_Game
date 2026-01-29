@@ -7,8 +7,8 @@ import BaseGameScene from './BaseGameScene.js';
 export class GameScene_1 extends BaseGameScene {
     constructor() {
         super('GameScene_1');
-        this.roundPerSeconds = 5;
-        this.targetRounds = 3; // 設定這款遊戲需要跑 3 回合
+        this.roundPerSeconds = 50;
+        this.targetRounds = 2; // 設定這款遊戲需要跑 3 回合
         this.sceneIndex = 1;
     }
 
@@ -47,8 +47,6 @@ export class GameScene_1 extends BaseGameScene {
         this.initGame('game1_bg', 'game1_title', descriptionPages);
 
     }
-
-    // --- 實作 BaseGameScene 要求的方法 ---
 
     /**
      * 初始化拼圖物件
@@ -108,28 +106,6 @@ export class GameScene_1 extends BaseGameScene {
         });
     }
 
-    /**
-     * 播放過場影片
-     */
-    playSuccessFeedback() {
-        this.puzzleGroup.setVisible(false);
-        this.successVideo = this.add.video(960, 440, 'game1_success_preview').setDepth(200).setScrollFactor(0);
-        this.successVideo.play();
-    }
-
-    /**
-     * 最終獲勝面板
-     */
-    showWin() {
-        this.puzzleGroup.setVisible(false);
-        this.loadBubble(1, null, 1); // 顯示 Win Bubble
-
-        this.time.delayedCall(1000, () => {
-            const objectPanel = new CustomSinglePanel(this, 960, 600, 'game1_object_description');
-            objectPanel.setDepth(201).setVisible(true);
-            objectPanel.setCloseCallBack(() => GameManager.backToMainStreet(this));
-        });
-    }
 
     // --- 拼圖專用邏輯 (保持不變) ---
 
@@ -152,13 +128,6 @@ export class GameScene_1 extends BaseGameScene {
         }
     }
 
-    checkAllDone() {
-        const allCorrect = this.puzzleGroup.getChildren().every(p => p.getData('isCorrect'));
-        if (allCorrect) {
-            this.handleResult(true); // 呼叫父類別處理成功流程
-        }
-    }
-
     randomPuzzlePosition(puzzles) {
         const centerX = this.cameras.main.width / 2;
         const centerY = this.cameras.main.height / 2;
@@ -169,6 +138,37 @@ export class GameScene_1 extends BaseGameScene {
             puzzle.setAngle(Phaser.Utils.Array.GetRandom(allowedRotations));
         });
     }
+
+    checkAllDone() {
+        const allCorrect = this.puzzleGroup.getChildren().every(p => p.getData('isCorrect'));
+        if (allCorrect) {
+            this.handleWinBeforeBubble();
+        }
+    }
+
+
+    /**
+     * 播放過場影片
+     */
+    playSuccessFeedback() {
+        this.puzzleGroup.setVisible(false);
+        this.successVideo = this.add.video(960, 440, 'game1_success_preview').setDepth(200).setScrollFactor(0);
+        this.successVideo.play();
+    }
+
+    /**
+     * 最終獲勝面板
+     */
+    showWin() {
+        this.puzzleGroup.setVisible(false);
+
+        this.time.delayedCall(1000, () => {
+            const objectPanel = new CustomSinglePanel(this, 960, 600, 'game1_object_description');
+            objectPanel.setDepth(201).setVisible(true);
+            objectPanel.setCloseCallBack(() => GameManager.backToMainStreet(this));
+        });
+    }
+
     /**
      * 重置每一局的拼圖狀態
      */

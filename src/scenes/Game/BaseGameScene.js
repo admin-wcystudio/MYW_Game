@@ -22,7 +22,7 @@ export default class BaseGameScene extends Phaser.Scene {
         const gender = localStorage.getItem('player') ? JSON.parse(localStorage.getItem('player')).gender : 'M';
 
         // 建立通用 UI
-        this.gameUI = UIHelper.createGameCommonUI(this, bgKey, titleKey, descriptionPages);
+        this.gameUI = UIHelper.createGameCommonUI(this, bgKey, titleKey, descriptionPages, this.targetRounds);
 
         // 建立計時器 (初始不啟動)
         this.gameTimer = UIHelper.showTimer(this, this.roundPerSeconds, false, () => {
@@ -91,7 +91,7 @@ export default class BaseGameScene extends Phaser.Scene {
             currentBubbleImg.once('pointerdown', () => {
                 if (this.successVideo) this.successVideo.destroy();
                 currentBubbleImg.destroy();
-                this.nextRound();
+                this.handleWinAfterBubble();
             });
         } else if (type === 2) {
             // 狀態 2: 失敗 (Fail Panel)
@@ -107,39 +107,37 @@ export default class BaseGameScene extends Phaser.Scene {
     startGame() {
         console.log('startGame in BaseGameScene');
         this.isGameActive = true;
-        
+
         if (this.gameTimer) this.gameTimer.start();
         this.enableGameInteraction(true);
         console.log(`第 ${this.roundIndex + 1} 局啟動`);
     }
 
-    handleResult(isCorrect, sceneIndex = -1) {
-        console.log('handleResult in BaseGameScene');
+    handleWinBeforeBubble() {
         if (!this.isGameActive) return;
 
-        if (isCorrect) {
-            this.isGameActive = false;
-            if (this.gameTimer) this.gameTimer.stop();
-            this.updateRoundUI(true);
+        if (this.gameTimer) this.gameTimer.stop();
+        this.enableGameInteraction(false);
 
-            if (this.roundIndex < this.targetRounds - 1) {
-                // 中場成功影片與泡泡
-                this.playSuccessFeedback();
-                this.loadBubble(1);
-            } else {
-                this.showWin();
-            }
-        } else {
-            this.handleTimeUp();
-        }
+        this.updateRoundUI(true);
+        this.gameTimer.reset(this.roundPerSeconds);
+        this.playSuccessFeedback();
+
+        this.time.delayedCall(500, () => {
+            this.loadBubble(1);
+        });
     }
 
-    updateRoundUI(isSuccess) {
-        if (this.gameUI?.roundStates[this.roundIndex]) {
-            const state = this.gameUI.roundStates[this.roundIndex];
-            state.content.setTexture(isSuccess ? 'game_success' : 'game_fail');
-            state.isSuccess = isSuccess;
+    handleWinAfterBubble() {
+        if (!this.isGameActive) return;
+
+        if (this.roundIndex + 1 >= this.targetRounds) {
+            this.showWin();
+            this.isGameActive = false;
+        } else {
+            this.nextRound();
         }
+
     }
 
     nextRound() {
@@ -154,6 +152,14 @@ export default class BaseGameScene extends Phaser.Scene {
         this.enableGameInteraction(false);
         this.updateRoundUI(false);
         this.loadBubble(2); // 彈出 Try Again 泡泡
+    }
+
+    updateRoundUI(isSuccess) {
+        if (this.gameUI?.roundStates[this.roundIndex]) {
+            const state = this.gameUI.roundStates[this.roundIndex];
+            state.content.setTexture(isSuccess ? 'game_success' : 'game_fail');
+            state.isSuccess = isSuccess;
+        }
     }
 
     /**

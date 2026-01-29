@@ -86,25 +86,30 @@ export default class UIHelper {
     }
 
 
-    static createGameCommonUI(scene, bgKey, titleKey, descriptionPages, depth = 10) {
+    static createGameCommonUI(scene, bgKey, titleKey, descriptionPages, targetRounds = 3, depth = 10) {
 
         const width = scene.cameras.main.width;
         const height = scene.cameras.main.height;
+
         scene.add.image(width / 2, height / 2, bgKey).setDepth(1);
         scene.add.image(width / 2, 80, titleKey).setDepth(3);
 
-        const roundStates = [
-            { round: 1, content: 'game_gamechance', isSuccess: false },
-            { round: 2, content: 'game_gamechance', isSuccess: false },
-            { round: 3, content: 'game_gamechance', isSuccess: false }
-        ];
-        let space = 145;
-        roundStates.forEach(data => {
-            data.content = scene.add.image(1900 - space, 225, data.content)
+        const roundStates = [];
+        const startX = 1755; // 起始位置 (最右邊圓圈的 X 座標)
+        const spacing = 145; // 圓圈之間的間距
+
+        for (let i = 0; i < targetRounds; i++) {
+            // 由右向左生成物件
+            const icon = scene.add.image(startX - (i * spacing), 225, 'game_gamechance')
                 .setScale(0.9)
                 .setDepth(60);
-            space += 145;
-        })
+
+            roundStates.push({
+                round: i + 1,
+                content: icon, // 存入 Image 物件以便後續 setTexture
+                isSuccess: false
+            });
+        }
 
         // Panels
         const settingPanel = new SettingPanel(scene, 960, 540).setScrollFactor(0);
