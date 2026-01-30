@@ -37,7 +37,6 @@ export class GameScene_3 extends BaseGameScene {
         this.initGame('game3_bg', 'game3_title', 'game3_description');
 
         this.add.image(960, 540, 'game3_card_bg').setDepth(this.depth - 1);
-        // this.add.image(1800, 200, 'game3_card1').setDepth(this.depth - 1);
     }
 
     /**
@@ -50,20 +49,20 @@ export class GameScene_3 extends BaseGameScene {
 
         // Set 6 fixed card spawn positions
         const cardPositions = [
-            { x: centerX - 300, y: centerY - 200 },
-            { x: centerX, y: centerY - 200 },
-            { x: centerX + 300, y: centerY - 200 },
-            { x: centerX - 300, y: centerY + 200 },
-            { x: centerX, y: centerY + 200 },
-            { x: centerX + 300, y: centerY + 200 }
+            { x: centerX - 330, y: centerY - 300 },
+            { x: centerX, y: centerY - 220 },
+            { x: centerX + 300, y: centerY - 250 },
+            { x: centerX - 350, y: centerY + 250 },
+            { x: centerX - 20, y: centerY + 220 },
+            { x: centerX + 350, y: centerY + 300 }
         ];
         const defaultCards = [
-            { content: 'game3_card1', targetX: centerX - 600, targetY: centerY },
-            { content: 'game3_card2', targetX: centerX - 360, targetY: centerY },
+            { content: 'game3_card1', targetX: centerX - 530, targetY: centerY },
+            { content: 'game3_card2', targetX: centerX - 325, targetY: centerY },
             { content: 'game3_card3', targetX: centerX - 120, targetY: centerY },
-            { content: 'game3_card4', targetX: centerX + 120, targetY: centerY },
-            { content: 'game3_card5', targetX: centerX + 360, targetY: centerY },
-            { content: 'game3_card6', targetX: centerX + 600, targetY: centerY }
+            { content: 'game3_card4', targetX: centerX + 85, targetY: centerY },
+            { content: 'game3_card5', targetX: centerX + 290, targetY: centerY },
+            { content: 'game3_card6', targetX: centerX + 495, targetY: centerY }
         ];
 
         this.cardGroup = this.add.group();
@@ -97,22 +96,8 @@ export class GameScene_3 extends BaseGameScene {
         confirm_button.setDepth(100);
 
         //==== Debug Graphics ===========================================================
-        const debugGraphics = this.add.graphics().setDepth(2); // 擺喺背景上面，物件下面
+        const debugGraphics = this.add.graphics().setDepth(this.depth + 2); // 擺喺背景上面，物件下面
         debugGraphics.lineStyle(4, 0xff0000, 1); // 紅色線，粗度 2
-
-        defaultCards.forEach(data => {
-            const rectSize = 150;
-            const startX = data.targetX - rectSize / 2;
-            const startY = data.targetY - rectSize / 2;
-            // 畫出目標區域矩形
-            debugGraphics.strokeRect(startX, startY, rectSize, rectSize);
-
-            // 喺方框旁邊寫低係邊塊 Puzzle，方便對號入座
-            this.add.text(startX, startY, data.content, {
-                fontSize: '16px',
-                fill: '#ff0000'
-            }).setDepth(1);
-        });
 
         const tolerance = 40; // 同你 checkSnap 裡面個數值一樣
         defaultCards.forEach(data => {
