@@ -172,7 +172,7 @@ export class BootScene extends Phaser.Scene {
         this.load.image('game_timer_bg', `${path}game1_timer.png`);
 
         this.load.image('game_confirm_button', 'assets/Game_3/game3_confirm_button.png');
-        this.load.image('gameconfirm_button_select', 'assets/Game_3/game3_confirm_button_select.png');
+        this.load.image('game_confirm_button_select', 'assets/Game_3/game3_confirm_button_select.png');
 
 
         const path2 = 'assets/Items/';
@@ -219,7 +219,7 @@ export class BootScene extends Phaser.Scene {
 
             this.registry.set('globalSettings', settings);
         }
-        this.scene.start('GameScene_2');
+        this.scene.start('GameScene_3');
     }
 
 }

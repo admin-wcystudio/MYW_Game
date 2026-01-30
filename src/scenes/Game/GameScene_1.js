@@ -8,7 +8,7 @@ export class GameScene_1 extends BaseGameScene {
     constructor() {
         super('GameScene_1');
         this.roundPerSeconds = 50;
-        this.targetRounds = 2; // 設定這款遊戲需要跑 3 回合
+        this.targetRounds = 2;
         this.sceneIndex = 1;
     }
 
@@ -37,8 +37,6 @@ export class GameScene_1 extends BaseGameScene {
     }
 
     create() {
-
-
         this.initGame('game1_bg', 'game1_title', 'game1_description');
 
     }
@@ -61,7 +59,7 @@ export class GameScene_1 extends BaseGameScene {
             { content: 'game1_puzzle6', targetX: centerX + 100, targetY: 660 }
         ];
 
-        this.puzzleGroup = this.add.group();
+        this.puzzleoGrup = this.add.group();
 
         defaultPuzzles.forEach(data => {
             const piece = this.add.image(0, 0, data.content).setDepth(50);
