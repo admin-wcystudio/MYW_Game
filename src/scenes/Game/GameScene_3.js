@@ -1,12 +1,12 @@
 import { CustomButton } from '../../UI/Button.js';
-import { CustomPanel, SettingPanel } from '../../UI/Panel.js';
+import { CustomPanel, SettingPanel, CustomSinglePanel } from '../../UI/Panel.js';
 import UIHelper from '../../UI/UIHelper.js';
 import BaseGameScene from './BaseGameScene.js';
 
 export class GameScene_3 extends BaseGameScene {
     constructor() {
         super('GameScene_3');
-        this.roundPerSeconds = 30;
+        this.roundPerSeconds = 500;
         this.targetRounds = 1;
         this.sceneIndex = 3;
     }
@@ -48,28 +48,28 @@ export class GameScene_3 extends BaseGameScene {
         const centerY = this.cameras.main.height / 2;
 
         // Set 6 fixed card spawn positions
-        const cardPositions = [
-            { x: centerX - 330, y: centerY - 300 },
-            { x: centerX, y: centerY - 220 },
-            { x: centerX + 300, y: centerY - 250 },
-            { x: centerX - 350, y: centerY + 250 },
-            { x: centerX - 20, y: centerY + 220 },
-            { x: centerX + 350, y: centerY + 300 }
+        this.spawnCardPositions = [
+            { x: centerX - 330, y: centerY - 300, },
+            { x: centerX, y: centerY - 220, },
+            { x: centerX + 300, y: centerY - 250, },
+            { x: centerX - 350, y: centerY + 250, },
+            { x: centerX - 20, y: centerY + 220, },
+            { x: centerX + 350, y: centerY + 300, }
         ];
-        const defaultCards = [
-            { content: 'game3_card1', targetX: centerX - 530, targetY: centerY },
-            { content: 'game3_card2', targetX: centerX - 325, targetY: centerY },
-            { content: 'game3_card3', targetX: centerX - 120, targetY: centerY },
-            { content: 'game3_card4', targetX: centerX + 85, targetY: centerY },
-            { content: 'game3_card5', targetX: centerX + 290, targetY: centerY },
-            { content: 'game3_card6', targetX: centerX + 495, targetY: centerY }
+        this.defaultCards = [
+            { id: 1, content: 'game3_card1', targetX: centerX - 530, targetY: centerY, occupiedBy: null },
+            { id: 2, content: 'game3_card2', targetX: centerX - 325, targetY: centerY, occupiedBy: null },
+            { id: 3, content: 'game3_card3', targetX: centerX - 120, targetY: centerY, occupiedBy: null },
+            { id: 4, content: 'game3_card4', targetX: centerX + 85, targetY: centerY, occupiedBy: null },
+            { id: 5, content: 'game3_card5', targetX: centerX + 290, targetY: centerY, occupiedBy: null },
+            { id: 6, content: 'game3_card6', targetX: centerX + 495, targetY: centerY, occupiedBy: null }
         ];
 
         this.cardGroup = this.add.group();
 
-        defaultCards.forEach((cardInfo, i) => {
+        this.defaultCards.forEach((cardInfo, i) => {
             // Spawn each card at its fixed spawn position
-            const spawnPos = cardPositions[i];
+            const spawnPos = this.spawnCardPositions[i];
             const card = this.add.image(spawnPos.x, spawnPos.y, cardInfo.content);
             card.setData({ targetX: cardInfo.targetX, targetY: cardInfo.targetY, isCorrect: false });
             card.on('pointerdown', () => {
@@ -86,24 +86,27 @@ export class GameScene_3 extends BaseGameScene {
 
         this.input.on('dragend', (pointer, gameObject) => {
             gameObject.setDepth(50);
+            // Log the texture key (name) of the gameObject
             this.checkSnap(gameObject);
         });
 
         const confirm_button = new CustomButton(this, centerX + 800, centerY + 400,
             'game_confirm_button', 'game_confirm_button_select',
-            () => { });
+            () => {
+                this.checkAllDone();
+            });
 
         confirm_button.setDepth(100);
 
-        //==== Debug Graphics ===========================================================
-        const debugGraphics = this.add.graphics().setDepth(this.depth + 2); // 擺喺背景上面，物件下面
-        debugGraphics.lineStyle(4, 0xff0000, 1); // 紅色線，粗度 2
+        // //==== Debug Graphics ===========================================================
+        // const debugGraphics = this.add.graphics().setDepth(this.depth + 2); // 擺喺背景上面，物件下面
+        // debugGraphics.lineStyle(4, 0xff0000, 1); // 紅色線，粗度 2
 
-        const tolerance = 40; // 同你 checkSnap 裡面個數值一樣
-        defaultCards.forEach(data => {
-            debugGraphics.lineStyle(3, 0x00ff00, 0.5); // 綠色虛線感
-            debugGraphics.strokeCircle(data.targetX, data.targetY, tolerance);
-        });
+        // const tolerance = 60; // 同你 checkSnap 裡面個數值一樣
+        // this.defaultCards.forEach(data => {
+        //     debugGraphics.lineStyle(3, 0x00ff00, 0.5); // 綠色虛線感
+        //     debugGraphics.strokeCircle(data.targetX, data.targetY, tolerance);
+        // });
     }
 
 
@@ -126,14 +129,30 @@ export class GameScene_3 extends BaseGameScene {
     }
 
     checkSnap(card) {
-        const { targetX, targetY } = card.data.values;
-        const dist = Phaser.Math.Distance.Between(card.x, card.y, targetX, targetY);
-        const isAngleCorrect = (card.angle % 360 === 0);
+        // Find the nearest unoccupied card position within threshold
+        const threshold = 60;
+        let nearest = null;
+        let minDist = Infinity;
+        this.defaultCards.forEach(pos => {
+            if (!pos.occupiedBy) {
+                const d = Phaser.Math.Distance.Between(card.x, card.y, pos.targetX, pos.targetY);
+                if (d < threshold && d < minDist) {
+                    minDist = d;
+                    nearest = pos;
+                    card.setPosition(pos.targetX, pos.targetY);
+                    pos.occupiedBy = card;
+                    card.clearTint();
+                }
+            } else {
+                if (pos.occupiedBy === card) {
+                    pos.occupiedBy = null;
+                    card.clearTint();
+                }
+            }
+            console.log('Target Position -', pos.id, ',current card', pos.occupiedBy ? pos.occupiedBy.texture.key : 'none');
+        });
 
-        if (dist < 40 && isAngleCorrect) {
-            card.setPosition(targetX, targetY).setData('isCorrect', true).disableInteractive().clearTint();
-            this.checkAllDone();
-        }
+        this.checkAllDone();
     }
 
     randomCardPosition(cards) {
@@ -146,7 +165,11 @@ export class GameScene_3 extends BaseGameScene {
     }
 
     checkAllDone() {
-        const allCorrect = this.CardGroup.getChildren().every(p => p.getData('isCorrect'));
+        // All positions must be occupied by a card
+        const allCorrect = this.spawnCardPositions.every(pos => pos.occupiedBy);
+
+
+
         if (allCorrect) {
             this.handleWinBeforeBubble();
         }
@@ -154,7 +177,12 @@ export class GameScene_3 extends BaseGameScene {
 
     showWin() {
         this.cardGroup.setVisible(false);
-        this.time.delayedCall(1000, () => {
+        const addOnImg = this.scene.add.image(0, 0, 'game3_additions')
+            .setInteractive({ useHandCursor: true });
+        this.add(addOnImg);
+        addOnImg.once('pointerdown', () => {
+            addOnImg.destroy();
+            // Show object panel after add-on image is clicked
             const objectPanel = new CustomSinglePanel(this, 960, 600, 'game3_object_description');
             objectPanel.setDepth(201).setVisible(true);
             objectPanel.setCloseCallBack(() => GameManager.backToMainStreet(this));
@@ -163,7 +191,7 @@ export class GameScene_3 extends BaseGameScene {
     resetStageForNextRound() {
         this.cardGroup.setVisible(true);
         this.cardGroup.getChildren().forEach(p => p.setData('isCorrect', false));
-        this.randomPuzzlePosition(this.cardGroup.getChildren());
+        this.randomCardPosition(this.cardGroup.getChildren());
     }
 
 }
