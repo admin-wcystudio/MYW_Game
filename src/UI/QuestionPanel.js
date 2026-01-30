@@ -82,7 +82,7 @@ export class QuestionPanel extends Phaser.GameObjects.Container {
         } else {
             console.log("答錯了 , correct : " + q.answer);
             // 呼叫 BaseGameScene 的失敗流程 (彈出 Try Again 泡泡)
-            this.scene.handleTimeUp();
+            this.scene.handleLose();
         }
     }
 

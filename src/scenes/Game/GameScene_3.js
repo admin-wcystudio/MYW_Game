@@ -94,7 +94,7 @@ export class GameScene_3 extends BaseGameScene {
             'game_confirm_button', 'game_confirm_button_select',
             () => {
                 this.checkAllDone();
-            });
+            }, () => { });
 
         confirm_button.setDepth(100);
 
@@ -118,6 +118,10 @@ export class GameScene_3 extends BaseGameScene {
         this.selectedCard.setTint(0xaaaaaa);
     }
 
+    startGame() {
+        this.enableGameInteraction(true);
+        if (this.gameTimer) this.gameTimer.start();
+    }
     enableGameInteraction(enabled) {
         this.cardGroup.getChildren().forEach(card => {
             if (enabled) {
@@ -151,8 +155,6 @@ export class GameScene_3 extends BaseGameScene {
             }
             console.log('Target Position -', pos.id, ',current card', pos.occupiedBy ? pos.occupiedBy.texture.key : 'none');
         });
-
-        this.checkAllDone();
     }
 
     randomCardPosition(cards) {
@@ -165,13 +167,24 @@ export class GameScene_3 extends BaseGameScene {
     }
 
     checkAllDone() {
-        // All positions must be occupied by a card
-        const allCorrect = this.spawnCardPositions.every(pos => pos.occupiedBy);
-
-
-
+        let allCorrect = false;
+        this.defaultCards.forEach(cardInfo => {
+            if (cardInfo.occupiedBy) {
+                if (cardInfo.content === cardInfo.occupiedBy.texture.key) {
+                    cardInfo.occupiedBy.setData('isCorrect', true);
+                } else {
+                    cardInfo.occupiedBy.setData('isCorrect', false);
+                    allCorrect = false;
+                }
+            } else {
+                allCorrect = false;
+            }
+        });
         if (allCorrect) {
             this.handleWinBeforeBubble();
+        } else {
+            // 呼叫 BaseGameScene 的失敗流程 (彈出 Try Again 泡泡)
+            this.handleLose();
         }
     }
 
@@ -189,7 +202,10 @@ export class GameScene_3 extends BaseGameScene {
         });
     }
     resetStageForNextRound() {
-        this.cardGroup.setVisible(true);
+        if (this.cardGroup) {
+            this.cardGroup.destroy();
+        }
+
         this.cardGroup.getChildren().forEach(p => p.setData('isCorrect', false));
         this.randomCardPosition(this.cardGroup.getChildren());
     }

@@ -34,7 +34,7 @@ export default class BaseGameScene extends Phaser.Scene {
 
         // 建立計時器 (初始不啟動)
         this.gameTimer = UIHelper.showTimer(this, this.roundPerSeconds, false, () => {
-            this.handleTimeUp();
+            this.handleLose();
         });
 
         // 執行子類別的物件初始化
@@ -160,7 +160,7 @@ export default class BaseGameScene extends Phaser.Scene {
         this.startGame();
     }
 
-    handleTimeUp() {
+    handleLose() {
         this.isGameActive = false;
         if (this.gameTimer) this.gameTimer.stop();
         this.enableGameInteraction(false);
