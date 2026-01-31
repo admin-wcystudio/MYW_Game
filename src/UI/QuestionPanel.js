@@ -56,7 +56,7 @@ export class QuestionPanel extends Phaser.GameObjects.Container {
             const y = index < 2 ? 50 : 210;
 
             const btn = new CustomButton(this.scene, x, y, optKey, `${optKey}_select`, () => {
-                this.handleSelect(index);
+                this.selectedAnswer(btn, index);
             }).setScale(0.9);
 
             this.add(btn); // 加入 Container
@@ -65,14 +65,15 @@ export class QuestionPanel extends Phaser.GameObjects.Container {
     }
 
     handleSelect(index) {
+        // Deprecated: use selectedAnswer instead
+        this.selectedAnswer(this.optionButtons[index], index);
+    }
+    selectedAnswer(gameObject, index) {
+        // Clear tint for all buttons
+        this.optionButtons.forEach(btn => btn.clearTint());
+        // Set tint for selected button
+        gameObject.setTint(0xaaaaaa);
         this.selectedAnswerIndex = index;
-        this.optionButtons.forEach((btn, i) => {
-            if (i === index) {
-                btn.setTexture(`${this.questions[this.currentIndex].option[i]}_select`);
-            } else {
-                btn.setTexture(this.questions[this.currentIndex].option[i]);
-            }
-        });
     }
 
     checkAnswer() {

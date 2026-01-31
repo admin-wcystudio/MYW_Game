@@ -123,12 +123,6 @@ export class GameScene_3 extends BaseGameScene {
         this.selectedCard.setTint(0xaaaaaa);
     }
 
-    startGame() {
-        this.isGameActive = true;
-        this.enableGameInteraction(true);
-        if (this.gameTimer) this.gameTimer.start();
-        this.confirm_button.setActive(true);
-    }
     enableGameInteraction(enable) {
         this.cardGroup.getChildren().forEach(card => {
             if (enable) {
@@ -137,6 +131,7 @@ export class GameScene_3 extends BaseGameScene {
                 card.disableInteractive();
             }
         });
+        this.confirm_button.setActive(enable);
     }
 
     checkSnap(card) {
