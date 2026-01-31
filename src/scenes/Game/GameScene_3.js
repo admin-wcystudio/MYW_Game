@@ -2,6 +2,7 @@ import { CustomButton } from '../../UI/Button.js';
 import { CustomPanel, SettingPanel, CustomSinglePanel } from '../../UI/Panel.js';
 import UIHelper from '../../UI/UIHelper.js';
 import BaseGameScene from './BaseGameScene.js';
+import GameManager from '../GameManager.js';
 
 export class GameScene_3 extends BaseGameScene {
     constructor() {
@@ -67,9 +68,10 @@ export class GameScene_3 extends BaseGameScene {
 
         this.cardGroup = this.add.group();
 
+        // Shuffle spawn positions for initial spawn
+        const shuffledPositions = Phaser.Utils.Array.Shuffle([...this.spawnCardPositions]);
         this.defaultCards.forEach((cardInfo, i) => {
-            // Spawn each card at its fixed spawn position
-            const spawnPos = this.spawnCardPositions[i];
+            const spawnPos = shuffledPositions[i % shuffledPositions.length];
             const card = this.add.image(spawnPos.x, spawnPos.y, cardInfo.content);
             card.setData({ targetX: cardInfo.targetX, targetY: cardInfo.targetY, isCorrect: false });
             card.on('pointerdown', () => {
@@ -122,12 +124,12 @@ export class GameScene_3 extends BaseGameScene {
     }
 
     startGame() {
+        this.isGameActive = true;
         this.enableGameInteraction(true);
         if (this.gameTimer) this.gameTimer.start();
         this.confirm_button.setActive(true);
     }
     enableGameInteraction(enable) {
-        this.isGameActive = enable;
         this.cardGroup.getChildren().forEach(card => {
             if (enable) {
                 card.setInteractive({ draggable: true });
@@ -158,7 +160,7 @@ export class GameScene_3 extends BaseGameScene {
                     card.clearTint();
                 }
             }
-            // console.log('Target Position -', pos.id, ',current card', pos.occupiedBy ? pos.occupiedBy.texture.key : 'none');
+            console.log('Target Position -', pos.id, ',current card', pos.occupiedBy ? pos.occupiedBy.texture.key : 'none');
         });
     }
 
@@ -177,30 +179,33 @@ export class GameScene_3 extends BaseGameScene {
             if (cardInfo.occupiedBy) {
                 if (cardInfo.content === cardInfo.occupiedBy.texture.key) {
                     cardInfo.occupiedBy.setData('isCorrect', true);
-                    this.handleWinBeforeBubble();
                 } else {
                     cardInfo.occupiedBy.setData('isCorrect', false);
                     allCorrect = false;
-                    this.handleLose();
                 }
             } else {
-                this.handleLose();
+                allCorrect = false;
             }
         });
 
-
+        if (allCorrect) {
+            this.handleWinBeforeBubble();
+        } else {
+            this.handleLose();
+        }
 
     }
 
     showWin() {
-        console.log('Game 3 Win!');
+        console.log("Game 3 完成!");
         this.cardGroup.setVisible(false);
         this.confirm_button.setVisible(false);
-        const addOnImg = this.scene.add.image(0, 0, 'game3_additions')
-            .setInteractive({ useHandCursor: true });
-        this.add(addOnImg);
-        addOnImg.once('pointerdown', () => {
-            addOnImg.destroy();
+        this.addOnImg = this.add.image(960, 600, 'game3_additions')
+            .setInteractive({ useHandCursor: true }).setDepth(200);
+
+        this.addOnImg.setVisible(true);
+        this.addOnImg.once('pointerdown', () => {
+            this.addOnImg.destroy();
             // Show object panel after add-on image is clicked
             const objectPanel = new CustomSinglePanel(this, 960, 600, 'game3_object_description');
             objectPanel.setDepth(201).setVisible(true);
