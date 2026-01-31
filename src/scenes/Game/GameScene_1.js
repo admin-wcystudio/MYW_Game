@@ -59,10 +59,10 @@ export class GameScene_1 extends BaseGameScene {
             { content: 'game1_puzzle6', targetX: centerX + 100, targetY: 660 }
         ];
 
-        this.puzzleoGrup = this.add.group();
+        this.puzzleGroup = this.add.group();
 
         defaultPuzzles.forEach(data => {
-            const piece = this.add.image(0, 0, data.content).setDepth(50);
+            let piece = this.add.image(0, 0, data.content).setDepth(50);
             piece.setData({ targetX: data.targetX, targetY: data.targetY, isCorrect: false });
             piece.on('pointerdown', () => this.selectPuzzle(piece));
             this.puzzleGroup.add(piece);
@@ -115,7 +115,7 @@ export class GameScene_1 extends BaseGameScene {
         const dist = Phaser.Math.Distance.Between(piece.x, piece.y, targetX, targetY);
         const isAngleCorrect = (piece.angle % 360 === 0);
 
-        if (dist < 40 && isAngleCorrect) {
+        if (dist < 60 && isAngleCorrect) {
             piece.setPosition(targetX, targetY).setData('isCorrect', true).disableInteractive().clearTint();
             this.checkAllDone();
         }
@@ -135,6 +135,7 @@ export class GameScene_1 extends BaseGameScene {
     checkAllDone() {
         const allCorrect = this.puzzleGroup.getChildren().every(p => p.getData('isCorrect'));
         if (allCorrect) {
+            console.log("所有拼圖完成!");
             this.handleWinBeforeBubble();
         }
     }

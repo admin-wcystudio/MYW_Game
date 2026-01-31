@@ -13,6 +13,8 @@ export default class BaseGameScene extends Phaser.Scene {
         this.roundIndex = 0;
         this.isGameActive = false;
         this.sceneIndex = -1;
+        this.gameState = 'init'; // 'init', 'playing', 'roundWin', 'gameWin', 'lose'
+        this.currentBubbleImg = null;
     }
 
     /**
@@ -26,6 +28,7 @@ export default class BaseGameScene extends Phaser.Scene {
      * @param {boolean} skipIntroBubble - if true, skip the first intro bubble and start game immediately
      */
     initGame(bgKey, titleKey, descriptionKey, depth = 10, skipIntroBubble = false) {
+        this.gameState = 'init';
         const gender = localStorage.getItem('player') ? JSON.parse(localStorage.getItem('player')).gender : 'M';
 
         const descriptionPages = [
@@ -50,80 +53,98 @@ export default class BaseGameScene extends Phaser.Scene {
         if (skipIntroBubble) {
             this.startGame();
         } else {
-            // 載入第一階段泡泡 (NPC 對話)
-            this.loadBubble('intro', gender);
+            this.showBubble('intro', gender);
         }
     }
 
     /**
      * 2. 泡泡對話系統 (整合 Init, Success, Fail 狀態)
      */
-    loadBubble(type, gender = null) {
-        console.log('loadBubble in BaseGameScene');
+    /**
+     * Show a bubble (intro, win, tryagain) and handle its logic.
+     * @param {'intro'|'win'|'tryagain'} type
+     * @param {string|null} gender
+     * @param {object} options - { autoCloseMs: number, onClose: function }
+     */
+    showBubble(type, gender = null, options = {}) {
+        if (this.currentBubbleImg) {
+            this.currentBubbleImg.destroy();
+            this.currentBubbleImg = null;
+        }
         const centerX = this.cameras.main.width / 2;
-        const centerY = 900;
-
-        // 優先使用傳入的 sceneIndex，若無則抓取 Scene Key 前綴
+        // Adaptive Y: 20% from bottom for win/tryagain, 80% for intro
+        const centerY = (type === 'intro') ? this.cameras.main.height * 0.8 : this.cameras.main.height * 0.8;
         const prefix = this.sceneIndex !== -1 ? `game${this.sceneIndex}` : 'game1';
-        // 定義資源名稱
         const bubbleMapping = {
             'intro': `${prefix}_npc_box_intro`,
             'win': `${prefix}_npc_box_win`,
+            'gameWin': `${prefix}_npc_box_win`, // fallback to win bubble, can customize if needed
             'tryagain': `${prefix}_npc_box_tryagain`
         };
         const targetKey = bubbleMapping[type];
-        console.log('Loading bubble :', targetKey);
-
         const player_bubbles = [`${prefix}_npc_box4`, `${prefix}_npc_box5`];
-
-        // 建立初始 NPC 泡泡
-        let currentBubbleImg = this.add.image(centerX, centerY, targetKey)
+        this.currentBubbleImg = this.add.image(centerX, centerY, targetKey)
             .setDepth(300)
             .setScrollFactor(0)
             .setInteractive({ useHandCursor: true });
-
-        // 泡泡彈出效果
         this.tweens.add({
-            targets: currentBubbleImg,
+            targets: this.currentBubbleImg,
             scale: { from: 0.5, to: 1 },
             duration: 200,
             ease: 'Back.easeOut'
         });
-
+        let closed = false;
+        const closeBubble = () => {
+            if (closed) return;
+            closed = true;
+            if (this.currentBubbleImg) {
+                this.currentBubbleImg.destroy();
+                this.currentBubbleImg = null;
+            }
+            if (options.onClose) options.onClose();
+        };
         if (type === 'intro') {
-            // 狀態 0: 初始化對話 (NPC -> [Player] -> Start)
-            currentBubbleImg.on('pointerdown', () => {
-                // 檢查是否提供了性別，且對應的玩家泡泡圖片資源確實存在於 Cache 中
+            this.currentBubbleImg.on('pointerdown', () => {
                 const hasGenderAssets = this.textures.exists(player_bubbles[0]);
-
                 if (gender && hasGenderAssets) {
                     const playerKey = (gender === 'M') ? player_bubbles[0] : player_bubbles[1];
-                    currentBubbleImg.setTexture(playerKey);
-
-                    // 更換 Texture 後，下一次點擊才啟動遊戲
-                    currentBubbleImg.off('pointerdown').once('pointerdown', () => {
-                        currentBubbleImg.destroy();
+                    this.currentBubbleImg.setTexture(playerKey);
+                    this.currentBubbleImg.off('pointerdown').once('pointerdown', () => {
+                        closeBubble();
                         this.startGame();
                     });
                 } else {
-                    // 若無性別需求或資源缺失，直接進入遊戲
-                    currentBubbleImg.destroy();
+                    closeBubble();
                     this.startGame();
                 }
             });
         } else if (type === 'win') {
-            // 狀態 1: 回合成功 (Next Round / Win)
-            currentBubbleImg.once('pointerdown', () => {
+            this.currentBubbleImg.once('pointerdown', () => {
                 if (this.successVideo) this.successVideo.destroy();
-                currentBubbleImg.destroy();
+                closeBubble();
                 this.handleWinAfterBubble();
             });
+            if (options.autoCloseMs) {
+                this.time.delayedCall(options.autoCloseMs, () => {
+                    if (!closed) {
+                        closeBubble();
+                        this.handleWinAfterBubble();
+                    }
+                });
+            }
         } else if (type === 'tryagain') {
-            // 狀態 2: 失敗 (Fail Panel)
-            currentBubbleImg.once('pointerdown', () => {
-                currentBubbleImg.destroy();
+            this.currentBubbleImg.once('pointerdown', () => {
+                closeBubble();
                 this.showFailPanel();
             });
+            if (options.autoCloseMs) {
+                this.time.delayedCall(options.autoCloseMs, () => {
+                    if (!closed) {
+                        closeBubble();
+                        this.showFailPanel();
+                    }
+                });
+            }
         }
     }
     /**
@@ -138,45 +159,51 @@ export default class BaseGameScene extends Phaser.Scene {
         console.log(`第 ${this.roundIndex + 1} 局啟動`);
     }
 
+    //handlebefore -> showbubble -> handleafter
     handleWinBeforeBubble() {
-        if (!this.isGameActive) return;
-
+        if (!this.isGameActive || this.gameState === 'gameWin') return;
+        // Determine if this is the last round
+        const isGameWin = (this.roundIndex + 1 >= this.targetRounds);
+        this.gameState = isGameWin ? 'gameWin' : 'roundWin';
+        console.log('遊戲狀態改為:', this.gameState);
         if (this.gameTimer) this.gameTimer.stop();
         this.enableGameInteraction(false);
-
         this.updateRoundUI(true);
         this.gameTimer.reset(this.roundPerSeconds);
         this.playSuccessFeedback();
 
         this.time.delayedCall(500, () => {
-            this.loadBubble('win');
+            this.showBubble('win');
         });
     }
 
     handleWinAfterBubble() {
         if (!this.isGameActive) return;
-
-        if (this.roundIndex + 1 >= this.targetRounds) {
+        if (this.gameState === 'gameWin') {
             this.showWin();
             this.isGameActive = false;
-        } else {
+            this.gameState = 'completed';
+            if (typeof this.onGameWin === 'function') this.onGameWin();
+        } else if (this.gameState === 'roundWin') {
             this.nextRound();
         }
-
     }
 
     nextRound() {
+        console.log('進入下一局');
         this.roundIndex++;
         this.resetForNewRound();
         this.startGame();
     }
 
     handleLose() {
+        if (this.gameState === 'lose') return;
         this.isGameActive = false;
+        this.gameState = 'lose';
         if (this.gameTimer) this.gameTimer.stop();
         this.enableGameInteraction(false);
         this.updateRoundUI(false);
-        this.loadBubble('tryagain'); // 彈出 Try Again 泡泡
+        this.showBubble('tryagain');
     }
 
     updateRoundUI(isSuccess) {
@@ -211,18 +238,24 @@ export default class BaseGameScene extends Phaser.Scene {
     resetWholeGame() {
         console.log('重置整個遊戲');
         this.roundIndex = 0;
+        this.gameState = 'init';
+        this.isGameActive = false;
         this.gameTimer.reset(this.roundPerSeconds);
-        // 重置所有 UI 圓圈
+        this.resetGameUI();
+        this.resetForNewRound();
+        this.startGame();
+    }
+
+    /**
+     * Reset all round UI states to initial
+     */
+    resetGameUI() {
         if (this.gameUI && this.gameUI.roundStates) {
             this.gameUI.roundStates.forEach(data => {
                 data.content.setTexture('game_gamechance');
                 data.isSuccess = false;
             });
         }
-        //reset game assets
-        this.resetForNewRound();
-        this.startGame();
-
     }
 
 }
