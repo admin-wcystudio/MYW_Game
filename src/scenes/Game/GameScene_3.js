@@ -93,10 +93,9 @@ export class GameScene_3 extends BaseGameScene {
         this.confirm_button = new CustomButton(this, centerX + 800, centerY + 400,
             'game_confirm_button', 'game_confirm_button_select',
             () => {
-                // Only allow checkAllDone to be called once per round
-                if (!this.confirm_button.input || !this.confirm_button.input.enabled) return;
-                this.confirm_button.setActive(false);
+                if (this.isChecked) return;
                 this.checkAllDone();
+                this.isChecked = true;
             }, () => { });
         this.confirm_button.setActive(false);
 
@@ -127,9 +126,10 @@ export class GameScene_3 extends BaseGameScene {
         if (this.gameTimer) this.gameTimer.start();
         this.confirm_button.setActive(true);
     }
-    enableGameInteraction(enabled) {
+    enableGameInteraction(enable) {
+        this.isGameActive = enable;
         this.cardGroup.getChildren().forEach(card => {
-            if (enabled) {
+            if (enable) {
                 card.setInteractive({ draggable: true });
             } else {
                 card.disableInteractive();
@@ -158,25 +158,16 @@ export class GameScene_3 extends BaseGameScene {
                     card.clearTint();
                 }
             }
-            console.log('Target Position -', pos.id, ',current card', pos.occupiedBy ? pos.occupiedBy.texture.key : 'none');
+            // console.log('Target Position -', pos.id, ',current card', pos.occupiedBy ? pos.occupiedBy.texture.key : 'none');
         });
     }
 
     randomCardPosition(cards) {
-        const centerX = this.cameras.main.width / 2;
-        const centerY = this.cameras.main.height / 2;
-        const bgX = 960;
-        const bgY = 540;
-        const minDistance = 200; // Minimum distance from background center
-
-        cards.forEach(card => {
-            let x, y, tries = 0;
-            do {
-                x = centerX + Phaser.Math.Between(-600, 600);
-                y = centerY + Phaser.Math.Between(-300, 500);
-                tries++;
-            } while (Phaser.Math.Distance.Between(x, y, bgX, bgY) < minDistance && tries < 20);
-            card.setPosition(x, y);
+        // Shuffle spawn positions
+        const shuffledPositions = Phaser.Utils.Array.Shuffle([...this.spawnCardPositions]);
+        cards.forEach((card, i) => {
+            const pos = shuffledPositions[i % shuffledPositions.length];
+            card.setPosition(pos.x, pos.y);
         });
     }
 
@@ -186,23 +177,23 @@ export class GameScene_3 extends BaseGameScene {
             if (cardInfo.occupiedBy) {
                 if (cardInfo.content === cardInfo.occupiedBy.texture.key) {
                     cardInfo.occupiedBy.setData('isCorrect', true);
+                    this.handleWinBeforeBubble();
                 } else {
                     cardInfo.occupiedBy.setData('isCorrect', false);
                     allCorrect = false;
+                    this.handleLose();
                 }
             } else {
-                allCorrect = false;
+                this.handleLose();
             }
         });
-        if (allCorrect) {
-            this.handleWinBeforeBubble();
-        } else {
-            // 呼叫 BaseGameScene 的失敗流程 (彈出 Try Again 泡泡)
-            this.handleLose();
-        }
+
+
+
     }
 
     showWin() {
+        console.log('Game 3 Win!');
         this.cardGroup.setVisible(false);
         this.confirm_button.setVisible(false);
         const addOnImg = this.scene.add.image(0, 0, 'game3_additions')
@@ -217,9 +208,16 @@ export class GameScene_3 extends BaseGameScene {
         });
     }
     resetForNewRound() {
-        this.cardGroup.setVisible(true);
-        this.cardGroup.getChildren().forEach(p => p.setData('isCorrect', false));
         this.randomCardPosition(this.cardGroup.getChildren());
+        this.cardGroup.setVisible(true);
+
+        this.cardGroup.getChildren().forEach(card => {
+            card.setData('isCorrect', false);
+        });
+        this.defaultCards.forEach(pos => {
+            pos.occupiedBy = null;
+        });
+        this.isChecked = false;
     }
 
 }
