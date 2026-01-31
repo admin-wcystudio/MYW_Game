@@ -18,7 +18,14 @@ export default class BaseGameScene extends Phaser.Scene {
     /**
      * 1. 遊戲初始化 (在 Scene create 呼叫)
      */
-    initGame(bgKey, titleKey, descriptionKey, depth = 10) {
+    /**
+     * @param {string} bgKey
+     * @param {string} titleKey
+     * @param {string} descriptionKey
+     * @param {number} depth
+     * @param {boolean} skipIntroBubble - if true, skip the first intro bubble and start game immediately
+     */
+    initGame(bgKey, titleKey, descriptionKey, depth = 10, skipIntroBubble = false) {
         const gender = localStorage.getItem('player') ? JSON.parse(localStorage.getItem('player')).gender : 'M';
 
         const descriptionPages = [
@@ -40,8 +47,12 @@ export default class BaseGameScene extends Phaser.Scene {
         // 執行子類別的物件初始化
         this.setupGameObjects();
 
-        // 載入第一階段泡泡 (NPC 對話)
-        this.loadBubble('intro', gender);
+        if (skipIntroBubble) {
+            this.startGame();
+        } else {
+            // 載入第一階段泡泡 (NPC 對話)
+            this.loadBubble('intro', gender);
+        }
     }
 
     /**
