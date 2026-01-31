@@ -12,9 +12,10 @@ export class QuestionPanel extends Phaser.GameObjects.Container {
 
         // 1. 背景與標題/內容
         this.bg = scene.add.image(0, 0, 'game2_bg');
-        this.title = scene.add.image(0, -300, '');// 1/3, 2/3
-        this.content = scene.add.image(0, 0, '');           // 題目圖
-        this.add([this.bg, this.title, this.content]);
+        this.content = scene.add.image(0, 0, '');
+        this.title = scene.add.image(0, -390, '');
+        // 題目圖
+        this.add([this.bg, this.content, this.title]); // title is last, so always on top
 
         // 2. 確認按鈕 (初始隱藏)
         this.confirmBtn = new CustomButton(scene, 0, 330,
@@ -29,11 +30,19 @@ export class QuestionPanel extends Phaser.GameObjects.Container {
     }
 
     showQuestion() {
+
         const q = this.questions[this.currentIndex];
 
+        // Debug: check if texture exists in this.scene
+        const titleKey = this.titles[this.currentIndex];
+
+        console.log('[DEBUG] Texture exists in QuestionPanel:', titleKey);
+
         // 1. 更新標題與內容圖片
-        this.title.setTexture(this.titles[this.currentIndex]).setDepth(556);
         this.content.setTexture(q.content).setVisible(true).setDepth(556);
+        this.title.setTexture(this.titles[this.currentIndex]).setVisible(true).setDepth(557);
+        // Ensure title is always above content in display list
+        this.bringToTop(this.title);
 
         // 2. [重要] 清除「上一題」的所有按鈕
         if (this.optionButtons) {

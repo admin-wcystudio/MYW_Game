@@ -127,7 +127,7 @@ export class GameScene_2 extends BaseGameScene {
             }
         ];
 
-        const titles = [
+        this.titles = [
             'game2_q1_question_title',
             'game2_q2_question_title',
             'game2_q3_question_title'
@@ -138,7 +138,7 @@ export class GameScene_2 extends BaseGameScene {
 
         // 2. 建立 QuestionPanel，將邏輯全部交給它
         // 注意：我們把 titles 也傳進去，讓它自己換圖
-        this.questionPanel = new QuestionPanel(this, selectedQuestions, titles, () => {
+        this.questionPanel = new QuestionPanel(this, selectedQuestions, this.titles, () => {
             // 當 3 題都答完時，Panel 會呼叫這個 callback
             this.handleWinAfterBubble();
         });
