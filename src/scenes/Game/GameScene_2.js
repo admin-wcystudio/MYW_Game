@@ -140,19 +140,13 @@ export class GameScene_2 extends BaseGameScene {
         // 注意：我們把 titles 也傳進去，讓它自己換圖
         this.questionPanel = new QuestionPanel(this, selectedQuestions, this.titles, () => {
             // 當 3 題都答完時，Panel 會呼叫這個 callback
-            this.handleWinAfterBubble();
+            this.handleWinBeforeBubble();
         });
 
         this.questionPanel.setDepth(500).setVisible(false);
     }
 
-    startGame() {
-        this.enableGameInteraction(true);
-        if (this.gameTimer) this.gameTimer.start();
-    }
-
     enableGameInteraction(enable) {
-        this.isGameActive = enable;
         if (this.questionPanel) {
             this.questionPanel.setVisible(enable);
         }
