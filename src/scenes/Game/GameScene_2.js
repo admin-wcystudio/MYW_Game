@@ -158,7 +158,7 @@ export class GameScene_2 extends BaseGameScene {
         }
     }
 
-    resetStageForNextRound() {
+    resetForNewRound() {
         if (this.questionPanel) {
             this.questionPanel.destroy();
         }

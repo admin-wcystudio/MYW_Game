@@ -14,6 +14,7 @@ export class CustomButton extends Phaser.GameObjects.Image {
         this.setInteractive({ useHandCursor: true });
 
         this.on('pointerdown', () => {
+            if (!this.input || !this.input.enabled) return;
             if (this.needClicked) {
                 // Toggle 
                 this.isClicked = !this.isClicked;
@@ -31,14 +32,15 @@ export class CustomButton extends Phaser.GameObjects.Image {
             }
         });
 
-
-    this.on('pointerover', () => {
-        if (!this.isClicked) {
-            this.setPressedState();
-        }
-    });
+        this.on('pointerover', () => {
+            if (!this.input || !this.input.enabled) return;
+            if (!this.isClicked) {
+                this.setPressedState();
+            }
+        });
 
         this.on('pointerup', () => {
+            if (!this.input || !this.input.enabled) return;
             if (!this.needClicked) {
                 this.setNormalState();
                 this.cbUp();
@@ -46,9 +48,19 @@ export class CustomButton extends Phaser.GameObjects.Image {
         });
 
         this.on('pointerout', () => {
-            this.setNormalState();     
+            this.setNormalState();
         });
     }
+    setActive(canEnable) {
+        if (!canEnable) {
+            this.disableInteractive();
+            this.setAlpha(0.8);
+        } else {
+            this.setInteractive();
+            this.setAlpha(1);
+        }
+    }
+
 
     setPressedState() {
         if (this.pressedKey) this.setTexture(this.pressedKey);

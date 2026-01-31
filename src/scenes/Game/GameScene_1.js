@@ -165,7 +165,7 @@ export class GameScene_1 extends BaseGameScene {
     /**
      * 重置每一局的拼圖狀態
      */
-    resetStageForNextRound() {
+    resetForNewRound() {
         this.puzzleGroup.setVisible(true);
         this.puzzleGroup.getChildren().forEach(p => p.setData('isCorrect', false));
         this.randomPuzzlePosition(this.puzzleGroup.getChildren());

@@ -90,13 +90,17 @@ export class GameScene_3 extends BaseGameScene {
             this.checkSnap(gameObject);
         });
 
-        const confirm_button = new CustomButton(this, centerX + 800, centerY + 400,
+        this.confirm_button = new CustomButton(this, centerX + 800, centerY + 400,
             'game_confirm_button', 'game_confirm_button_select',
             () => {
+                // Only allow checkAllDone to be called once per round
+                if (!this.confirm_button.input || !this.confirm_button.input.enabled) return;
+                this.confirm_button.setActive(false);
                 this.checkAllDone();
             }, () => { });
+        this.confirm_button.setActive(false);
 
-        confirm_button.setDepth(100);
+        this.confirm_button.setDepth(100);
 
         // //==== Debug Graphics ===========================================================
         // const debugGraphics = this.add.graphics().setDepth(this.depth + 2); // 擺喺背景上面，物件下面
@@ -121,6 +125,7 @@ export class GameScene_3 extends BaseGameScene {
     startGame() {
         this.enableGameInteraction(true);
         if (this.gameTimer) this.gameTimer.start();
+        this.confirm_button.setActive(true);
     }
     enableGameInteraction(enabled) {
         this.cardGroup.getChildren().forEach(card => {
@@ -160,14 +165,23 @@ export class GameScene_3 extends BaseGameScene {
     randomCardPosition(cards) {
         const centerX = this.cameras.main.width / 2;
         const centerY = this.cameras.main.height / 2;
+        const bgX = 960;
+        const bgY = 540;
+        const minDistance = 200; // Minimum distance from background center
 
         cards.forEach(card => {
-            card.setPosition(centerX + Phaser.Math.Between(-600, 600), centerY + Phaser.Math.Between(-300, 500));
+            let x, y, tries = 0;
+            do {
+                x = centerX + Phaser.Math.Between(-600, 600);
+                y = centerY + Phaser.Math.Between(-300, 500);
+                tries++;
+            } while (Phaser.Math.Distance.Between(x, y, bgX, bgY) < minDistance && tries < 20);
+            card.setPosition(x, y);
         });
     }
 
     checkAllDone() {
-        let allCorrect = false;
+        let allCorrect = true;
         this.defaultCards.forEach(cardInfo => {
             if (cardInfo.occupiedBy) {
                 if (cardInfo.content === cardInfo.occupiedBy.texture.key) {
@@ -190,6 +204,7 @@ export class GameScene_3 extends BaseGameScene {
 
     showWin() {
         this.cardGroup.setVisible(false);
+        this.confirm_button.setVisible(false);
         const addOnImg = this.scene.add.image(0, 0, 'game3_additions')
             .setInteractive({ useHandCursor: true });
         this.add(addOnImg);
@@ -201,11 +216,8 @@ export class GameScene_3 extends BaseGameScene {
             objectPanel.setCloseCallBack(() => GameManager.backToMainStreet(this));
         });
     }
-    resetStageForNextRound() {
-        if (this.cardGroup) {
-            this.cardGroup.destroy();
-        }
-
+    resetForNewRound() {
+        this.cardGroup.setVisible(true);
         this.cardGroup.getChildren().forEach(p => p.setData('isCorrect', false));
         this.randomCardPosition(this.cardGroup.getChildren());
     }

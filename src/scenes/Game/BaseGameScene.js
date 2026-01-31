@@ -156,7 +156,7 @@ export default class BaseGameScene extends Phaser.Scene {
 
     nextRound() {
         this.roundIndex++;
-        this.resetStageForNextRound();
+        this.resetForNewRound();
         this.startGame();
     }
 
@@ -181,7 +181,7 @@ export default class BaseGameScene extends Phaser.Scene {
      */
     setupGameObjects() { /* 放置拼圖或按鈕 */ }
     enableGameInteraction(enabled) { /* 開啟或關閉拖拽/點擊 */ }
-    resetStageForNextRound() { /* 重置位置 */ }
+    resetForNewRound() { /* 重置位置 */ }
     playSuccessFeedback() { /* 播放影片 */ }
     showWin() { /* 最終勝利面板 */ }
 
@@ -209,7 +209,7 @@ export default class BaseGameScene extends Phaser.Scene {
             });
         }
         //reset game assets
-        this.resetStageForNextRound();
+        this.resetForNewRound();
         this.startGame();
 
     }
