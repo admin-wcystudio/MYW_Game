@@ -136,13 +136,17 @@ export default class BaseGameScene extends Phaser.Scene {
         } else if (type === 'tryagain') {
             this.currentBubbleImg.once('pointerdown', () => {
                 closeBubble();
-                this.showFailPanel();
+                this.showLose(() => {
+                    this.showFailPanel();
+                });
             });
             if (options.autoCloseMs) {
                 this.time.delayedCall(options.autoCloseMs, () => {
                     if (!closed) {
                         closeBubble();
-                        this.showFailPanel();
+                        this.showLose(() => {
+                            this.showFailPanel();
+                        });
                     }
                 });
             }
@@ -183,8 +187,6 @@ export default class BaseGameScene extends Phaser.Scene {
         this.enableGameInteraction(false);
         this.updateRoundUI(true);
         this.gameTimer.reset(this.roundPerSeconds);
-        this.playFeedback(true);
-
         this.time.delayedCall(500, () => {
             this.showBubble('win');
         });
@@ -220,8 +222,8 @@ export default class BaseGameScene extends Phaser.Scene {
         if (this.gameTimer) this.gameTimer.stop();
         this.enableGameInteraction(false);
         this.updateRoundUI(false);
-        this.playFeedback(false);
         this.showBubble('tryagain');
+
     }
 
     updateRoundUI(isSuccess) {
@@ -238,8 +240,13 @@ export default class BaseGameScene extends Phaser.Scene {
     setupGameObjects() { /* 放置拼圖或按鈕 */ }
     enableGameInteraction(enabled) { /* 開啟或關閉拖拽/點擊 */ }
     resetForNewRound() { /* 重置位置 */ }
-    playFeedback(isSuccess) { /* 播放影片 */ }
+    playFeedback(isSuccess, onComplete) {
+        if (onComplete) onComplete();
+    }
     showWin() { /* 最終勝利面板 */ }
+    showLose(onComplete) {
+        if (onComplete) onComplete();
+    }
 
     showFailPanel() {
         // 確保這是在所有東西的最上層

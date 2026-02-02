@@ -1,5 +1,5 @@
 import { CustomButton } from '../../UI/Button.js';
-import { CustomPanel, SettingPanel } from '../../UI/Panel.js';
+import { CustomPanel, SettingPanel, CustomDescriptionPanel } from '../../UI/Panel.js';
 import UIHelper from '../../UI/UIHelper.js';
 import BaseGameScene from './BaseGameScene.js';
 import GameManager from '../GameManager.js';
@@ -50,6 +50,7 @@ export class GameScene_5 extends BaseGameScene {
 
         this.isHit = false;
         this.isValid = false;
+        this.isGameWin = false;
         this.arrowSpeed = 8;
         this.add.image(960, 540, 'game5_bar').setDepth(20);
         this.arrow = this.add.image(800, 340, 'game5_target_arrow').setDepth(20);
@@ -87,25 +88,45 @@ export class GameScene_5 extends BaseGameScene {
 
     resetForNewRound() {
         this.isHit = false;
+        if (this.video) {
+            this.video.destroy();
+            this.video = null;
+        }
+        this.isValid = false;
         this.arrow.x = 800;
         this.setupGameObjects();
     }
 
-    playFeedback() {
-        this.video = this.add.video(960, 440,
-            this.isSuccess ? 'game5_success_preview' : 'game5_fail_preview').setDepth(200).setScrollFactor(0);
-
+    playFeedback(isSuccess, onComplete) {
+        if (this.video) this.video.destroy();
+        this.video = this.add.video(960, 540,
+            isSuccess ? 'game5_success_preview' : 'game5_fail_preview').setDepth(200).setScrollFactor(0);
         this.video.play();
+
+        this.video.on('complete', () => {
+            this.time.delayedCall(1000, () => {
+                if (typeof onComplete === 'function') onComplete();
+            });
+        });
+    }
+
+    showLose(onComplete) {
+        this.isGameWin = false;
+        this.playFeedback(false, onComplete);
     }
 
 
     showWin() {
-        const descriptionPages = ['game5_object_description'];
-        const objectPanel = new CustomDescriptionPanel(this, 960, 600, descriptionPages, () => GameManager.backToMainStreet(this));
-        objectPanel.setDepth(1000).setVisible(true);
+        this.isGameWin = true;
+        this.playFeedback(true, () => {
+            const descriptionPages = ['game5_object_description'];
+            const objectPanel = new CustomDescriptionPanel(this, 960, 600, descriptionPages, () => GameManager.backToMainStreet(this));
+            objectPanel.setDepth(1000).setVisible(true);
+        });
     }
 
     handleHit() {
+        this.currentArrowX = this.arrow.x;
         this.isHit = true;
         console.log("Hit button clicked!");
 
@@ -113,6 +134,7 @@ export class GameScene_5 extends BaseGameScene {
         const minX = this.targetArea.x - halfWidth;
         const maxX = this.targetArea.x + halfWidth;
 
+        this.arrow.x = this.currentArrowX;
         if (this.arrow.x >= minX && this.arrow.x <= maxX) {
             this.handleWinBeforeBubble();
         } else {
