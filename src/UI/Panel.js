@@ -20,6 +20,10 @@ export class CustomPanel extends Phaser.GameObjects.Container {
             if (this.toggleBtn) {
                 this.toggleBtn.resetStatus();
             }
+
+            if (this.onClose) {
+                this.onClose();
+            }
         });
         this.prevBtn.needClicked = false;
         this.nextBtn.needClicked = false;
@@ -31,6 +35,10 @@ export class CustomPanel extends Phaser.GameObjects.Container {
         scene.add.existing(this);
 
         this.refresh();
+    }
+
+    setCloseCallBack(callback) {
+        this.onClose = callback;
     }
 
     changePage(dir) {

@@ -1,5 +1,5 @@
 import { CustomButton } from '../../UI/Button.js';
-import { CustomPanel, SettingPanel, CustomSinglePanel } from '../../UI/Panel.js';
+import { CustomPanel, SettingPanel, CustomSinglePanel, CustomDescriptionPanel } from '../../UI/Panel.js';
 import UIHelper from '../../UI/UIHelper.js';
 import BaseGameScene from './BaseGameScene.js';
 import GameManager from '../GameManager.js';
@@ -59,7 +59,7 @@ export class GameScene_4 extends BaseGameScene {
         }
 
         // Pass current question based on BaseGameScene's roundIndex
-        const currentQ = this.selectedQuestions[this.roundIndex];
+        let currentQ = this.selectedQuestions[this.roundIndex];
 
         this.calculationPanel = new CalculationPanel(
             this,
@@ -83,9 +83,8 @@ export class GameScene_4 extends BaseGameScene {
 
     showWin() {
         const descriptionPages = ['game4_object_description', 'game4_object_description2'];
-        const objectPanel = new CustomPanel(this, 960, 600, descriptionPages);
+        const objectPanel = new CustomDescriptionPanel(this, 960, 600, descriptionPages, () => GameManager.backToMainStreet(this));
         objectPanel.setDepth(1000).setVisible(true);
-        objectPanel.setCloseCallBack(() => GameManager.backToMainStreet(this));
     }
 }
 
@@ -116,16 +115,22 @@ export class CalculationPanel extends Phaser.GameObjects.Container {
         this.inputBox = scene.add.image(0, 220, 'game4_input');
         this.add(this.inputBox);
 
-        // rexInputText needs screen coordinates, or we position it relative to container
         this.answerInput = scene.add.rexInputText(960, 820, 300, 50, {
             type: 'text',
-            placeholder: '?',
+            placeholder: '',
             fontSize: '48px',
             color: '#000000',
             align: 'center',
             fontFamily: 'Arial',
             backgroundColor: 'transparent'
         }).setDepth(600);
+
+        this.answerInput.on('textchange', (inputText) => {
+            const filtered = inputText.text.replace(/\D/g, '');
+            if (filtered !== inputText.text) {
+                inputText.setText(filtered);
+            }
+        });
 
         this.confirmBtn = new CustomButton(scene, 0, 330, 'game4_confirm_button', 'game4_confirm_button_select', () => {
             this.checkAnswer();
@@ -135,18 +140,38 @@ export class CalculationPanel extends Phaser.GameObjects.Container {
         scene.add.existing(this);
     }
 
+    setVisible(value) {
+        super.setVisible(value);
+        if (this.answerInput) {
+            this.answerInput.setVisible(value);
+            // Also disable interactivity to be safe when hidden
+            if (value) {
+                this.answerInput.setInteractive();
+            } else {
+                this.answerInput.disableInteractive();
+            }
+        }
+        return this;
+    }
+
     checkAnswer() {
         const playerInput = this.answerInput.text.trim();
+
+
         if (playerInput === this.questionData.answer.toString()) {
+            console.log('Correct answer!');
             // Correct answer logic
             this.confirmBtn.disableInteractive();
             const successIcon = this.scene.add.image(250, 220, 'game_success').setScale(0.8);
             this.add(successIcon);
 
             this.scene.time.delayedCall(1000, () => {
-                this.onComplete(); // Triggers BaseGameScene's bubble/next round
+                this.onComplete();
+                this.inputBox.setVisible(false);
+                // Triggers BaseGameScene's bubble/next round
             });
         } else {
+            console.log('Wrong answer!' + `(Input: ${playerInput}, Answer: ${this.questionData.answer})`);
             // Wrong answer logic
             this.onFail();
         }
