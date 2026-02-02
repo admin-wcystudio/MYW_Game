@@ -144,7 +144,7 @@ export class GameScene_1 extends BaseGameScene {
     /**
      * 播放過場影片
      */
-    playSuccessFeedback() {
+    playFeedback() {
         this.puzzleGroup.setVisible(false);
         this.successVideo = this.add.video(960, 440, 'game1_success_preview').setDepth(200).setScrollFactor(0);
         this.successVideo.play();

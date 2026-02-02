@@ -183,7 +183,7 @@ export default class BaseGameScene extends Phaser.Scene {
         this.enableGameInteraction(false);
         this.updateRoundUI(true);
         this.gameTimer.reset(this.roundPerSeconds);
-        this.playSuccessFeedback();
+        this.playFeedback(true);
 
         this.time.delayedCall(500, () => {
             this.showBubble('win');
@@ -220,6 +220,7 @@ export default class BaseGameScene extends Phaser.Scene {
         if (this.gameTimer) this.gameTimer.stop();
         this.enableGameInteraction(false);
         this.updateRoundUI(false);
+        this.playFeedback(false);
         this.showBubble('tryagain');
     }
 
@@ -237,7 +238,7 @@ export default class BaseGameScene extends Phaser.Scene {
     setupGameObjects() { /* 放置拼圖或按鈕 */ }
     enableGameInteraction(enabled) { /* 開啟或關閉拖拽/點擊 */ }
     resetForNewRound() { /* 重置位置 */ }
-    playSuccessFeedback() { /* 播放影片 */ }
+    playFeedback(isSuccess) { /* 播放影片 */ }
     showWin() { /* 最終勝利面板 */ }
 
     showFailPanel() {

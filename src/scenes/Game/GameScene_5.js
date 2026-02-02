@@ -49,6 +49,7 @@ export class GameScene_5 extends BaseGameScene {
         // }
 
         this.isHit = false;
+        this.isValid = false;
         this.arrowSpeed = 8;
         this.add.image(960, 540, 'game5_bar').setDepth(20);
         this.arrow = this.add.image(800, 340, 'game5_target_arrow').setDepth(20);
@@ -84,8 +85,38 @@ export class GameScene_5 extends BaseGameScene {
         }
     }
 
+    resetForNewRound() {
+        this.isHit = false;
+        this.arrow.x = 800;
+        this.setupGameObjects();
+    }
+
+    playFeedback() {
+        this.video = this.add.video(960, 440,
+            this.isSuccess ? 'game5_success_preview' : 'game5_fail_preview').setDepth(200).setScrollFactor(0);
+
+        this.video.play();
+    }
+
+
+    showWin() {
+        const descriptionPages = ['game5_object_description'];
+        const objectPanel = new CustomDescriptionPanel(this, 960, 600, descriptionPages, () => GameManager.backToMainStreet(this));
+        objectPanel.setDepth(1000).setVisible(true);
+    }
+
     handleHit() {
         this.isHit = true;
         console.log("Hit button clicked!");
+
+        const halfWidth = this.targetArea.width * this.targetArea.scaleX / 2;
+        const minX = this.targetArea.x - halfWidth;
+        const maxX = this.targetArea.x + halfWidth;
+
+        if (this.arrow.x >= minX && this.arrow.x <= maxX) {
+            this.handleWinBeforeBubble();
+        } else {
+            this.handleLose();
+        }
     }
 }
