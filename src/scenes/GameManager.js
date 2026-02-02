@@ -26,6 +26,26 @@ export default class GameManager {
 
     }
 
+    static loadGameResult() {
+        const savedGameResultData = localStorage.getItem('allGamesResult');
+        let allGamesResult = savedGameResultData ? JSON.parse(savedGameResultData) : [
+            { game: 1, isFinished: false, seconds: 0 },
+            { game: 2, isFinished: false, seconds: 0 },
+            { game: 3, isFinished: false, seconds: 0 },
+            { game: 4, isFinished: false, seconds: 0 },
+            { game: 5, isFinished: false, seconds: 0 },
+            { game: 6, isFinished: false, seconds: 0 },
+            { game: 7, isFinished: false, seconds: 0 },
+        ];
+        return allGamesResult;
+    }
+
+    static loadOneGameResult(sceneIndex) {
+        console.log("載入遊戲結果 for game", sceneIndex);
+        const allGamesResult = this.loadGameResult();
+        return allGamesResult.find(g => g.game === sceneIndex);
+    }
+
     static backToMainStreet(scene) {
         scene.cameras.main.fadeOut(500, 0, 0, 0);
 

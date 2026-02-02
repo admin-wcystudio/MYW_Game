@@ -27,7 +27,7 @@ export default class BaseGameScene extends Phaser.Scene {
      * @param {number} depth
      * @param {boolean} skipIntroBubble - if true, skip the first intro bubble and start game immediately
      */
-    initGame(bgKey, titleKey, descriptionKey, depth = 10, skipIntroBubble = false) {
+    initGame(bgKey, titleKey, descriptionKey, depth = 10, skipIntroBubble = false, willB) {
         this.gameState = 'init';
         const gender = localStorage.getItem('player') ? JSON.parse(localStorage.getItem('player')).gender : 'M';
 
@@ -79,7 +79,8 @@ export default class BaseGameScene extends Phaser.Scene {
             'intro': `${prefix}_npc_box_intro`,
             'win': `${prefix}_npc_box_win`,
             'gameWin': `${prefix}_npc_box_win`, // fallback to win bubble, can customize if needed
-            'tryagain': `${prefix}_npc_box_tryagain`
+            'tryagain': `${prefix}_npc_box_tryagain`,
+            'lock': `${prefix}_npc_box_lock`
         };
         const targetKey = bubbleMapping[type];
         const player_bubbles = [`${prefix}_npc_box4`, `${prefix}_npc_box5`];
@@ -145,6 +146,18 @@ export default class BaseGameScene extends Phaser.Scene {
                     }
                 });
             }
+        } else if (type === 'lock') {
+            this.currentBubbleImg.once('pointerdown', () => {
+                closeBubble();
+                GameManager.backToMainStreet(this);
+            });
+
+            if (options.autoCloseMs) {
+                this.time.delayedCall(options.autoCloseMs, () => {
+                    closeBubble();
+                    GameManager.backToMainStreet(this);
+                });
+            }
         }
     }
     /**
@@ -180,6 +193,10 @@ export default class BaseGameScene extends Phaser.Scene {
     handleWinAfterBubble() {
         if (!this.isGameActive) return;
         if (this.gameState === 'gameWin') {
+            // Save game result
+            if (this.sceneIndex > 0) {
+                GameManager.saveGameResult(this.sceneIndex, true);
+            }
             this.showWin();
             this.isGameActive = false;
             this.gameState = 'completed';
@@ -256,6 +273,15 @@ export default class BaseGameScene extends Phaser.Scene {
                 data.isSuccess = false;
             });
         }
+    }
+
+    lockGameUI() {
+        this.showBubble('lock', null, {
+            autoCloseMs: 2000,
+            onClose: () => {
+                console.log('Lock bubble closed');
+            }
+        });
     }
 
 }

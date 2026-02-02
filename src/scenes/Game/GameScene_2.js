@@ -191,8 +191,6 @@ export class GameScene_2 extends BaseGameScene {
 
     }
 
-
-
     showAddOn(addOnKey) {
         this.optionButtons.forEach(btn => btn.setVisible(false));
 
