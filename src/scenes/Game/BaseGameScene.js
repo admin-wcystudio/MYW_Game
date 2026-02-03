@@ -194,17 +194,19 @@ export default class BaseGameScene extends Phaser.Scene {
 
     handleWinAfterBubble() {
         if (!this.isGameActive) return;
-        if (this.gameState === 'gameWin') {
-            // Save game result
-            if (this.sceneIndex > 0) {
-                GameManager.saveGameResult(this.sceneIndex, true);
-            }
-            this.showWin();
-            this.isGameActive = false;
-            this.gameState = 'completed';
-            if (typeof this.onGameWin === 'function') this.onGameWin();
-        } else if (this.gameState === 'roundWin') {
+        if (this.gameState === 'roundWin') {
             this.nextRound();
+        } else {
+            if (this.gameState === 'gameWin') {
+                // Save game result
+                if (this.sceneIndex > 0) {
+                    GameManager.saveGameResult(this.sceneIndex, true);
+                }
+                this.showWin();
+                this.isGameActive = false;
+                this.gameState = 'completed';
+                if (typeof this.onGameWin === 'function') this.onGameWin();
+            }
         }
     }
 

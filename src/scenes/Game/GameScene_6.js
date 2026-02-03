@@ -8,7 +8,7 @@ export class GameScene_6 extends BaseGameScene {
     constructor() {
         super('GameScene_6');
         this.roundPerSeconds = 50000;
-        this.targetRounds = 2;
+        this.targetRounds = 3;
         this.sceneIndex = 6;
     }
     preload() {
@@ -16,14 +16,13 @@ export class GameScene_6 extends BaseGameScene {
         this.load.image('game6_bg', `${path}game6_bg.png`);
         this.load.image('game6_title', `${path}game6_title.png`);
         this.load.image('game6_description', `${path}game6_description.png`);
-        this.load.image('game6_object_description', `${path}game6_object_description.png`);
 
         this.load.image('game6_npc_box_intro', `${path}game6_npc_box1.png`);
         this.load.image('game6_npc_box_win', `${path}game6_npc_box2.png`);
-        this.load.image('game6_npc_box_win_round1', `${path}game6_npc_box3.png`);
+        this.load.image('game6_npc_box_tryagain', `${path}game6_npc_box3.png`);
         this.load.image('game6_npc_box_win_round2', `${path}game6_npc_box4.png`);
         this.load.image('game6_npc_box_win_d1', `${path}game6_npc_box5.png`);
-        this.load.image('game6_npc_box_tryagain', `${path}game6_npc_box6.png`);
+        this.load.image('game6_npc_box_tryagain1', `${path}game6_npc_box6.png`);
 
         // Arrows
         this.load.image('game6_arrow_blue', `${path}game6_arrow_blue.png`);
@@ -56,16 +55,36 @@ export class GameScene_6 extends BaseGameScene {
         this.barBG = this.add.image(960, 540, 'game6_bar_bg').setDepth(22);
         this.barBG.setVisible(false);
 
-        this.spawnSpeed = 5;
+        this.spawnSpeed = 4;
         this.maxArrows = 6;
+        this.currentRound = 0;
         this.canSpawn = false;
         this.spawnHitPoint = false;
+        this.isHitPointValid = false;
+        this.isWin = false;
+
+        // const debugGraphics = this.add.graphics().setDepth(50);
+        // debugGraphics.lineStyle(4, 0xff0000, 1);
+        // debugGraphics.strokeRect(920, 440, 160, 160); // Visualizing x: 940-1060
     }
     update() {
         if (this.canSpawn) {
-            if (!this.fallingArrows || this.fallingArrows.length === 0) {
+            if (!this.fallingArrows || this.fallingArrows.length < 2) {
                 this.spawnArrow();
             }
+
+            if (!this.fallingArrows) return;
+
+
+            if (!this.spawnHitPoint) {
+                this.spawnHitPoint = true;
+
+                this.time.delayedCall(1500, () => {
+
+                    this.showHitPoint();
+                });
+            }
+            console.log('Hit point valid:', this.isHitPointValid);
 
             for (let i = this.fallingArrows.length - 1; i >= 0; i--) {
                 const arrow = this.fallingArrows[i];
@@ -73,7 +92,6 @@ export class GameScene_6 extends BaseGameScene {
                 if (arrow.x < 200) {
                     arrow.destroy();
                     this.fallingArrows.splice(i, 1);
-                    this.handleMissedArrow();
                 }
             }
 
@@ -101,6 +119,7 @@ export class GameScene_6 extends BaseGameScene {
     }
 
     enableGameInteraction(enable) {
+        this.canSpawn = enable;
         if (this.buttonGroup) {
             this.buttonGroup.setVisible(enable);
             this.buttonGroup.getChildren().forEach(button => {
@@ -113,13 +132,16 @@ export class GameScene_6 extends BaseGameScene {
         }
         this.barBG.setVisible(enable);
         this.arrowGroup.setVisible(enable);
-        this.canSpawn = enable;
+
     }
 
+
     showHitPoint() {
+        if (this.isWin) return;
+
         this.hitPoint = this.add.image(1000, 540, 'game6_hit_point').setDepth(30);
         this.hitPoint.setScale(0);
-
+        this.isHitPointValid = true;
         this.tweens.add({
             targets: this.hitPoint,
             scale: 1,
@@ -127,59 +149,106 @@ export class GameScene_6 extends BaseGameScene {
             ease: 'Back.out'
         });
 
-        this.time.delayedCall(2000, () => {
+
+        this.time.delayedCall(1500, () => {
             if (this.hitPoint) {
                 this.tweens.add({
                     targets: this.hitPoint,
                     scale: 0,
                     duration: 500,
                     ease: 'Back.in',
-                });
-                this.hitPoint.destroy();
-                this.spawnHitPoint = false;
+                });;
             }
+            this.isHitPointValid = false
+        });
+
+        this.time.delayedCall(2000, () => {
+            this.spawnHitPoint = false;
         });
     }
 
     spawnArrow() {
-        this.fallingArrows = [];
+        if (!this.fallingArrows) this.fallingArrows = [];
         const colors = ['blue', 'green', 'red', 'yellow'];
-        for (let i = 0; i < 6; i++) {
+        const gap = 200;
+        let startX = 1620;
+
+        if (this.fallingArrows.length > 0) {
+            const rightMostArrow = this.fallingArrows.reduce((
+                max, arrow) => arrow.x > max.x ? arrow : max, this.fallingArrows[0]);
+            startX = Math.max(rightMostArrow.x, 1920);
+        }
+
+        console.log('Spawning ');
+
+        for (let i = 1; i <= 12; i++) {
             const randomIndex = Phaser.Math.Between(0, colors.length - 1);
             const color = colors[randomIndex];
-            const arrow = this.add.image(1680 - (i * 200), 540, `game6_bar_arrow_${color}`).setDepth(24);
+            const arrow = this.add.image(startX + (i * gap), 540, `game6_bar_arrow_${color}`).setDepth(24);
             arrow.colorIndex = randomIndex;
             this.fallingArrows.push(arrow);
         }
-        if (!this.spawnHitPoint) {
-            this.spawnHitPoint = true;
-            this.showHitPoint();
-        }
+
     }
 
     handleArrowClick(index) {
         if (!this.fallingArrows || this.fallingArrows.length === 0) return;
 
-        const arrow = this.fallingArrows[0];
-        // Target is at 1000
-        if (arrow.x >= 940 && arrow.x <= 1060) {
-            console.log('Hit arrow:', index, 'Position:', arrow.x);
+        // Find the first arrow that is within the hit zone
+        const hitIndex = this.fallingArrows.findIndex(arrow => arrow.x >= 920 && arrow.x <= 1080);
+
+        if (hitIndex !== -1 && this.isHitPointValid) {
+            const arrow = this.fallingArrows[hitIndex];
+            console.log('Hit arrow index:', hitIndex, 'Position:', arrow.x);
+
             if (arrow.colorIndex === index) {
-                arrow.destroy();
-                this.fallingArrows.shift();
+                //arrow.destroy();
+                for (let i = 0; i < this.fallingArrows.length; i++) {
+                    this.fallingArrows[i].destroy();
+                }
+                this.hitPoint.destroy();
+
                 this.handleWinBeforeBubble();
+                this.currentRound++;
+                this.updateTargetImage(this.currentRound);
+                if (this.currentRound >= this.targetRounds) {
+                    this.isWin = true;
+                }
             } else {
-                this.handleMissedArrow();
-                //this.handleLose();
+                console.log("Wrong color clicked");
+                for (let i = 0; i < this.fallingArrows.length; i++) {
+                    this.fallingArrows[i].destroy();
+                }
+                this.handleLose();
             }
         } else {
-            // this.handleLose();
+            this.hitPoint.destroy();
+            for (let i = 0; i < this.fallingArrows.length; i++) {
+                this.fallingArrows[i].destroy();
+            }
+            this.handleLose();
+            console.log("No arrow in hit zone / or hit point not valid");
         }
-
     }
 
-    handleMissedArrow() {
-        console.log('Missed arrow');
-        // Implement miss logic (e.g., reduce health, shake screen)
+    updateTargetImage(index) {
+        this.targetImage.setTexture(`game6_target_${index}`);
     }
+
+
+    showWin() {
+        this.isLastGamePlayed = GameManager.loadOneGameResult(7) ? true : false;
+        console.log("Is Last Game Played:", this.isLastGamePlayed);
+
+        if (this.isLastGamePlayed) {
+            //item page
+        } else {
+            this.time.delayedCall(1000, () => {
+                GameManager.switchToGameScene(this, 'GameScene_7');
+            });
+        }
+    }
+
+
+
 }
