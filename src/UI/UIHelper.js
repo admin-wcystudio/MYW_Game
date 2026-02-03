@@ -118,7 +118,7 @@ export default class UIHelper {
         scene.add.existing(settingPanel);
 
         const descriptionPanel = new CustomPanel(scene, 960, 540, descriptionPages).setScrollFactor(0);
-        descriptionPanel.setVisible(false);
+        descriptionPanel.setVisible(true);
         descriptionPanel.setDepth(999);
         scene.add.existing(descriptionPanel);
 

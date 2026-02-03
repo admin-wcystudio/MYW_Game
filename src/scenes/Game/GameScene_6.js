@@ -7,7 +7,7 @@ import BaseGameScene from './BaseGameScene.js';
 export class GameScene_6 extends BaseGameScene {
     constructor() {
         super('GameScene_6');
-        this.roundPerSeconds = 50000;
+        this.roundPerSeconds = 45;
         this.targetRounds = 3;
         this.sceneIndex = 6;
     }
@@ -18,11 +18,11 @@ export class GameScene_6 extends BaseGameScene {
         this.load.image('game6_description', `${path}game6_description.png`);
 
         this.load.image('game6_npc_box_intro', `${path}game6_npc_box1.png`);
-        this.load.image('game6_npc_box_win', `${path}game6_npc_box2.png`);
-        this.load.image('game6_npc_box_tryagain', `${path}game6_npc_box3.png`);
+        this.load.image('game6_npc_box_win_round3', `${path}game6_npc_box2.png`);
+        this.load.image('game6_npc_box_win_round1', `${path}game6_npc_box3.png`);
         this.load.image('game6_npc_box_win_round2', `${path}game6_npc_box4.png`);
-        this.load.image('game6_npc_box_win_d1', `${path}game6_npc_box5.png`);
-        this.load.image('game6_npc_box_tryagain1', `${path}game6_npc_box6.png`);
+        this.load.image('game6_npc_box_addon', `${path}game6_npc_box5.png`);
+        this.load.image('game6_npc_box_tryagain', `${path}game6_npc_box6.png`);
 
         // Arrows
         this.load.image('game6_arrow_blue', `${path}game6_arrow_blue.png`);
@@ -49,11 +49,19 @@ export class GameScene_6 extends BaseGameScene {
 
     }
     create() {
-        this.initGame('game6_bg', 'game6_title', 'game6_description', 10, false);
+        this.initGame('game6_bg', 'game6_title', 'game6_description', 10, true);
+
+        // Stop the timer immediately because we want to wait for the description panel to close
+        if (this.gameTimer) {
+            this.gameTimer.stop();
+            this.gameTimer.reset(this.roundPerSeconds);
+        }
+        this.isGameActive = false;
+
         this.add.image(960, 540, 'game5_bar_bg').setDepth(20);
         this.targetImage = this.add.image(960, 560, 'game6_target_0').setDepth(21);
         this.barBG = this.add.image(960, 540, 'game6_bar_bg').setDepth(22);
-        this.barBG.setVisible(false);
+        this.barBG.setVisible(true);
 
         this.spawnSpeed = 4;
         this.maxArrows = 6;
@@ -77,14 +85,14 @@ export class GameScene_6 extends BaseGameScene {
 
 
             if (!this.spawnHitPoint) {
-                this.spawnHitPoint = true;
-
                 this.time.delayedCall(1500, () => {
-
-                    this.showHitPoint();
+                    if (this.canSpawn && !this.spawnHitPoint) {
+                        this.spawnHitPoint = true;
+                        this.showHitPoint();
+                    }
                 });
             }
-            console.log('Hit point valid:', this.isHitPointValid);
+            // console.log('Hit point valid:', this.isHitPointValid);
 
             for (let i = this.fallingArrows.length - 1; i >= 0; i--) {
                 const arrow = this.fallingArrows[i];
@@ -115,7 +123,11 @@ export class GameScene_6 extends BaseGameScene {
             this.arrowGroup.add(arrow);
         }
 
-        this.buttonGroup.setVisible(false);
+        if (this.gameUI && this.gameUI.descriptionPanel) {
+            this.gameUI.descriptionPanel.onClose = () => {
+                this.startGame();
+            }
+        }
     }
 
     enableGameInteraction(enable) {
@@ -130,8 +142,11 @@ export class GameScene_6 extends BaseGameScene {
                 }
             });
         }
-        this.barBG.setVisible(enable);
-        this.arrowGroup.setVisible(enable);
+        if (this.barBG)
+            this.barBG.setVisible(enable);
+
+        if (this.hitPoint)
+            this.hitPoint.setVisible(enable);
 
     }
 
@@ -139,7 +154,7 @@ export class GameScene_6 extends BaseGameScene {
     showHitPoint() {
         if (this.isWin) return;
 
-        this.hitPoint = this.add.image(1000, 540, 'game6_hit_point').setDepth(30);
+        this.hitPoint = this.add.image(1000, 520, 'game6_hit_point').setDepth(30);
         this.hitPoint.setScale(0);
         this.isHitPointValid = true;
         this.tweens.add({
@@ -196,38 +211,40 @@ export class GameScene_6 extends BaseGameScene {
 
         // Find the first arrow that is within the hit zone
         const hitIndex = this.fallingArrows.findIndex(arrow => arrow.x >= 920 && arrow.x <= 1080);
+        let winRound = false;
 
         if (hitIndex !== -1 && this.isHitPointValid) {
             const arrow = this.fallingArrows[hitIndex];
             console.log('Hit arrow index:', hitIndex, 'Position:', arrow.x);
 
             if (arrow.colorIndex === index) {
-                //arrow.destroy();
-                for (let i = 0; i < this.fallingArrows.length; i++) {
-                    this.fallingArrows[i].destroy();
-                }
-                this.hitPoint.destroy();
-
-                this.handleWinBeforeBubble();
-                this.currentRound++;
-                this.updateTargetImage(this.currentRound);
-                if (this.currentRound >= this.targetRounds) {
-                    this.isWin = true;
-                }
+                winRound = true;
             } else {
                 console.log("Wrong color clicked");
-                for (let i = 0; i < this.fallingArrows.length; i++) {
-                    this.fallingArrows[i].destroy();
-                }
-                this.handleLose();
             }
         } else {
-            this.hitPoint.destroy();
-            for (let i = 0; i < this.fallingArrows.length; i++) {
-                this.fallingArrows[i].destroy();
-            }
-            this.handleLose();
             console.log("No arrow in hit zone / or hit point not valid");
+        }
+
+        // Common cleanup: destroy arrows, hitPoint, and hide barBG
+        for (let i = 0; i < this.fallingArrows.length; i++) {
+            this.fallingArrows[i].destroy();
+        }
+        this.fallingArrows = [];
+
+        this.barBG.setVisible(false);
+        this.hitPoint.setVisible(false);
+
+        // Handle result
+        if (winRound) {
+            this.handleWinBeforeBubble();
+            this.currentRound++;
+            this.updateTargetImage(this.currentRound);
+            if (this.currentRound >= this.targetRounds) {
+                this.isWin = true;
+            }
+        } else {
+            this.handleLose();
         }
     }
 
@@ -235,13 +252,30 @@ export class GameScene_6 extends BaseGameScene {
         this.targetImage.setTexture(`game6_target_${index}`);
     }
 
+    handleWinBeforeBubble() {
+        if (!this.isGameActive || this.gameState === 'gameWin') return;
+        // Determine if this is the last round
+        const isGameWin = (this.roundIndex + 1 >= this.targetRounds);
+        this.gameState = isGameWin ? 'gameWin' : 'roundWin';
+        console.log('遊戲狀態改為:', this.gameState);
+        if (this.gameTimer) this.gameTimer.stop(); // Stop/Pause the timer
+        this.enableGameInteraction(false);
+        this.updateRoundUI(true);
+        // We do NOT reset the timer here, so it continues from where it left off in the next round.
+
+        this.time.delayedCall(500, () => {
+            this.showBubble('win');
+        });
+    }
 
     showWin() {
-        this.isLastGamePlayed = GameManager.loadOneGameResult(7) ? true : false;
+        const lastGameResult = GameManager.loadOneGameResult(7);
+        this.isLastGamePlayed = lastGameResult.isFinished ? true : false;
         console.log("Is Last Game Played:", this.isLastGamePlayed);
 
         if (this.isLastGamePlayed) {
             //item page
+            console.log("Show item page");
         } else {
             this.time.delayedCall(1000, () => {
                 GameManager.switchToGameScene(this, 'GameScene_7');

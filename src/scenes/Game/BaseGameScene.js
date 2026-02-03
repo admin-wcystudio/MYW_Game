@@ -82,7 +82,17 @@ export default class BaseGameScene extends Phaser.Scene {
             'tryagain': `${prefix}_npc_box_tryagain`,
             'lock': `${prefix}_npc_box_lock`
         };
-        const targetKey = bubbleMapping[type];
+
+        let targetKey = bubbleMapping[type];
+        
+        // Check for round-specific win bubble (e.g., game6_npc_box_win_round2)
+        if (type === 'win' || type === 'gameWin') {
+            const specificRoundKey = `${prefix}_npc_box_win_round${this.roundIndex + 1}`;
+            if (this.textures.exists(specificRoundKey)) {
+                targetKey = specificRoundKey;
+            }
+        }
+        
         const player_bubbles = [`${prefix}_npc_box4`, `${prefix}_npc_box5`];
         this.currentBubbleImg = this.add.image(centerX, centerY, targetKey)
             .setDepth(300)
