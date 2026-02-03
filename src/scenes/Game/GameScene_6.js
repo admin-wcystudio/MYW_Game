@@ -17,11 +17,11 @@ export class GameScene_6 extends BaseGameScene {
         this.load.image('game6_title', `${path}game6_title.png`);
         this.load.image('game6_description', `${path}game6_description.png`);
 
-        this.load.image('game6_npc_box_intro', `${path}game6_npc_box1.png`);
+        this.load.image('game6_npc_box_win', `${path}game6_npc_box1.png`);
         this.load.image('game6_npc_box_win_round3', `${path}game6_npc_box2.png`);
         this.load.image('game6_npc_box_win_round1', `${path}game6_npc_box3.png`);
         this.load.image('game6_npc_box_win_round2', `${path}game6_npc_box4.png`);
-        this.load.image('game6_npc_box_addon', `${path}game6_npc_box5.png`);
+        this.load.image('game6_npc_box_win_round_addon', `${path}game6_npc_box5.png`);
         this.load.image('game6_npc_box_tryagain', `${path}game6_npc_box6.png`);
 
         // Arrows
@@ -261,11 +261,30 @@ export class GameScene_6 extends BaseGameScene {
         if (this.gameTimer) this.gameTimer.stop(); // Stop/Pause the timer
         this.enableGameInteraction(false);
         this.updateRoundUI(true);
-        // We do NOT reset the timer here, so it continues from where it left off in the next round.
 
-        this.time.delayedCall(500, () => {
+        if (this.gameState === 'gameWin') {
+            this.time.delayedCall(500, () => {
+                this.addOnBubble = this.add.image(960, 540,
+                    'game6_npc_box_win_round_addon').setDepth(1000)
+                    .setInteractive({ useHandCursor: true });
+
+                this.tweens.add({
+                    targets: this.addOnBubble,
+                    scale: { from: 0.5, to: 1 },
+                    duration: 200,
+                    ease: 'Back.easeOut'
+                });
+
+                this.addOnBubble.on('pointerdown', () => {
+                    this.addOnBubble.destroy();
+                    this.addOnBubble = null;
+                });
+
+                this.showBubble('win');
+            });
+        } else {
             this.showBubble('win');
-        });
+        }
     }
 
     showWin() {

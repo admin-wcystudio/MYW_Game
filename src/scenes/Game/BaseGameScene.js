@@ -43,9 +43,18 @@ export default class BaseGameScene extends Phaser.Scene {
             descriptionPages, this.targetRounds, this.depth);
 
         // 建立計時器 (初始不啟動)
-        this.gameTimer = UIHelper.showTimer(this, this.roundPerSeconds, false, () => {
-            this.handleLose();
-        });
+        if (this.roundPerSeconds > 0) {
+            this.gameTimer = UIHelper.showTimer(this, this.roundPerSeconds, false, () => {
+                this.handleLose();
+            });
+        } else {
+            // Mock object if timer is disabled
+            this.gameTimer = {
+                start: () => { },
+                stop: () => { },
+                reset: () => { }
+            };
+        }
 
         // 執行子類別的物件初始化
         this.setupGameObjects();
@@ -84,7 +93,7 @@ export default class BaseGameScene extends Phaser.Scene {
         };
 
         let targetKey = bubbleMapping[type];
-        
+
         // Check for round-specific win bubble (e.g., game6_npc_box_win_round2)
         if (type === 'win' || type === 'gameWin') {
             const specificRoundKey = `${prefix}_npc_box_win_round${this.roundIndex + 1}`;
@@ -92,7 +101,7 @@ export default class BaseGameScene extends Phaser.Scene {
                 targetKey = specificRoundKey;
             }
         }
-        
+
         const player_bubbles = [`${prefix}_npc_box4`, `${prefix}_npc_box5`];
         this.currentBubbleImg = this.add.image(centerX, centerY, targetKey)
             .setDepth(300)
