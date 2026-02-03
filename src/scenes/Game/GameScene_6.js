@@ -55,10 +55,34 @@ export class GameScene_6 extends BaseGameScene {
         this.targetImage = this.add.image(960, 560, 'game6_target_0').setDepth(21);
         this.barBG = this.add.image(960, 540, 'game6_bar_bg').setDepth(22);
         this.barBG.setVisible(false);
+
+        this.spawnSpeed = 5;
+        this.maxArrows = 6;
+        this.canSpawn = false;
+        this.spawnHitPoint = false;
+    }
+    update() {
+        if (this.canSpawn) {
+            if (!this.fallingArrows || this.fallingArrows.length === 0) {
+                this.spawnArrow();
+            }
+
+            for (let i = this.fallingArrows.length - 1; i >= 0; i--) {
+                const arrow = this.fallingArrows[i];
+                arrow.x -= this.spawnSpeed;
+                if (arrow.x < 200) {
+                    arrow.destroy();
+                    this.fallingArrows.splice(i, 1);
+                    this.handleMissedArrow();
+                }
+            }
+
+        }
     }
 
     setupGameObjects() {
         this.buttonGroup = this.add.group();
+        this.arrowGroup = this.add.group();
         const colors = ['blue', 'green', 'red', 'yellow'];
         for (let i = 0; i < 4; i++) {
             const button = new CustomButton(this, 520 + i * 300, 840, `game6_arrow_${colors[i]}`, `game6_arrow_${colors[i]}`,
@@ -67,6 +91,12 @@ export class GameScene_6 extends BaseGameScene {
                 }).setDepth(25);
             this.buttonGroup.add(button);
         }
+
+        for (let i = 0; i < colors.length; i++) {
+            const arrow = this.add.image(960, -100, `game6_bar_arrow_${colors[i]}`).setDepth(23);
+            this.arrowGroup.add(arrow);
+        }
+
         this.buttonGroup.setVisible(false);
     }
 
@@ -82,5 +112,74 @@ export class GameScene_6 extends BaseGameScene {
             });
         }
         this.barBG.setVisible(enable);
+        this.arrowGroup.setVisible(enable);
+        this.canSpawn = enable;
+    }
+
+    showHitPoint() {
+        this.hitPoint = this.add.image(1000, 540, 'game6_hit_point').setDepth(30);
+        this.hitPoint.setScale(0);
+
+        this.tweens.add({
+            targets: this.hitPoint,
+            scale: 1,
+            duration: 500,
+            ease: 'Back.out'
+        });
+
+        this.time.delayedCall(2000, () => {
+            if (this.hitPoint) {
+                this.tweens.add({
+                    targets: this.hitPoint,
+                    scale: 0,
+                    duration: 500,
+                    ease: 'Back.in',
+                });
+                this.hitPoint.destroy();
+                this.spawnHitPoint = false;
+            }
+        });
+    }
+
+    spawnArrow() {
+        this.fallingArrows = [];
+        const colors = ['blue', 'green', 'red', 'yellow'];
+        for (let i = 0; i < 6; i++) {
+            const randomIndex = Phaser.Math.Between(0, colors.length - 1);
+            const color = colors[randomIndex];
+            const arrow = this.add.image(1680 - (i * 200), 540, `game6_bar_arrow_${color}`).setDepth(24);
+            arrow.colorIndex = randomIndex;
+            this.fallingArrows.push(arrow);
+        }
+        if (!this.spawnHitPoint) {
+            this.spawnHitPoint = true;
+            this.showHitPoint();
+        }
+    }
+
+    handleArrowClick(index) {
+        if (!this.fallingArrows || this.fallingArrows.length === 0) return;
+
+        const arrow = this.fallingArrows[0];
+        // Target is at 1000
+        if (arrow.x >= 940 && arrow.x <= 1060) {
+            console.log('Hit arrow:', index, 'Position:', arrow.x);
+            if (arrow.colorIndex === index) {
+                arrow.destroy();
+                this.fallingArrows.shift();
+                this.handleWinBeforeBubble();
+            } else {
+                this.handleMissedArrow();
+                //this.handleLose();
+            }
+        } else {
+            // this.handleLose();
+        }
+
+    }
+
+    handleMissedArrow() {
+        console.log('Missed arrow');
+        // Implement miss logic (e.g., reduce health, shake screen)
     }
 }
