@@ -39,14 +39,14 @@ export class GameScene_5 extends BaseGameScene {
         this.gameResult_4 = GameManager.loadOneGameResult(4);
         this.canPlay = false;
         console.log("Game 5 - Can Play:", this.canPlay);
-        // if (this.gameResult_1 && this.gameResult_1.isFinished &&
-        //     this.gameResult_4 && this.gameResult_4.isFinished) {
-        //     this.canPlay = true;
-        //     this.initGame('game5_bg', 'game5_title', 'game5_description', 10, true);
-        // } else {
-        //     this.add.image(960, 540, 'game5_bg');
-        //     this.showBubble('lock');
-        // }
+        if (this.gameResult_1 && this.gameResult_1.isFinished &&
+            this.gameResult_4 && this.gameResult_4.isFinished) {
+            this.canPlay = true;
+            this.initGame('game5_bg', 'game5_title', 'game5_description', 10, true);
+        } else {
+            this.add.image(960, 540, 'game5_bg');
+            this.showBubble('lock');
+        }
 
         this.isHit = false;
         this.isValid = false;
