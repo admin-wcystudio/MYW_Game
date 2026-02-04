@@ -97,6 +97,7 @@ export class CustomSinglePanel extends Phaser.GameObjects.Container {
         super(scene, x, y);
         this.scene = scene;
         this.pageKey = pageKey;
+        this.onClose = onClose;
         this.currentPage = 0;
         this.toggleBtn = null;
 

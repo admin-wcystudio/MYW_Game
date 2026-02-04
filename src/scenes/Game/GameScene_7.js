@@ -1,5 +1,5 @@
 import { CustomButton } from '../../UI/Button.js';
-import { CustomPanel, SettingPanel } from '../../UI/Panel.js';
+import { CustomDescriptionPanel, CustomPanel, CustomSinglePanel, SettingPanel } from '../../UI/Panel.js';
 import { QuestionPanel_7 } from '../../UI/QuestionPanel.js';
 import UIHelper from '../../UI/UIHelper.js';
 import BaseGameScene from './BaseGameScene.js';
@@ -39,18 +39,12 @@ export class GameScene_7 extends BaseGameScene {
 
         // Question Buttons (Q1 - Q3 use _click, Q4 uses _select)
         const options = ['a', 'b', 'c', 'd'];
-        for (let q = 1; q <= 3; q++) {
+        for (let q = 1; q <= 4; q++) {
             options.forEach(opt => {
                 this.load.image(`game7_q${q}_${opt}_button`, `${path}game7_game7_q${q}_${opt}_button.png`);
                 this.load.image(`game7_q${q}_${opt}_button_click`, `${path}game7_game7_q${q}_${opt}_button_click.png`);
             });
         }
-
-        // Q4 Buttons
-        options.forEach(opt => {
-            this.load.image(`game7_q4_${opt}_button`, `${path}game7_game7_q4_${opt}_button.png`);
-            this.load.image(`game7_q4_${opt}_button_select`, `${path}game7_game7_q4_${opt}_button_select.png`);
-        });
 
         // Videos
         for (let i = 1; i <= 3; i++) {
@@ -103,7 +97,8 @@ export class GameScene_7 extends BaseGameScene {
             }
         ];
 
-        this.questionPanel = new QuestionPanel_7(this, allQuestions)
+        this.questionPanel = new QuestionPanel_7(this, allQuestions,
+            () => this.handleWin(), () => this.handleLose())
             .setDepth(20).setVisible(false);
         this.sceneGroup = this.add.group();
         this.currentBubbleImg = this.add.image(960, 900, this.introBubbles[this.roundIndex])
@@ -126,10 +121,7 @@ export class GameScene_7 extends BaseGameScene {
         }
     }
 
-
-
     enableGameInteraction(enabled) {
-        super.enableGameInteraction(enabled);
         this.currentBubbleImg.setVisible(enabled);
 
         this.currentVideo.setVisible(enabled);
@@ -160,5 +152,46 @@ export class GameScene_7 extends BaseGameScene {
         this.currentVideo.setVisible(false);
         this.questionPanel.setVisible(true);
     }
+
+    handleWin() {
+        this.questionPanel.setVisible(false);
+
+        if (this.currentVideo) {
+            this.currentVideo.destroy();
+        }
+        this.currentVideo = this.add.video(960, 540, 'game7_scene3').setDepth(19).setVisible(true);
+        this.currentVideo.play(false);
+
+        const ending1 = new CustomSinglePanel(this, 960, 540, 'game7_ending1', () => {
+            ending2.setVisible(true);
+        }).setDepth(30).setVisible(false);
+        const ending2 = new CustomSinglePanel(this, 960, 540, 'game7_ending2', () => {
+        }).setDepth(30).setVisible(false);
+
+        this.add.existing(ending1);
+        this.add.existing(ending2);
+
+        this.currentVideo.once('complete', () => {
+            this.currentVideo.setVisible(false);
+            ending1.setVisible(true);
+        });
+    }
+
+    handleLose() {
+        this.questionPanel.setVisible(false);
+        this.currentVideo.setVisible(false);
+        if (this.gameState === 'lose') return;
+        this.isGameActive = false;
+        this.gameState = 'lose';
+        this.enableGameInteraction(false);
+        this.showFailPanel();
+    }
+
+    resetWholeGame() {
+        console.log('重置整個遊戲');
+        this.roundIndex = 0;
+        this.scene.restart();
+    }
+
 
 }

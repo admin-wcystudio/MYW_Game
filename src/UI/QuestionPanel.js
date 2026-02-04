@@ -190,6 +190,7 @@ export class QuestionPanel_7 extends Phaser.GameObjects.Container {
             if (this.currentIndex < this.questions.length) {
                 this.showQuestion();
             } else {
+                console.log("全部答對了 , 遊戲結束");
                 this.destroy();
                 if (this.onComplete) this.onComplete();
             }
