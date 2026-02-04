@@ -97,8 +97,8 @@ export class QuestionPanel extends Phaser.GameObjects.Container {
     }
 
     showAddOn(addOnKey) {
-        this.optionButtons.forEach(btn => btn.setVisible(false));
-        this.content.setVisible(false);
+        this.optionButtons.forEach(btn => btn.setVisible(true));
+        this.content.setVisible(true);
 
         const addOnImg = this.scene.add.image(0, 50, addOnKey).setInteractive({ useHandCursor: true });
         this.add(addOnImg);
@@ -121,5 +121,90 @@ export class QuestionPanel extends Phaser.GameObjects.Container {
             this.destroy(); // 3 題都答完了
             if (this.onComplete) this.onComplete();
         }
+    }
+}
+
+export class QuestionPanel_7 extends Phaser.GameObjects.Container {
+    constructor(scene, questions, onComplete, onLose, depth) {
+        super(scene, 960, 540); // 放在畫面中央
+        this.scene = scene;
+        this.questions = questions; // Scene 傳進來的 3 題隨機題
+        this.onComplete = onComplete;
+        this.onLose = onLose;
+        this.currentIndex = 0;
+        this.selectedAnswerIndex = -1;
+
+        this.content = scene.add.image(0, 50, '');
+        this.add(this.content);
+
+        this.confirmBtn = new CustomButton(scene, 0, 380,
+            'game7_confirm_button', 'game7_confirm_button_select', () => {
+                this.checkAnswer();
+            });
+        this.confirmBtn.setDepth(556).setVisible(true);
+        this.add(this.confirmBtn);
+        this.showQuestion();
+        scene.add.existing(this);
+
+    }
+
+    showQuestion() {
+        console.log(`[DEBUG] show question ${this.currentIndex}`);
+        const q = this.questions[this.currentIndex];
+        this.content.setTexture(q.content).setVisible(true).setDepth(556);
+
+        if (this.optionButtons) {
+            this.optionButtons.forEach(btn => btn.destroy());
+        }
+
+        this.optionButtons = []; // 清空陣列，準備放「這一題」的新按鈕
+
+        // 3. 根據這一題的資料，生成全新的按鈕
+        q.option.forEach((optKey, index) => {
+            const x = 50;
+            const y = -100 + index * 120;
+
+            const btn = new CustomButton(this.scene, x, y, optKey, `${optKey}_click`, () => {
+                this.selectedAnswer(btn, index);
+            }).setScale(1).setVisible(true).setDepth(556);
+
+            this.add(btn);
+            this.optionButtons.push(btn);
+        });
+    }
+    checkAnswer() {
+        if (this.currentIndex >= this.questions.length) return;
+        const q = this.questions[this.currentIndex];
+
+        if (this.selectedAnswerIndex === q.answer) {
+            console.log("答對了");
+            if (this.currentIndex === 1) {
+                console.log("觸發中間預覽");
+                if (this.scene.handleMiddlePreview) {
+                    this.scene.handleMiddlePreview();
+                }
+            }
+
+            this.currentIndex++;
+
+            if (this.currentIndex < this.questions.length) {
+                this.showQuestion();
+            } else {
+                this.destroy();
+                if (this.onComplete) this.onComplete();
+            }
+
+        } else {
+            console.log("答錯了 , correct : " + q.answer);
+            if (this.onLose) this.onLose();
+        }
+    }
+
+    selectedAnswer(gameObject, index) {
+        // Clear tint for all buttons
+        this.optionButtons.forEach(btn => btn.clearTint());
+        // Set tint for selected button
+        gameObject.setTint(0xaaaaaa);
+        this.selectedAnswerIndex = index;
     }
 }

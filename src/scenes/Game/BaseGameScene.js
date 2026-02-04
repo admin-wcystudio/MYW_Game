@@ -27,7 +27,7 @@ export default class BaseGameScene extends Phaser.Scene {
      * @param {number} depth
      * @param {boolean} skipIntroBubble - if true, skip the first intro bubble and start game immediately
      */
-    initGame(bgKey, titleKey, descriptionKey, depth = 10, skipIntroBubble = false, willB) {
+    initGame(bgKey, titleKey, descriptionKey, depth = 10, skipIntroBubble = false, autoStart = true) {
         this.gameState = 'init';
         const gender = localStorage.getItem('player') ? JSON.parse(localStorage.getItem('player')).gender : 'M';
 
@@ -60,7 +60,8 @@ export default class BaseGameScene extends Phaser.Scene {
         this.setupGameObjects();
 
         if (skipIntroBubble) {
-            this.startGame();
+            if (autoStart)
+                this.startGame();
         } else {
             this.showBubble('intro', gender);
         }
