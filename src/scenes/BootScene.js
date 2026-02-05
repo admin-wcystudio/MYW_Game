@@ -210,9 +210,6 @@ export class BootScene extends Phaser.Scene {
 
         const savedData = localStorage.getItem('gameSettings');
 
-        const savedGameResultData = localStorage.getItem('allGamesResult');
-
-
         if (savedData) {
             const settings = JSON.parse(savedData);
 

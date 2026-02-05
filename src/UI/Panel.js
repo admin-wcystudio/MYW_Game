@@ -395,35 +395,47 @@ export class ItemsPanel extends Phaser.GameObjects.Container {
         this.panelBg = scene.add.image(0, 0, 'panel_bg').setDepth(2);
         this.add([this.bg, this.panelBg]);
 
+        // Get game results from localStorage
+        const savedGameResultData = localStorage.getItem('allGamesResult');
+        const allResults = savedGameResultData ? JSON.parse(savedGameResultData) : [];
+
         // 2. 產生物品按鈕
         itemsContent.forEach((item, index) => {
             const posX = -500 + index * 250; // 調整為 Container 相對座標
             const posY = -100;
 
-            const itemBtn = new CustomButton(scene, posX, posY, item.itemKey, item.itemSelectKey, () => {
-                const pages = [
-                    item.itemDescriptionKey,
-                    item.itemDescriptionKey1,
-                    item.itemDescriptionKey2
-                ].filter(key => key != null);
+            // Always show the box for Top Row (y=-100) and Bottom Row (y=200)
+            const itemBoxTop = scene.add.image(posX, posY, 'itempage_item_box').setDepth(3);
+            const itemBoxBottom = scene.add.image(posX, 200, 'itempage_item_box').setDepth(3);
+            this.add([itemBoxTop, itemBoxBottom]);
 
-                if (pages.length > 0) {
+            // Check if corresponding game (index + 1) is completed
+            const gameId = index + 1;
+            const isUnlocked = allResults.find(r => r.game === gameId)?.isFinished;
 
-                    const blocker = scene.add.rectangle(0, 0, 1920, 1080, 0x000000, 0.5).setInteractive();
+            if (isUnlocked) {
+                const itemBtn = new CustomButton(scene, posX, posY, item.itemKey, item.itemSelectKey, () => {
+                    const pages = [
+                        item.itemDescriptionKey,
+                        item.itemDescriptionKey1,
+                        item.itemDescriptionKey2
+                    ].filter(key => key != null);
 
-                    const descPanel = new CustomDescriptionPanel(scene, 0, 0, pages, () => {
-                        blocker.destroy();
-                    });
+                    if (pages.length > 0) {
+                        const blocker = scene.add.rectangle(0, 0, 1920, 1080, 0x000000, 0.5).setInteractive();
 
-                    descPanel.setDepth(501);
-                    blocker.setDepth(500);
+                        const descPanel = new CustomDescriptionPanel(scene, 0, 0, pages, () => {
+                            blocker.destroy();
+                        });
 
-                    this.add([blocker, descPanel]);
-                }
-            }).setDepth(3);
+                        descPanel.setDepth(501);
+                        blocker.setDepth(500);
 
-            const itemBox = scene.add.image(posX, 200, 'itempage_item_box').setDepth(3);
-            this.add([itemBtn, itemBox]);
+                        this.add([blocker, descPanel]);
+                    }
+                }).setDepth(4);
+                this.add(itemBtn);
+            }
         });
 
         // 3. 關閉按鈕
