@@ -38,7 +38,8 @@ export class GameScene_4 extends BaseGameScene {
 
     create() {
         // Change skipIntroBubble to false if you want the tutorial bubble first
-        this.initGame('game4_bg', 'game4_title', 'game4_description', 10, true);
+        // Set autoStart to false so the game starts after description panel is closed
+        this.initGame('game4_bg', 'game4_title', 'game4_description', 10, true, false);
     }
 
     setupGameObjects() {

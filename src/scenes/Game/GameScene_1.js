@@ -8,7 +8,7 @@ export class GameScene_1 extends BaseGameScene {
     constructor() {
         super('GameScene_1');
         this.roundPerSeconds = 30;
-        this.targetRounds = 3;
+        this.targetRounds = 2;
         this.sceneIndex = 1;
     }
 
@@ -138,6 +138,31 @@ export class GameScene_1 extends BaseGameScene {
             console.log("所有拼圖完成!");
             this.handleWinBeforeBubble();
         }
+    }
+
+    handleWinBeforeBubble() {
+        // Override to ensure feedback plays
+        if (!this.isGameActive || this.gameState === 'gameWin') return;
+
+        this.gameState = 'gameWin';
+        console.log('遊戲狀態改為:', this.gameState);
+
+        if (this.gameTimer) this.gameTimer.stop();
+
+        if (this.gameTimer && typeof this.gameTimer.getRemaining === 'function') {
+            const used = Math.max(0, this.roundPerSeconds - this.gameTimer.getRemaining());
+            this.totalUsedSeconds += used;
+        }
+
+        this.enableGameInteraction(false);
+        this.updateRoundUI(true);
+
+        this.playFeedback();
+
+        this.gameTimer.reset(this.roundPerSeconds);
+        this.time.delayedCall(500, () => {
+            this.showBubble('win');
+        });
     }
     /**
      * 播放過場影片

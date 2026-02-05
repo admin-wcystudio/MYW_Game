@@ -404,7 +404,8 @@ export default class UIHelper {
                 state.timeLeft = newSeconds || seconds;
                 state.isRunning = false; // 重置時先停止，等待 startGameLogic 啟動
                 timerText.setText(formatTime(state.timeLeft));
-            }
+            },
+            getRemaining: () => state.timeLeft
         };
 
         const timerEvent = scene.time.addEvent({

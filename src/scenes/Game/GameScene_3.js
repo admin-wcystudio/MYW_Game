@@ -196,7 +196,7 @@ export class GameScene_3 extends BaseGameScene {
         this.cardGroup.setVisible(false);
         this.confirm_button.setVisible(false);
         this.addOnImg = this.add.image(960, 600, 'game3_additions')
-            .setInteractive({ useHandCursor: true }).setDepth(200);
+            .setInteractive({ useHandCursor: true }).setDepth(557);
 
         this.addOnImg.setVisible(true);
         this.addOnImg.once('pointerdown', () => {

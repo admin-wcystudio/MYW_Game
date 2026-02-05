@@ -15,7 +15,8 @@ export class MainStreetScene extends Phaser.Scene {
 
         const gender = localStorage.getItem('player') ? JSON.parse(localStorage.getItem('player')).gender : 'F';
 
-        const genderKey = gender === 'M' ? 'boy' : 'girl';
+        this.genderKey = gender === 'M' ? 'boy' : 'girl';
+        const genderKey = this.genderKey;
 
 
         console.log(`Player gender: ${gender}, genderKey: ${genderKey}`);
@@ -41,7 +42,7 @@ export class MainStreetScene extends Phaser.Scene {
             },
         ]
 
-        // const ui = UIHelper.createGameCommonUI(this, null, null, introPage, 0);
+        const ui = UIHelper.createGameCommonUI(this, null, null, introPage, 0);
         //
         //buttons
         this.isLeftDown = false;
@@ -166,11 +167,7 @@ export class MainStreetScene extends Phaser.Scene {
         // 紀錄最後方向供 handleAnimation 使用
         this.player.lastDirectionLeft = isLeft;
 
-        const playerData = localStorage.getItem('player');
-        const gender = playerData ? JSON.parse(playerData).gender : 'M';
-        const genderKey = gender === 'M' ? 'boy' : 'girl';
-
-        this.handleAnimation(genderKey, isMoving, isLeft);
+        this.handleAnimation(this.genderKey, isMoving, isLeft);
 
 
         this.player.x = Phaser.Math.Clamp(this.player.x, 100, 8314);

@@ -15,6 +15,7 @@ export default class BaseGameScene extends Phaser.Scene {
         this.sceneIndex = -1;
         this.gameState = 'init'; // 'init', 'playing', 'roundWin', 'gameWin', 'lose'
         this.currentBubbleImg = null;
+        this.totalUsedSeconds = 0;
     }
 
     /**
@@ -52,7 +53,8 @@ export default class BaseGameScene extends Phaser.Scene {
             this.gameTimer = {
                 start: () => { },
                 stop: () => { },
-                reset: () => { }
+                reset: () => { },
+                getRemaining: () => 0
             };
         }
 
@@ -60,6 +62,15 @@ export default class BaseGameScene extends Phaser.Scene {
         this.setupGameObjects();
 
         if (skipIntroBubble) {
+            // Setup close callback to start game if not auto-started
+            if (this.gameUI && this.gameUI.descriptionPanel) {
+                this.gameUI.descriptionPanel.setCloseCallBack(() => {
+                    if (!this.isGameActive && this.gameState === 'init') {
+                        this.startGame();
+                    }
+                });
+            }
+
             if (autoStart)
                 this.startGame();
         } else {
@@ -208,6 +219,12 @@ export default class BaseGameScene extends Phaser.Scene {
         this.gameState = isGameWin ? 'gameWin' : 'roundWin';
         console.log('遊戲狀態改為:', this.gameState);
         if (this.gameTimer) this.gameTimer.stop();
+
+        if (this.gameTimer && typeof this.gameTimer.getRemaining === 'function') {
+            const used = Math.max(0, this.roundPerSeconds - this.gameTimer.getRemaining());
+            this.totalUsedSeconds += used;
+        }
+
         this.enableGameInteraction(false);
         this.updateRoundUI(true);
         this.gameTimer.reset(this.roundPerSeconds);
@@ -224,7 +241,8 @@ export default class BaseGameScene extends Phaser.Scene {
             if (this.gameState === 'gameWin') {
                 // Save game result
                 if (this.sceneIndex > 0) {
-                    GameManager.saveGameResult(this.sceneIndex, true);
+                    GameManager.saveGameResult(this.sceneIndex, true, this.totalUsedSeconds);
+                    console.log(`遊戲 ${this.sceneIndex} 結束，總用時: ${this.totalUsedSeconds} 秒`);
                 }
                 this.showWin();
                 this.isGameActive = false;
@@ -290,6 +308,7 @@ export default class BaseGameScene extends Phaser.Scene {
     resetWholeGame() {
         console.log('重置整個遊戲');
         this.roundIndex = 0;
+        this.totalUsedSeconds = 0;
         this.gameState = 'init';
         this.isGameActive = false;
         this.gameTimer.reset(this.roundPerSeconds);

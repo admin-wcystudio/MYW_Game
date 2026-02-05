@@ -9,11 +9,11 @@ export class CustomPanel extends Phaser.GameObjects.Container {
         this.toggleBtn = null;
 
         const contentKey = (this.pages.length > 0 && this.pages[0].content) ? this.pages[0].content : '';
-        this.contentImage = scene.add.image(0, 0, contentKey);
+        this.contentImage = scene.add.image(0, 0, contentKey).setScrollFactor(0);
         this.add(this.contentImage);
 
-        this.prevBtn = new CustomButton(scene, -570, 260, null, null, () => this.changePage(-1));
-        this.nextBtn = new CustomButton(scene, 570, 260, null, null, () => this.changePage(1));
+        this.prevBtn = new CustomButton(scene, -570, 260, null, null, () => this.changePage(-1)).setScrollFactor(0);
+        this.nextBtn = new CustomButton(scene, 570, 260, null, null, () => this.changePage(1)).setScrollFactor(0);
 
         this.closeBtn = new CustomButton(scene, 625, -295, null, null, () => {
             this.setVisible(false);
@@ -25,7 +25,7 @@ export class CustomPanel extends Phaser.GameObjects.Container {
             if (this.onClose) {
                 this.onClose();
             }
-        });
+        }).setScrollFactor(0);
         this.prevBtn.needClicked = false;
         this.nextBtn.needClicked = false;
         this.closeBtn.needClicked = false;
@@ -102,7 +102,7 @@ export class CustomSinglePanel extends Phaser.GameObjects.Container {
         this.currentPage = 0;
         this.toggleBtn = null;
 
-        this.contentImage = scene.add.image(0, 0, this.pageKey);
+        this.contentImage = scene.add.image(0, 0, this.pageKey).setScrollFactor(0);
         this.add(this.contentImage);
 
         this.closeBtn = new CustomButton(scene, 625, -295, 'close_button', 'close_button_click', () => {
@@ -115,7 +115,7 @@ export class CustomSinglePanel extends Phaser.GameObjects.Container {
             if (this.onClose) {
                 this.onClose();
             }
-        });
+        }).setScrollFactor(0);
 
         this.closeBtn.needClicked = false;
 
@@ -161,12 +161,12 @@ export class SettingPanel extends Phaser.GameObjects.Container {
         this.volumeCells = [];
 
         // background
-        this.contentImage = scene.add.image(0, 0, 'setting_bg');
+        this.contentImage = scene.add.image(0, 0, 'setting_bg').setScrollFactor(0);
         this.add(this.contentImage);
 
         //sound
         // 建議改法：全部都加進 Container
-        this.volumeBg = scene.add.image(130, -100, 'vol_bg'); // 座標要相對於 Container 中心
+        this.volumeBg = scene.add.image(130, -100, 'vol_bg').setScrollFactor(0); // 座標要相對於 Container 中心
         this.add(this.volumeBg);
 
         const startX = -260;
@@ -174,7 +174,7 @@ export class SettingPanel extends Phaser.GameObjects.Container {
 
         for (let i = 1; i <= 5; i++) {
             let xOffset = startX + (i * cellGap);
-            let cell = scene.add.image(startX + (cellGap * i), -103, `vol_${i}`);
+            let cell = scene.add.image(startX + (cellGap * i), -103, `vol_${i}`).setScrollFactor(0);
             console.log("Cell xoffset", this.xOffset);
 
             cell.setDepth(104);
@@ -189,29 +189,29 @@ export class SettingPanel extends Phaser.GameObjects.Container {
 
         this.mandarinBtn = new CustomButton2(scene, -50, 50,
             'lang_mandarin', 'lang_mandarin_click',
-            () => this.setLanguage('CN'));
+            () => this.setLanguage('CN')).setScrollFactor(0);
         this.mandarinBtn.setDepth(105);
         this.mandarinBtn.needClicked = true;
 
         this.cantoneseBtn = new CustomButton2(scene, 300, 50, 'lang_cantonese', 'lang_cantonese_click',
             () => this.setLanguage('HK')
-        );
+        ).setScrollFactor(0);
         this.cantoneseBtn.setDepth(105);
         this.cantoneseBtn.needClicked = true;
         this.add([this.mandarinBtn, this.cantoneseBtn]);
 
-        this.prevBtn = new CustomButton(scene, -250, -100, 'vol_left', 'vol_left_click', () => this.setVolume(-1));
-        this.nextBtn = new CustomButton(scene, 525, -100, 'vol_right', 'vol_right_click', () => this.setVolume(1));
+        this.prevBtn = new CustomButton(scene, -250, -100, 'vol_left', 'vol_left_click', () => this.setVolume(-1)).setScrollFactor(0);
+        this.nextBtn = new CustomButton(scene, 525, -100, 'vol_right', 'vol_right_click', () => this.setVolume(1)).setScrollFactor(0);
         this.closeBtn = new CustomButton(scene, 625, -295, 'close_button', 'close_button_click', () => {
             this.setVisible(false);
 
             if (this.toggleBtn) {
                 this.toggleBtn.resetStatus();
             }
-        });
+        }).setScrollFactor(0);
 
         this.saveBtn = new CustomButton(scene, -50, 200, 'save_btn', 'save_btn_click',
-            () => this.saveToLocal());
+            () => this.saveToLocal()).setScrollFactor(0);
         this.saveBtn.setDepth(104);
         this.add(this.saveBtn);
         this.saveBtn.needClicked = false;
@@ -294,21 +294,21 @@ export class CustomDescriptionPanel extends Phaser.GameObjects.Container {
         this.onClose = onClose;
 
         // 1. 主背景圖片
-        this.contentImage = scene.add.image(0, 0, this.pageKeys[this.currentPage]);
+        this.contentImage = scene.add.image(0, 0, this.pageKeys[this.currentPage]).setScrollFactor(0);
         this.add(this.contentImage);
 
         // 2. 關閉按鈕
         this.closeBtn = new CustomButton(scene, 625, -295, 'close_button', 'close_button_click', () => {
             this.closePanel();
-        });
+        }).setScrollFactor(0);
         this.add(this.closeBtn);
 
         // 3. 上一頁按鈕 (初始隱藏)
-        this.prevBtn = new CustomButton(scene, -800, 250, 'prev_button', null, () => this.prevPage());
+        this.prevBtn = new CustomButton(scene, -800, 250, 'prev_button', null, () => this.prevPage()).setScrollFactor(0);
         this.add(this.prevBtn);
 
         // 4. 下一頁按鈕
-        this.nextBtn = new CustomButton(scene, 800, 250, 'next_button', null, () => this.nextPage());
+        this.nextBtn = new CustomButton(scene, 800, 250, 'next_button', null, () => this.nextPage()).setScrollFactor(0);
         this.add(this.nextBtn);
 
         // 初始化按鈕可見性
@@ -391,8 +391,8 @@ export class ItemsPanel extends Phaser.GameObjects.Container {
         ];
 
         // 1. 背景層
-        this.bg = scene.add.image(0, 0, 'itempage_bg').setDepth(1);
-        this.panelBg = scene.add.image(0, 0, 'panel_bg').setDepth(2);
+        this.bg = scene.add.image(0, 0, 'itempage_bg').setDepth(1).setScrollFactor(0);
+        this.panelBg = scene.add.image(0, 0, 'panel_bg').setDepth(2).setScrollFactor(0);
         this.add([this.bg, this.panelBg]);
 
         // Get game results from localStorage
@@ -405,8 +405,8 @@ export class ItemsPanel extends Phaser.GameObjects.Container {
             const posY = -100;
 
             // Always show the box for Top Row (y=-100) and Bottom Row (y=200)
-            const itemBoxTop = scene.add.image(posX, posY, 'itempage_item_box').setDepth(3);
-            const itemBoxBottom = scene.add.image(posX, 200, 'itempage_item_box').setDepth(3);
+            const itemBoxTop = scene.add.image(posX, posY, 'itempage_item_box').setDepth(3).setScrollFactor(0);
+            const itemBoxBottom = scene.add.image(posX, 200, 'itempage_item_box').setDepth(3).setScrollFactor(0);
             this.add([itemBoxTop, itemBoxBottom]);
 
             // Check if corresponding game (index + 1) is completed
@@ -422,27 +422,40 @@ export class ItemsPanel extends Phaser.GameObjects.Container {
                     ].filter(key => key != null);
 
                     if (pages.length > 0) {
-                        const blocker = scene.add.rectangle(0, 0, 1920, 1080, 0x000000, 0.5).setInteractive();
+                        const blocker = scene.add.rectangle(0, 0, 1920, 1080, 0x000000, 0.5).setInteractive().setScrollFactor(0);
 
                         const descPanel = new CustomDescriptionPanel(scene, 0, 0, pages, () => {
                             blocker.destroy();
+                            this.activeDescPanel = null;
+                            this.activeBlocker = null;
                         });
 
-                        descPanel.setDepth(501);
-                        blocker.setDepth(500);
+                        descPanel.setDepth(501).setScrollFactor(0);
+                        blocker.setDepth(500).setScrollFactor(0);
 
                         this.add([blocker, descPanel]);
+                        this.activeDescPanel = descPanel;
+                        this.activeBlocker = blocker;
                     }
-                }).setDepth(4);
+                }).setDepth(4).setScrollFactor(0);
                 this.add(itemBtn);
             }
         });
 
         // 3. 關閉按鈕
         this.closeBtn = new CustomButton(scene, 620, -290, 'itempage_close_button', 'itempage_close_button_select', () => {
+            if (this.activeDescPanel) {
+                this.activeDescPanel.destroy();
+                this.activeDescPanel = null;
+            }
+            if (this.activeBlocker) {
+                this.activeBlocker.destroy();
+                this.activeBlocker = null;
+            }
+
             this.setVisible(false);
             if (this.toggleBtn) this.toggleBtn.resetStatus(); // 讓外部按鈕彈回
-        });
+        }).setScrollFactor(0);
         this.add(this.closeBtn);
 
         scene.add.existing(this);
