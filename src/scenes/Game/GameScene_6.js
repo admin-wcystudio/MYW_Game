@@ -7,7 +7,7 @@ import BaseGameScene from './BaseGameScene.js';
 export class GameScene_6 extends BaseGameScene {
     constructor() {
         super('GameScene_6');
-        this.roundPerSeconds = 45;
+        this.roundPerSeconds = 30;
         this.targetRounds = 3;
         this.sceneIndex = 6;
     }

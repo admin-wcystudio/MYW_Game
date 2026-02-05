@@ -8,7 +8,7 @@ import GameManager from '../GameManager.js';
 export class GameScene_5 extends BaseGameScene {
     constructor() {
         super('GameScene_5');
-        this.roundPerSeconds = 400;
+        this.roundPerSeconds = 30;
         this.targetRounds = 2;
         this.sceneIndex = 5;
     }

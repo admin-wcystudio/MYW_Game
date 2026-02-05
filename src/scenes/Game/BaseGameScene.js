@@ -201,6 +201,10 @@ export default class BaseGameScene extends Phaser.Scene {
         if (!this.isGameActive || this.gameState === 'gameWin') return;
         // Determine if this is the last round
         const isGameWin = (this.roundIndex + 1 >= this.targetRounds);
+        this.playFeedback();
+        if (isGameWin) {
+            this.label = this.add.image(1650, 350, 'game_success_label').setDepth(555);
+        }
         this.gameState = isGameWin ? 'gameWin' : 'roundWin';
         console.log('遊戲狀態改為:', this.gameState);
         if (this.gameTimer) this.gameTimer.stop();
@@ -241,6 +245,7 @@ export default class BaseGameScene extends Phaser.Scene {
         if (this.gameState === 'lose') return;
         this.isGameActive = false;
         this.gameState = 'lose';
+        this.label = this.add.image(1650, 350, 'game_fail_label').setDepth(555);
         if (this.gameTimer) this.gameTimer.stop();
         this.enableGameInteraction(false);
         this.updateRoundUI(false);
@@ -303,6 +308,7 @@ export default class BaseGameScene extends Phaser.Scene {
                 data.isSuccess = false;
             });
         }
+        this.label?.destroy();
     }
 
     lockGameUI() {

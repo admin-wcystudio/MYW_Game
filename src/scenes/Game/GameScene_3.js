@@ -7,7 +7,7 @@ import GameManager from '../GameManager.js';
 export class GameScene_3 extends BaseGameScene {
     constructor() {
         super('GameScene_3');
-        this.roundPerSeconds = 500;
+        this.roundPerSeconds = 30;
         this.targetRounds = 1;
         this.sceneIndex = 3;
     }
@@ -203,7 +203,7 @@ export class GameScene_3 extends BaseGameScene {
             this.addOnImg.destroy();
             // Show object panel after add-on image is clicked
             const objectPanel = new CustomSinglePanel(this, 960, 600, 'game3_object_description');
-            objectPanel.setDepth(201).setVisible(true);
+            objectPanel.setDepth(1000).setVisible(true);
             objectPanel.setCloseCallBack(() => GameManager.backToMainStreet(this));
         });
     }

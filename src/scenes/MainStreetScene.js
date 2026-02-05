@@ -230,8 +230,16 @@ export class MainStreetScene extends Phaser.Scene {
         let npcX = targetNpc.x + 200;
         let npcY = targetNpc.y - 220;
 
-        const playerX = this.player.x - 200;
-        const playerY = this.player.y + 200;
+        let playerX = this.player.x - 200;
+        let playerY = this.player.y + 200;
+
+        if (targetNpc.id === 4) {
+            npcY = targetNpc.y + 200;
+            playerX = this.player.x + 200;
+        } else if (targetNpc.id === 5) {
+            npcY = targetNpc.y + 200;
+        }
+
 
         // 2. 生成新的對話框
         const startX = index % 2 === 1 ? playerX : npcX;

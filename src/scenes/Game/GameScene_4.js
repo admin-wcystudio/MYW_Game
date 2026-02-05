@@ -7,7 +7,7 @@ import GameManager from '../GameManager.js';
 export class GameScene_4 extends BaseGameScene {
     constructor() {
         super('GameScene_4');
-        this.roundPerSeconds = 60; // Usually 60-90s is better for math
+        this.roundPerSeconds = 30; // Usually 60-90s is better for math
         this.targetRounds = 2;
         this.sceneIndex = 4;
     }

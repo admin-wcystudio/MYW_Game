@@ -8,7 +8,7 @@ export class GameScene_1 extends BaseGameScene {
     constructor() {
         super('GameScene_1');
         this.roundPerSeconds = 30;
-        this.targetRounds = 1;
+        this.targetRounds = 3;
         this.sceneIndex = 1;
     }
 
@@ -139,8 +139,6 @@ export class GameScene_1 extends BaseGameScene {
             this.handleWinBeforeBubble();
         }
     }
-
-
     /**
      * 播放過場影片
      */
@@ -158,7 +156,7 @@ export class GameScene_1 extends BaseGameScene {
 
         this.time.delayedCall(1000, () => {
             const objectPanel = new CustomSinglePanel(this, 960, 600, 'game1_object_description');
-            objectPanel.setDepth(201).setVisible(true);
+            objectPanel.setDepth(1000).setVisible(true);
             objectPanel.setCloseCallBack(() => GameManager.backToMainStreet(this));
         });
     }
