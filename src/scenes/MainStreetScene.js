@@ -27,6 +27,7 @@ export class MainStreetScene extends Phaser.Scene {
             const bg = this.add.image(currentX, 540, key).setOrigin(0, 0.5).setDepth(1);
             currentX += bg.width; // 累加寬度，讓下一張接在後面
         });
+        this.add.image(5800, 295, 'stage_building').setOrigin(0.5, 0.5).setDepth(15).setScale(1.13);
 
         // 設定相機邊界為總長度 8414px
         this.cameras.main.setBounds(0, 0, 8414, 1080);
@@ -40,7 +41,7 @@ export class MainStreetScene extends Phaser.Scene {
             },
         ]
 
-        const ui = UIHelper.createGameCommonUI(this, null, null, introPage, 0);
+        // const ui = UIHelper.createGameCommonUI(this, null, null, introPage, 0);
         //
         //buttons
         this.isLeftDown = false;
@@ -82,7 +83,7 @@ export class MainStreetScene extends Phaser.Scene {
 
 
         const n1 = NpcHelper.createNpc(this, 1, 1000, 450, 1, 'npc1', npc1_bubbles, 6);
-        const n2 = NpcHelper.createNpc(this, 2, 4000, 550, 1, 'npc2', npc2_bubbles, 6);
+        const n2 = NpcHelper.createNpc(this, 2, 4000, 480, 1, 'npc2', npc2_bubbles, 6);
         const n3 = NpcHelper.createNpc(this, 3, 2000, 550, 1, 'npc3', npc3_bubbles, 6);
         const n4 = NpcHelper.createNpc(this, 4, 330, 750, 1, 'npc4', npc4_bubbles, 15);
         const n5 = NpcHelper.createNpc(this, 5, 5100, 750, 1, 'npc5', npc5_bubbles, 15);
@@ -134,7 +135,7 @@ export class MainStreetScene extends Phaser.Scene {
             });
         });
 
-        this.player = NpcHelper.createCharacter(this, 800, 600, 400, 650,
+        this.player = NpcHelper.createCharacter(this, 800, 550, 400, 650,
             1, 1, `${genderKey}_idle`, true, 'player_bubble_1', true, 10);
         this.handleAnimation(genderKey, false, false);
 
@@ -182,7 +183,6 @@ export class MainStreetScene extends Phaser.Scene {
             const dist = Math.abs(this.player.x - npc.x);
 
             if (dist < npc.proximityDistance) {
-                console.log("近距離 NPC:", npc.id, "距離:", dist, npc.proximityDistance);
                 npc.canInteract = true;
                 npc.setTint(0x888888); // 遠離變暗
 
@@ -227,8 +227,8 @@ export class MainStreetScene extends Phaser.Scene {
         const centerX = this.cameras.main.width / 2;
         const centerY = this.cameras.main.height / 2;
 
-        const npcX = targetNpc.x + 300;
-        const npcY = targetNpc.y - 200;
+        let npcX = targetNpc.x + 200;
+        let npcY = targetNpc.y - 220;
 
         const playerX = this.player.x - 200;
         const playerY = this.player.y + 200;
@@ -277,12 +277,18 @@ export class MainStreetScene extends Phaser.Scene {
     }
 
     popRandomBubble(bubbles, targetNpc) {
+        if (bubbles === null) return;
+
+        if (this.currentActiveBubble) {
+            this.currentActiveBubble.destroy();
+        }
+
         let randomKey = Phaser.Utils.Array.GetRandom(bubbles);
 
         const centerX = this.cameras.main.width / 2;
         const centerY = this.cameras.main.height / 2;
 
-        const npcX = targetNpc.x + 300;
+        const npcX = targetNpc.x + 200;
         const npcY = targetNpc.y - 200;
 
         // Position at NPC (Index 0 behavior)
@@ -300,9 +306,11 @@ export class MainStreetScene extends Phaser.Scene {
             ease: 'Back.easeOut'
         });
 
-        this.bubbleImg.on('pointerdown', () => {
-            this.bubbleImg.destroy();
-            this.currentActiveBubble = null;
+        this.time.delayedCall(3000, () => {
+            if (this.bubbleImg) {
+                this.bubbleImg.destroy();
+                this.currentActiveBubble = null;
+            }
         });
     }
 
