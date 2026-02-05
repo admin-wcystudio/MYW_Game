@@ -93,22 +93,24 @@ export default class UIHelper {
 
         scene.add.image(width / 2, height / 2, bgKey).setDepth(1);
         scene.add.image(width / 2, 80, titleKey).setDepth(3);
-
         const roundStates = [];
-        const startX = 1755; // 起始位置 (最右邊圓圈的 X 座標)
-        const spacing = 145; // 圓圈之間的間距
+        if (targetRounds > 0) {
 
-        for (let i = 0; i < targetRounds; i++) {
-            // 由右向左生成物件
-            const icon = scene.add.image(startX - (i * spacing), 200, 'game_gamechance')
-                .setScale(0.8)
-                .setDepth(555);
+            const startX = 1755; // 起始位置 (最右邊圓圈的 X 座標)
+            const spacing = 145; // 圓圈之間的間距
 
-            roundStates.push({
-                round: i + 1,
-                content: icon, // 存入 Image 物件以便後續 setTexture
-                isSuccess: false
-            });
+            for (let i = 0; i < targetRounds; i++) {
+                // 由右向左生成物件
+                const icon = scene.add.image(startX - (i * spacing), 200, 'game_gamechance')
+                    .setScale(0.8)
+                    .setDepth(555);
+
+                roundStates.push({
+                    round: i + 1,
+                    content: icon, // 存入 Image 物件以便後續 setTexture
+                    isSuccess: false
+                });
+            }
         }
 
         // Panels

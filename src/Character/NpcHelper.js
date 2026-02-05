@@ -16,7 +16,7 @@ export default class NpcHelper {
     static createCharacter(scene, x, y, dialogueX, dialogueY, npcScale = 1, dialogScale = 1,
         videoKey, hasDialogue = false, dialogueKey = '', isVisible = false, depth = 10) {
 
-
+        console.log("Creating character:", videoKey);
         const character = scene.add.video(x, y, videoKey).setDepth(depth);
         character.setScale(npcScale);
         character.play(true);

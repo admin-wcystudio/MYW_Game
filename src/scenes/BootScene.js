@@ -102,11 +102,11 @@ export class BootScene extends Phaser.Scene {
         this.load.video('boy_left_walk', 'assets/MainStreet/Boy/mainboycharacter_leftwalk.webm');
         this.load.video('boy_right_walk', 'assets/MainStreet/Boy/mainboycharacter_rightwalk.webm');
 
-        this.load.video('girl_idle', 'assets/MainStreet/Boy/maincharacter_girl_middlestand.webm');
-        this.load.video('girl_left_talk', 'assets/MainStreet/Girl/maingirlcharacter_lefttalking.webm');
-        this.load.video('girl_right_talk', 'assets/MainStreet/Girl/maingirlcharacter_righttalking.webm');
-        this.load.video('girl_left_walk', 'assets/MainStreet/Girl/maingirlcharacter_leftwalking.webm');
-        this.load.video('girl_right_walk', 'assets/MainStreet/Girl/maingirlcharacter_rightwalking.webm');
+        this.load.video('girl_idle', 'assets/MainStreet/Girl/maincharacter_girl_middlestand.webm');
+        this.load.video('girl_left_talk', 'assets/MainStreet/Girl/maincharacter_girl_lefttalking.webm');
+        this.load.video('girl_right_talk', 'assets/MainStreet/Girl/maincharacter_girl_righttalking.webm');
+        this.load.video('girl_left_walk', 'assets/MainStreet/Girl/maincharacter_girl_leftwalking.webm');
+        this.load.video('girl_right_walk', 'assets/MainStreet/Girl/maincharacter_girl_rightwalking.webm');
 
         //npcs
         this.load.video('npc1', 'assets/MainStreet/NPCs/NPC_1/game1_npc.webm');
@@ -220,7 +220,7 @@ export class BootScene extends Phaser.Scene {
 
             this.registry.set('globalSettings', settings);
         }
-        this.scene.start('GameStartScene');
+        this.scene.start('MainStreetScene');
     }
 
 }

@@ -16,6 +16,8 @@ export class MainStreetScene extends Phaser.Scene {
         const gender = localStorage.getItem('player') ? JSON.parse(localStorage.getItem('player')).gender : 'M';
         const genderKey = gender === 'M' ? 'boy' : 'girl';
 
+        console.log(`Player gender: ${gender}, genderKey: ${genderKey}`);
+
         const bgKeys = ['stage1', 'stage2', 'stage3', 'stage4', 'stage5'];
         let currentX = 0;
         //background
@@ -36,8 +38,8 @@ export class MainStreetScene extends Phaser.Scene {
             },
         ]
 
-        const introPanel = new CustomPanel(this, 960, 620, introPage);
-
+        const ui = UIHelper.createGameCommonUI(this, null, null, introPage, 0);
+        //
         //buttons
         this.isLeftDown = false;
         this.isRightDown = false;
@@ -49,11 +51,10 @@ export class MainStreetScene extends Phaser.Scene {
 
         this.btnRight = new CustomButton(this, width - 150, height / 2, 'next_button', 'next_button_click',
             () => { this.isRightDown = true; },
-            () => { thisdisRightDown = false; }
+            () => { this.isRightDown = false; }
         ).setScrollFactor(0).setDepth(100);
 
 
-        const ui = UIHelper.createGameCommonUI(this, introPage, 200);
 
         const npc1_bubbles = ['npc1_bubble_1', 'npc1_bubble_2', 'npc1_bubble_3'];
         const npc2_bubbles = ['npc2_bubble_1', 'npc2_bubble_2'];

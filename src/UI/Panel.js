@@ -4,11 +4,12 @@ export class CustomPanel extends Phaser.GameObjects.Container {
     constructor(scene, x, y, pages) {
         super(scene, x, y);
         this.scene = scene;
-        this.pages = pages;
+        this.pages = pages || [];
         this.currentPage = 0;
         this.toggleBtn = null;
 
-        this.contentImage = scene.add.image(0, 0, this.pages[0].content);
+        const contentKey = (this.pages.length > 0 && this.pages[0].content) ? this.pages[0].content : '';
+        this.contentImage = scene.add.image(0, 0, contentKey);
         this.add(this.contentImage);
 
         this.prevBtn = new CustomButton(scene, -570, 260, null, null, () => this.changePage(-1));
