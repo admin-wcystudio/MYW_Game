@@ -6,6 +6,7 @@ export class BootScene extends Phaser.Scene {
         this.load.plugin('rexinputtextplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexinputtextplugin.min.js', true);
 
         //game start background
+        this.load.audio('bgm', 'assets/Music/bgm.mp3');
         this.load.video('cover_video', 'assets/GameStart/cover_bg.mp4');
         this.load.image('game_start', 'assets/GameStart/button/cover_game_start.png');
         this.load.image('game_start_click', 'assets/GameStart/button/cover_game_start_click.png');
@@ -219,7 +220,7 @@ export class BootScene extends Phaser.Scene {
 
             this.registry.set('globalSettings', settings);
         }
-        this.scene.start('GameResult');
+        this.scene.start('GameStartScene');
     }
 
 }

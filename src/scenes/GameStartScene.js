@@ -12,6 +12,10 @@ export class GameStartScene extends Phaser.Scene {
         this.bgVideo.setMute(false);
         this.bgVideo.play(true); // loop
 
+        if (this.sound.getAll('bgm').length === 0) {
+            this.sound.play('bgm', { loop: true, volume: 0.5 });
+        }
+
         const descriptionPages = [
             {
                 content: 'game_description_p1',

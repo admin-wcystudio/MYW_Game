@@ -48,7 +48,6 @@ export class CustomButton extends Phaser.GameObjects.Image {
         });
 
         this.on('pointerout', () => {
-            this.setNormalState();
         });
     }
     setActive(canEnable) {

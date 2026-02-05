@@ -152,8 +152,11 @@ export class SettingPanel extends Phaser.GameObjects.Container {
         this.currentPage = 0;
         this.toggleBtn = null;
 
+        const savedData = localStorage.getItem('gameSettings');
+        const settings = savedData ? JSON.parse(savedData) : { volume: 3, language: 'HK' };
+
         // default volume
-        this.currentVolume = 3
+        this.currentVolume = settings.volume;
         this.volumeCells = [];
 
         // background
@@ -181,13 +184,17 @@ export class SettingPanel extends Phaser.GameObjects.Container {
         }
 
         //language
-        this.currentLanguage = 'HK';
+        this.currentLanguage = settings.language;
 
-        this.mandarinBtn = new CustomButton(scene, -50, 50, 'lang_mandarin', 'lang_mandarin_click', () => this.setLanguage('CN'));
+        this.mandarinBtn = new CustomButton(scene, -50, 50,
+            'lang_mandarin', 'lang_mandarin_click',
+            () => this.setLanguage('CN'));
         this.mandarinBtn.setDepth(105);
         this.mandarinBtn.needClicked = true;
 
-        this.cantoneseBtn = new CustomButton(scene, 300, 50, 'lang_cantonese', 'lang_cantonese_click', () => this.setLanguage('HK'));
+        this.cantoneseBtn = new CustomButton(scene, 300, 50, 'lang_cantonese', 'lang_cantonese_click',
+            () => this.setLanguage('HK')
+        );
         this.cantoneseBtn.setDepth(105);
         this.cantoneseBtn.needClicked = true;
         this.add([this.mandarinBtn, this.cantoneseBtn]);
@@ -202,7 +209,8 @@ export class SettingPanel extends Phaser.GameObjects.Container {
             }
         });
 
-        this.saveBtn = new CustomButton(scene, -50, 200, 'save_btn', 'save_btn_click', () => saveToLocal());
+        this.saveBtn = new CustomButton(scene, -50, 200, 'save_btn', 'save_btn_click',
+            () => this.saveToLocal());
         this.saveBtn.setDepth(104);
         this.add(this.saveBtn);
         this.saveBtn.needClicked = false;
@@ -213,6 +221,8 @@ export class SettingPanel extends Phaser.GameObjects.Container {
 
         this.add([this.prevBtn, this.nextBtn, this.closeBtn]);
         scene.add.existing(this);
+
+        this.setLanguage(this.currentLanguage);
         this.refresh();
     }
 
@@ -232,14 +242,24 @@ export class SettingPanel extends Phaser.GameObjects.Container {
     }
 
     setLanguage(lang) {
-        if (lang === 'CN') {
-            this.cantoneseBtn.resetStatus();
-            console.log("Switch to Mandarin");
-        } else {
-            this.mandarinBtn.resetStatus();
-            console.log("Switch to Cantonese");
-        }
         this.currentLanguage = lang;
+        console.log("Setting language to:", lang);
+
+        if (this.currentLanguage === 'CN') {
+            console.log("Switch to Mandarin");
+            this.mandarinBtn.isClicked = true;
+            this.mandarinBtn.setPressedState();
+
+            this.cantoneseBtn.isClicked = false;
+            this.cantoneseBtn.setNormalState();
+        } else {
+            console.log("Switch to Cantonese");
+            this.cantoneseBtn.isClicked = true;
+            this.cantoneseBtn.setPressedState();
+
+            this.mandarinBtn.isClicked = false;
+            this.mandarinBtn.setNormalState();
+        }
     }
 
     saveToLocal() {
