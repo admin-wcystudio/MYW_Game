@@ -48,12 +48,18 @@ export class MainStreetScene extends Phaser.Scene {
 
         this.btnLeft = new CustomButton(this, 150, height / 2, 'prev_button', 'prev_button_click',
             () => { this.isLeftDown = true; },
-            () => { this.isLeftDown = false; }
+            () => {
+                this.isLeftDown = false;
+                this.handleAnimation(genderKey, false, true);
+            }
         ).setScrollFactor(0).setDepth(100);
 
         this.btnRight = new CustomButton(this, width - 150, height / 2, 'next_button', 'next_button_click',
             () => { this.isRightDown = true; },
-            () => { this.isRightDown = false; }
+            () => {
+                this.isRightDown = false;
+                this.handleAnimation(genderKey, false, true);
+            }
         ).setScrollFactor(0).setDepth(100);
 
 
@@ -75,12 +81,12 @@ export class MainStreetScene extends Phaser.Scene {
         this.fakeNpcs = [];
 
 
-        const n1 = NpcHelper.createNpc(this, 1000, 450, 1, 'npc1', npc1_bubbles, 6);
-        const n2 = NpcHelper.createNpc(this, 4000, 550, 1, 'npc2', npc2_bubbles, 6);
-        const n3 = NpcHelper.createNpc(this, 2000, 550, 1, 'npc3', npc3_bubbles, 6);
-        const n4 = NpcHelper.createNpc(this, 330, 750, 1, 'npc4', npc4_bubbles, 6);
-        const n5 = NpcHelper.createNpc(this, 5100, 750, 1, 'npc5', npc5_bubbles, 15);
-        const n6 = NpcHelper.createNpc(this, 7900, 420, 1, 'npc6', npc6_bubbles, 6);
+        const n1 = NpcHelper.createNpc(this, 1, 1000, 450, 1, 'npc1', npc1_bubbles, 6);
+        const n2 = NpcHelper.createNpc(this, 2, 4000, 550, 1, 'npc2', npc2_bubbles, 6);
+        const n3 = NpcHelper.createNpc(this, 3, 2000, 550, 1, 'npc3', npc3_bubbles, 6);
+        const n4 = NpcHelper.createNpc(this, 4, 330, 750, 1, 'npc4', npc4_bubbles, 15);
+        const n5 = NpcHelper.createNpc(this, 5, 5100, 750, 1, 'npc5', npc5_bubbles, 15);
+        const n6 = NpcHelper.createNpc(this, 6, 7900, 420, 1, 'npc6', npc6_bubbles, 6);
 
         this.interactiveNpcs.push(n1);
         this.interactiveNpcs.push(n2);
@@ -90,17 +96,25 @@ export class MainStreetScene extends Phaser.Scene {
         this.interactiveNpcs.push(n6);
 
         // Fake NPCs (random talk)
-        const f1 = NpcHelper.createNpc(this, 2800, 500, 1, 'fake_npc_1', fake_npc1_bubbles, 6);
-        const f2 = NpcHelper.createNpc(this, 3400, 440, 1, 'fake_npc_2', null, 6);
-        const f3 = NpcHelper.createNpc(this, 3250, 300, 1, 'fake_npc_3', fake_npc3_bubbles, 6);
-        const f4 = NpcHelper.createNpc(this, 4000, 850, 1, 'fake_npc_4', fake_npc4_bubbles, 15);
-        const f5 = NpcHelper.createNpc(this, 4450, 350, 1, 'fake_npc_5', fake_npc5_bubbles, 6);
+        const f1 = NpcHelper.createNpc(this, 7, 2800, 500, 1, 'fake_npc_1', fake_npc1_bubbles, 6);
+        const f2 = NpcHelper.createNpc(this, 8, 3400, 440, 1, 'fake_npc_2', null, 6);
+        const f3 = NpcHelper.createNpc(this, 9, 3250, 300, 1, 'fake_npc_3', fake_npc3_bubbles, 6);
+        const f4 = NpcHelper.createNpc(this, 10, 4000, 850, 1, 'fake_npc_4', fake_npc4_bubbles, 15);
+        const f5 = NpcHelper.createNpc(this, 11, 4450, 350, 1, 'fake_npc_5', fake_npc5_bubbles, 6);
 
         this.fakeNpcs.push(f1);
         this.fakeNpcs.push(f2);
         this.fakeNpcs.push(f3);
         this.fakeNpcs.push(f4);
         this.fakeNpcs.push(f5);
+
+        this.currentInteractiveNpc = null;
+
+        // Add global input listener to stop movement when pointer is released anywhere
+        this.input.on('pointerup', () => {
+            this.isLeftDown = false;
+            this.isRightDown = false;
+        });
 
         this.interactiveNpcs.forEach((npc, index) => {
             npc.on('pointerdown', () => {
@@ -115,7 +129,7 @@ export class MainStreetScene extends Phaser.Scene {
         this.fakeNpcs.forEach(npc => {
             npc.on('pointerdown', () => {
                 if (npc.canInteract) {
-                    this.popRandomBubble(npc);
+                    this.popRandomBubble(npc.bubbles, npc);
                 }
             });
         });
@@ -143,6 +157,7 @@ export class MainStreetScene extends Phaser.Scene {
             isLeft = false;
             isMoving = true;
         } else {
+            this.player.x += 0;
             isLeft = false;
             isMoving = false;
         }
@@ -158,12 +173,6 @@ export class MainStreetScene extends Phaser.Scene {
 
 
         this.player.x = Phaser.Math.Clamp(this.player.x, 100, 8314);
-
-        if (this.player.bubble) {
-            const offsetX = isLeft ? -Math.abs(this.player.bubbleOffset.x) : Math.abs(this.player.bubbleOffset.x);
-            this.player.bubble.x = this.player.x + offsetX;
-            this.player.bubble.y = this.player.y + this.player.bubbleOffset.y;
-        }
         // 檢查 NPC 距離以決定是否可互動
         const allNpcs = [...this.interactiveNpcs, ...this.fakeNpcs];
 
@@ -173,11 +182,13 @@ export class MainStreetScene extends Phaser.Scene {
             const dist = Math.abs(this.player.x - npc.x);
 
             if (dist < npc.proximityDistance) {
+                console.log("近距離 NPC:", npc.id, "距離:", dist, npc.proximityDistance);
                 npc.canInteract = true;
-                //npc.setTint(0xffffff); // 靠近變亮
+                npc.setTint(0x888888); // 遠離變暗
+
             } else {
                 npc.canInteract = false;
-                //npc.setTint(0x888888); // 遠離變暗
+                npc.setTint(0xffffff); // 靠近變亮
 
                 if (this.currentActiveBubble && this.currentActiveBubble.ownerNpc === npc) {
                     this.currentActiveBubble.destroy();
@@ -216,19 +227,20 @@ export class MainStreetScene extends Phaser.Scene {
         const centerX = this.cameras.main.width / 2;
         const centerY = this.cameras.main.height / 2;
 
-        const npcX = centerX + 350;
-        const npcY = centerY - 200;
+        const npcX = targetNpc.x + 300;
+        const npcY = targetNpc.y - 200;
 
-        const playerX = centerX - 200;
-        const playerY = centerY + 200;
+        const playerX = this.player.x - 200;
+        const playerY = this.player.y + 200;
 
         // 2. 生成新的對話框
         const startX = index % 2 === 1 ? playerX : npcX;
         const startY = index % 2 === 1 ? playerY : npcY;
 
+        console.log("Loading bubble at:", startX, startY, "for NPC:", targetNpc.id);
+
         this.bubbleImg = this.add.image(startX, startY, bubbles[index])
             .setDepth(200)
-            .setScrollFactor(0)
             .setInteractive({ useHandCursor: true });
 
         // 綁定當前 NPC 到對話框，方便 update 檢查距離
@@ -243,11 +255,13 @@ export class MainStreetScene extends Phaser.Scene {
                 const nextX = index % 2 === 1 ? playerX : npcX;
                 const nextY = index % 2 === 1 ? playerY : npcY;
                 this.bubbleImg.setPosition(nextX, nextY);
+                this.currentActiveBubble = this.bubbleImg;
             } else {
                 // 對話結束
                 this.bubbleImg.destroy();
                 this.currentActiveBubble = null;
                 if (sceneKey) {
+                    console.log("Starting game scene:", sceneKey);
                     GameManager.switchToGameScene(this, sceneKey);
                 }
             }
@@ -263,25 +277,31 @@ export class MainStreetScene extends Phaser.Scene {
     }
 
     popRandomBubble(bubbles, targetNpc) {
-        const randomKey = Phaser.Utils.Array.GetRandom(bubbles);
+        let randomKey = Phaser.Utils.Array.GetRandom(bubbles);
 
-        let bubbleImg = this.add.image(this.cameras.main.width / 2, 900, randomKey)
+        const centerX = this.cameras.main.width / 2;
+        const centerY = this.cameras.main.height / 2;
+
+        const npcX = targetNpc.x + 300;
+        const npcY = targetNpc.y - 200;
+
+        // Position at NPC (Index 0 behavior)
+        this.bubbleImg = this.add.image(npcX, npcY, randomKey)
             .setDepth(200)
-            .setScrollFactor(0)
             .setInteractive({ useHandCursor: true });
 
-        bubbleImg.ownerNpc = targetNpc;
-        this.currentActiveBubble = bubbleImg;
+        this.bubbleImg.ownerNpc = targetNpc;
+        this.currentActiveBubble = this.bubbleImg;
 
         this.tweens.add({
-            targets: bubbleImg,
+            targets: this.bubbleImg,
             scale: { from: 0.5, to: 1 },
             duration: 200,
             ease: 'Back.easeOut'
         });
 
-        bubble.on('pointerdown', () => {
-            bubbleImg.destroy();
+        this.bubbleImg.on('pointerdown', () => {
+            this.bubbleImg.destroy();
             this.currentActiveBubble = null;
         });
     }
