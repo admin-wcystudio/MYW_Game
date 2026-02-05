@@ -105,8 +105,8 @@ export class BootScene extends Phaser.Scene {
         this.load.video('girl_idle', 'assets/MainStreet/Girl/maincharacter_girl_middlestand.webm');
         this.load.video('girl_left_talk', 'assets/MainStreet/Girl/maincharacter_girl_lefttalking.webm');
         this.load.video('girl_right_talk', 'assets/MainStreet/Girl/maincharacter_girl_righttalking.webm');
-        this.load.video('girl_left_walk', 'assets/MainStreet/Girl/maincharacter_girl_leftwalking.webm');
-        this.load.video('girl_right_walk', 'assets/MainStreet/Girl/maincharacter_girl_rightwalking.webm');
+        this.load.video('girl_left_walk', 'assets/MainStreet/Girl/maincharacter_girl_leftwalk.webm');
+        this.load.video('girl_right_walk', 'assets/MainStreet/Girl/maincharacter_girl_rightwalk.webm');
 
         //npcs
         this.load.video('npc1', 'assets/MainStreet/NPCs/NPC_1/game1_npc.webm');

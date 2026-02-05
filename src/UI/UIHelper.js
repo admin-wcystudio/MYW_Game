@@ -91,8 +91,9 @@ export default class UIHelper {
         const width = scene.cameras.main.width;
         const height = scene.cameras.main.height;
 
-        scene.add.image(width / 2, height / 2, bgKey).setDepth(1);
-        scene.add.image(width / 2, 80, titleKey).setDepth(3);
+        if (bgKey) scene.add.image(width / 2, height / 2, bgKey).setDepth(1);
+        if (titleKey) scene.add.image(width / 2, 80, titleKey).setDepth(3);
+
         const roundStates = [];
         if (targetRounds > 0) {
 

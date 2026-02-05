@@ -23,17 +23,6 @@ export default class NpcHelper {
 
         character.videoKey = videoKey;
 
-        // // 如果需要對話框
-        // if (hasDialogue && dialogueKey) {
-        //     const bubble = scene.add.image(dialogueX, dialogueY, dialogueKey)
-        //         .setDepth(depth + 20)
-        //         .setScale(isVisible ? dialogScale : 0)
-        //         .setOrigin(0.5, 1);
-
-        //     character.bubble = bubble; // 將對話框綁定在角色身上
-        //     character.bubbleOffset = { x: dialogueX - x, y: dialogueY - y }; // 記錄相對坐標
-        // }
-
         return character;
     }
 

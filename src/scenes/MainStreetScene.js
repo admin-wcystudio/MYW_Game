@@ -13,8 +13,10 @@ export class MainStreetScene extends Phaser.Scene {
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
 
-        const gender = localStorage.getItem('player') ? JSON.parse(localStorage.getItem('player')).gender : 'M';
+        const gender = localStorage.getItem('player') ? JSON.parse(localStorage.getItem('player')).gender : 'F';
+
         const genderKey = gender === 'M' ? 'boy' : 'girl';
+
 
         console.log(`Player gender: ${gender}, genderKey: ${genderKey}`);
 
@@ -212,26 +214,38 @@ export class MainStreetScene extends Phaser.Scene {
         }
 
         const centerX = this.cameras.main.width / 2;
-        const centerY = 900;
+        const centerY = this.cameras.main.height / 2;
+
+        const npcX = centerX + 350;
+        const npcY = centerY - 200;
+
+        const playerX = centerX - 200;
+        const playerY = centerY + 200;
 
         // 2. 生成新的對話框
-        let bubbleImg = this.add.image(centerX, centerY, bubbles[index])
+        const startX = index % 2 === 1 ? playerX : npcX;
+        const startY = index % 2 === 1 ? playerY : npcY;
+
+        this.bubbleImg = this.add.image(startX, startY, bubbles[index])
             .setDepth(200)
             .setScrollFactor(0)
             .setInteractive({ useHandCursor: true });
 
         // 綁定當前 NPC 到對話框，方便 update 檢查距離
-        bubbleImg.ownerNpc = targetNpc;
-        this.currentActiveBubble = bubbleImg;
+        this.bubbleImg.ownerNpc = targetNpc;
+        this.currentActiveBubble = this.bubbleImg;
 
         // 處理點擊邏輯
-        bubbleImg.on('pointerdown', () => {
+        this.bubbleImg.on('pointerdown', () => {
             index++;
             if (index < bubbles.length) {
-                bubbleImg.setTexture(bubbles[index]);
+                this.bubbleImg.setTexture(bubbles[index]);
+                const nextX = index % 2 === 1 ? playerX : npcX;
+                const nextY = index % 2 === 1 ? playerY : npcY;
+                this.bubbleImg.setPosition(nextX, nextY);
             } else {
                 // 對話結束
-                bubbleImg.destroy();
+                this.bubbleImg.destroy();
                 this.currentActiveBubble = null;
                 if (sceneKey) {
                     GameManager.switchToGameScene(this, sceneKey);
@@ -241,7 +255,7 @@ export class MainStreetScene extends Phaser.Scene {
 
         // 彈出動畫
         this.tweens.add({
-            targets: bubbleImg,
+            targets: this.bubbleImg,
             scale: { from: 0.5, to: 1 },
             duration: 200,
             ease: 'Back.easeOut'
