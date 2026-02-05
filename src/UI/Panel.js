@@ -1,4 +1,4 @@
-import { CustomButton } from './Button.js';
+import { CustomButton, CustomButton2 } from './Button.js';
 
 export class CustomPanel extends Phaser.GameObjects.Container {
     constructor(scene, x, y, pages) {
@@ -186,13 +186,13 @@ export class SettingPanel extends Phaser.GameObjects.Container {
         //language
         this.currentLanguage = settings.language;
 
-        this.mandarinBtn = new CustomButton(scene, -50, 50,
+        this.mandarinBtn = new CustomButton2(scene, -50, 50,
             'lang_mandarin', 'lang_mandarin_click',
             () => this.setLanguage('CN'));
         this.mandarinBtn.setDepth(105);
         this.mandarinBtn.needClicked = true;
 
-        this.cantoneseBtn = new CustomButton(scene, 300, 50, 'lang_cantonese', 'lang_cantonese_click',
+        this.cantoneseBtn = new CustomButton2(scene, 300, 50, 'lang_cantonese', 'lang_cantonese_click',
             () => this.setLanguage('HK')
         );
         this.cantoneseBtn.setDepth(105);
