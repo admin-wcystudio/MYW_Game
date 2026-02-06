@@ -3,6 +3,8 @@ import { CustomPanel, SettingPanel, CustomSinglePanel, CustomFailPanel } from '.
 import UIHelper from '../../UI/UIHelper.js';
 import GameManager from '../GameManager.js';
 
+import Phaser from 'phaser';
+
 export default class BaseGameScene extends Phaser.Scene {
     constructor(key) {
         super(key);

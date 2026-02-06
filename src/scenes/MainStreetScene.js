@@ -4,6 +4,8 @@ import { CustomPanel, SettingPanel } from '../UI/Panel.js';
 import NpcHelper from '../Character/NpcHelper.js';
 import GameManager from './GameManager.js';
 
+import Phaser from 'phaser';
+
 export class MainStreetScene extends Phaser.Scene {
     constructor() {
         super('MainStreetScene');

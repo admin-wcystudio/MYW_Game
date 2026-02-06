@@ -2,6 +2,8 @@ import { CustomButton } from "../UI/Button.js";
 import UIHelper from "../UI/UIHelper.js";
 import GameManager from "./GameManager.js";
 
+import Phaser from 'phaser';
+
 export class GameResultScene extends Phaser.Scene {
     constructor() {
         super('GameResultScene');
