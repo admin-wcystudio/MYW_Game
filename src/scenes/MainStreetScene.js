@@ -168,17 +168,13 @@ export class MainStreetScene extends Phaser.Scene {
         if (this.isLeftDown) {
             this.player.x -= speed;
             isLeft = true;
-            isMoving = true;
         } else if (this.isRightDown) {
             this.player.x += speed;
             isLeft = false;
             isMoving = true;
         } else {
-            this.player.x += 0;
-            isLeft = false;
             isMoving = false;
         }
-
         // 紀錄最後方向供 handleAnimation 使用
         this.player.lastDirectionLeft = isLeft;
 
@@ -224,6 +220,8 @@ export class MainStreetScene extends Phaser.Scene {
     }
 
     changePlayerVideo(key) {
+        if (this.player.videoKey === key) return;
+
         this.player.stop();
         this.player.changeSource(key); // 更換影片源
         this.player.play(true);
