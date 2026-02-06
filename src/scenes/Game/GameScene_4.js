@@ -8,7 +8,7 @@ export class GameScene_4 extends BaseGameScene {
     constructor() {
         super('GameScene_4');
         this.roundPerSeconds = 30; // Usually 60-90s is better for math
-        this.targetRounds = 2;
+        this.targetRounds = 3;
         this.sceneIndex = 4;
     }
 
