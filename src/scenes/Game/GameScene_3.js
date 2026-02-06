@@ -8,8 +8,10 @@ export class GameScene_3 extends BaseGameScene {
     constructor() {
         super('GameScene_3');
         this.roundPerSeconds = 30;
-        this.targetRounds = 1;
         this.sceneIndex = 3;
+        this.targetRounds = 3;
+        this.isAllowRoundFail = true;
+
     }
 
     preload() {
@@ -38,6 +40,7 @@ export class GameScene_3 extends BaseGameScene {
         this.initGame('game3_bg', 'game3_title', 'game3_description');
 
         this.add.image(960, 540, 'game3_card_bg').setDepth(this.depth - 1);
+        this.currentFailChance = 0;
     }
 
     /**
@@ -155,7 +158,7 @@ export class GameScene_3 extends BaseGameScene {
                     card.clearTint();
                 }
             }
-            console.log('Target Position -', pos.id, ',current card', pos.occupiedBy ? pos.occupiedBy.texture.key : 'none');
+            //console.log('Target Position -', pos.id, ',current card', pos.occupiedBy ? pos.occupiedBy.texture.key : 'none');
         });
     }
 
@@ -190,6 +193,8 @@ export class GameScene_3 extends BaseGameScene {
         }
 
     }
+
+
 
     showWin() {
         console.log("Game 3 完成!");

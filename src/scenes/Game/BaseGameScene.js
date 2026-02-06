@@ -13,9 +13,9 @@ export default class BaseGameScene extends Phaser.Scene {
         this.roundIndex = 0;
         this.isGameActive = false;
         this.sceneIndex = -1;
-        this.gameState = 'init'; // 'init', 'playing', 'roundWin', 'gameWin', 'lose'
+        this.gameState = 'init'; // 'init', 'playing', 'roundWin', 'gameWin', 'lose' , 'roundLose'
         this.currentBubbleImg = null;
-        this.totalUsedSeconds = 0;
+        this.totalUsedSeconds = 0
     }
 
     /**
@@ -30,6 +30,9 @@ export default class BaseGameScene extends Phaser.Scene {
      */
     initGame(bgKey, titleKey, descriptionKey, depth = 10, skipIntroBubble = false, autoStart = true) {
         this.gameState = 'init';
+
+        this.currentFailCount = 0; // Reset fail count on init
+
         const gender = localStorage.getItem('player') ? JSON.parse(localStorage.getItem('player')).gender : 'M';
 
         const descriptionPages = [
@@ -167,20 +170,51 @@ export default class BaseGameScene extends Phaser.Scene {
         } else if (type === 'tryagain') {
             this.currentBubbleImg.once('pointerdown', () => {
                 closeBubble();
-                this.showLose(() => {
-                    this.showFailPanel();
-                });
-            });
-            if (options.autoCloseMs) {
-                this.time.delayedCall(options.autoCloseMs, () => {
-                    if (!closed) {
-                        closeBubble();
+
+                // Logic: 
+                // 1. If isAllowRoundFail (consume rounds as chances):
+                //    - If we have rounds left, go nextRound().
+                //    - Else, Fail Panel.
+                // 2. Else (original sequential logic, or separate failChances logic):
+                //    - Default to Fail Panel immediately for now unless failChances used.
+
+                if (this.isAllowRoundFail) {
+                    if (this.roundIndex + 1 < this.targetRounds) {
+                        this.nextRound();
+                    } else {
                         this.showLose(() => {
                             this.showFailPanel();
                         });
                     }
-                });
-            }
+                } else {
+                    this.showLose(() => {
+                        this.showFailPanel();
+                    });
+                }
+            });
+
+            // if (options.autoCloseMs) {
+            //     this.time.delayedCall(options.autoCloseMs, () => {
+            //         if (!closed) {
+            //             closeBubble();
+            //             if (this.isAllowRoundFail) {
+            //                 if (this.roundIndex + 1 < this.targetRounds) {
+            //                     this.nextRound();
+            //                 } else {
+            //                     this.showLose(() => { this.showFailPanel(); });
+            //                 }
+            //             } else if (this.failChances > 0) {
+            //                 if (this.currentFailCount >= this.failChances) {
+            //                     this.showLose(() => { this.showFailPanel(); });
+            //                 } else {
+            //                     this.retryRound();
+            //                 }
+            //             } else {
+            //                 this.showLose(() => { this.showFailPanel(); });
+            //             }
+            //         }
+            //     });
+            // }
         } else if (type === 'lock') {
             this.currentBubbleImg.once('pointerdown', () => {
                 closeBubble();
@@ -210,8 +244,15 @@ export default class BaseGameScene extends Phaser.Scene {
     //handlebefore -> showbubble -> handleafter
     handleWinBeforeBubble() {
         if (!this.isGameActive || this.gameState === 'gameWin') return;
+
         // Determine if this is the last round
-        const isGameWin = (this.roundIndex + 1 >= this.targetRounds);
+        let isGameWin = (this.roundIndex + 1 >= this.targetRounds);
+
+        // In AllowRoundFail mode, winning ANY round is a Game Win
+        if (this.isAllowRoundFail) {
+            isGameWin = true;
+        }
+
         this.playFeedback();
         if (isGameWin) {
             this.label = this.add.image(1650, 350, 'game_success_label').setDepth(555);
@@ -259,15 +300,51 @@ export default class BaseGameScene extends Phaser.Scene {
         this.startGame();
     }
 
+    resetRoundUI() {
+        if (this.gameUI && this.gameUI.roundStates) {
+            // Reverse order calculation matching updateRoundUI logic
+            const index = this.gameUI.roundStates.length - 1 - this.roundIndex;
+            const state = this.gameUI.roundStates[index];
+            if (state) {
+                state.content.setTexture('game_gamechance');
+                state.isSuccess = false;
+            }
+        }
+    }
+
     handleLose() {
-        if (this.gameState === 'lose') return;
-        this.isGameActive = false;
-        this.gameState = 'lose';
-        this.label = this.add.image(1650, 350, 'game_fail_label').setDepth(555);
-        if (this.gameTimer) this.gameTimer.stop();
-        this.enableGameInteraction(false);
-        this.updateRoundUI(false);
-        this.showBubble('tryagain');
+        // Prevent multiple entries
+        if (this.gameState === 'gameLose') return;
+
+        this.currentFailCount = (this.currentFailCount || 0) + 1; // Increment fail count
+
+        // In AllowRoundFail mode, losing a round doesn't mean Game Over unless we are out of rounds
+        if (this.isAllowRoundFail) {
+            this.isGameActive = false;
+            this.gameState = 'roundLose';
+
+            if (this.gameTimer) this.gameTimer.stop();
+            this.enableGameInteraction(false);
+            this.updateRoundUI(false);
+
+            // Check if this was the last round (Game Over) or just a round loss
+            if (this.roundIndex + 1 >= this.targetRounds) {
+                this.gameState = 'gameLose'; // Will trigger Fail Panel after bubble
+                this.label = this.add.image(1650, 350, 'game_fail_label').setDepth(555);
+            }
+
+            this.showBubble('tryagain');
+        } else {
+            // Standard Logic
+            this.isGameActive = false;
+            this.gameState = 'lose';
+
+            this.label = this.add.image(1650, 350, 'game_fail_label').setDepth(555);
+            if (this.gameTimer) this.gameTimer.stop();
+            this.enableGameInteraction(false);
+            this.updateRoundUI(false);
+            this.showBubble('tryagain');
+        }
 
     }
 
