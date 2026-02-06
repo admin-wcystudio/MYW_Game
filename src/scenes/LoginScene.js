@@ -9,11 +9,10 @@ export class LoginScene extends Phaser.Scene {
 
     create() {
         this.bgVideo = this.add.video(960, 540, 'login_bg_video');
-
-        // Auto-mute on mobile devices (iOS/Android) to ensure autoplay works
-        // Desktop can stay unmuted if user interaction occurred previously
-        const isMobile = !this.sys.game.device.os.desktop;
-        this.bgVideo.setMute(isMobile);
+        // // Auto-mute on mobile devices (iOS/Android) to ensure autoplay works
+        // // Desktop can stay unmuted if user interaction occurred previously
+        // const isMobile = !this.sys.game.device.os.desktop;
+        this.bgVideo.setMute(false);
 
         this.bgVideo.play(true); // loop
 
