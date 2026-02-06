@@ -8,6 +8,10 @@ export class GameStartScene extends Phaser.Scene {
     }
 
     create() {
+        // Reset player progress but keep settings
+        localStorage.removeItem('player');
+        localStorage.removeItem('allGamesResult');
+
         this.bgVideo = this.add.video(960, 540, 'cover_video');
         this.bgVideo.setMute(false);
         this.bgVideo.play(true); // loop
