@@ -3,7 +3,7 @@ export class BootScene extends Phaser.Scene {
         super('BootScene');
     }
     preload() {
-        this.load.plugin('rexinputtextplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexinputtextplugin.min.js', true);
+        this.load.plugin('rexinputtextplugin', 'https://cdn.jsdelivr.net/npm/phaser3-rex-plugins@1.80.17/dist/rexinputtextplugin.min.js', true);
 
         //game start background
         this.load.audio('bgm', 'assets/Music/bgm.mp3');

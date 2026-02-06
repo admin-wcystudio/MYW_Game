@@ -1,6 +1,14 @@
 {
+  "name": "myw-game",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
   "devDependencies": {
-    "@azerion/phaser-input": "^2.0.5"
+    "@azerion/phaser-input": "^2.0.5",
+    "vite": "^7.3.1"
   },
   "dependencies": {
     "phaser3-rex-plugins": "^1.80.17"
