@@ -73,6 +73,7 @@ export class MainStreetScene extends Phaser.Scene {
         const npc5_bubbles = ['npc5_bubble_1', 'npc5_bubble_2', 'npc5_bubble_3'];
         const npc5_reject_bubbles = ['npc5_bubble_reject'];
         const npc6_bubbles = ['npc6_bubble_1', 'npc6_bubble_2', 'npc6_bubble_3'];
+        const npc6_reject_bubbles = ['npc6_bubble_reject'];
 
         const fake_npc1_bubbles = ['fake_npc_1_bubble1', 'fake_npc_1_bubble2'];
         const fake_npc3_bubbles = ['fake_npc_3_bubble'];
@@ -222,18 +223,19 @@ export class MainStreetScene extends Phaser.Scene {
             this.currentActiveBubble.destroy();
         }
 
-        // Special handling for NPC 5: Check if Games 1-4 are completed
-        if (targetNpc.id === 5) {
+        // Special handling for NPC 5 and 6: Check if Games 1-4 are completed
+        if (targetNpc.id === 5 || targetNpc.id === 6) {
             const allResults = GameManager.loadGameResult();
             // Check if games 1, 2, 3, and 4 are finished
-            const canStartGame5 = [1, 2, 3, 4].every(num => {
+            const canStartGame = [1, 2, 3, 4].every(num => {
                 const res = allResults.find(r => r.game === num);
                 return res && res.isFinished;
             });
 
-            if (!canStartGame5) {
-                console.log("Game 5 locked. Prerequisites (Games 1-4) not met.");
-                bubbles = ['npc5_bubble_reject'];
+            if (!canStartGame) {
+                console.log("Game is locked. Prerequisites (Games 1-4) not met.");
+                // Use string arrays directly as the variables are not in scope here
+                bubbles = targetNpc.id === 5 ? ['npc5_bubble_reject'] : ['npc6_bubble_reject'];
                 sceneKey = null; // Prevent starting the game
             }
         }
@@ -252,6 +254,8 @@ export class MainStreetScene extends Phaser.Scene {
             playerX = this.player.x + 200;
         } else if (targetNpc.id === 5) {
             npcY = targetNpc.y + 200;
+        } else if (targetNpc.id === 6)
+            npcX = targetNpc.x - 200; {
         }
 
 
