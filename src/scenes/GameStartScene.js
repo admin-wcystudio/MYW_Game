@@ -11,6 +11,8 @@ export class GameStartScene extends Phaser.Scene {
         // Reset player progress but keep settings
         localStorage.removeItem('player');
         localStorage.removeItem('allGamesResult');
+        localStorage.removeItem('playerPosition');
+        localStorage.removeItem('hasSeenMainStreetIntro');
 
         this.bgVideo = this.add.video(960, 540, 'cover_video');
         this.bgVideo.setMute(false);

@@ -18,6 +18,9 @@ export class MainStreetScene extends Phaser.Scene {
         this.genderKey = gender === 'M' ? 'boy' : 'girl';
         const genderKey = this.genderKey;
 
+        const playerPos = localStorage.getItem('playerPosition') ? JSON.parse(localStorage.getItem('playerPosition')) : { x: 800, y: 550 };
+        this.playerPos = playerPos;
+
 
         console.log(`Player gender: ${gender}, genderKey: ${genderKey}`);
 
@@ -43,6 +46,16 @@ export class MainStreetScene extends Phaser.Scene {
         ]
 
         const ui = UIHelper.createGameCommonUI(this, null, null, introPage, 0);
+
+        // Check if intro has been seen in this session
+        const hasSeenIntro = sessionStorage.getItem('hasSeenMainStreetIntro');
+        if (hasSeenIntro) {
+            if (ui && ui.descriptionPanel) {
+                ui.descriptionPanel.setVisible(false);
+            }
+        } else {
+            sessionStorage.setItem('hasSeenMainStreetIntro', 'true');
+        }
         //
         //buttons
         this.isLeftDown = false;
@@ -138,7 +151,7 @@ export class MainStreetScene extends Phaser.Scene {
             });
         });
 
-        this.player = NpcHelper.createCharacter(this, 800, 550, 400, 650,
+        this.player = NpcHelper.createCharacter(this, this.playerPos.x, this.playerPos.y, 400, 650,
             1, 1, `${genderKey}_idle`, true, 'player_bubble_1', true, 10);
         this.handleAnimation(genderKey, false, false);
 
@@ -211,6 +224,8 @@ export class MainStreetScene extends Phaser.Scene {
     }
 
     changePlayerVideo(key) {
+        if (this.player.videoKey === key) return;
+
         this.player.stop();
         this.player.changeSource(key); // 更換影片源
         this.player.play(true);
@@ -288,6 +303,7 @@ export class MainStreetScene extends Phaser.Scene {
                 this.currentActiveBubble = null;
                 if (sceneKey) {
                     console.log("Starting game scene:", sceneKey);
+                    const playerPos = localStorage.setItem('playerPosition', JSON.stringify({ x: this.player.x, y: this.player.y }));
                     GameManager.switchToGameScene(this, sceneKey);
                 }
             }
