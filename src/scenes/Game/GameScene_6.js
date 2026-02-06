@@ -107,6 +107,19 @@ export class GameScene_6 extends BaseGameScene {
     }
 
     setupGameObjects() {
+        this.canSpawn = false;
+        this.spawnHitPoint = false;
+        this.isHitPointValid = false;
+        this.isWin = false;
+        this.fallingArrows = [];
+
+        if (this.buttonGroup) {
+            this.buttonGroup.clear(true, true);
+        }
+        if (this.arrowGroup) {
+            this.arrowGroup.clear(true, true);
+        }
+
         this.buttonGroup = this.add.group();
         this.arrowGroup = this.add.group();
         const colors = ['blue', 'green', 'red', 'yellow'];

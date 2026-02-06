@@ -99,6 +99,11 @@ export class GameScene_2 extends BaseGameScene {
         this.initGame('game2_bg', 'game2_title', 'game2_description');
     }
     setupGameObjects() {
+        if (this.questionPanel) {
+            this.questionPanel.destroy();
+            this.questionPanel = null;
+        }
+
         const allQuestions = [
             {
                 content: 'game2_q1_question',

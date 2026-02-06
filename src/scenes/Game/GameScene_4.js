@@ -43,6 +43,15 @@ export class GameScene_4 extends BaseGameScene {
     }
 
     setupGameObjects() {
+        if (this.roundIndex === 0) {
+            this.selectedQuestions = null;
+        }
+
+        if (this.calculationPanel) {
+            this.calculationPanel.destroy();
+            this.calculationPanel = null;
+        }
+
         const allQuestions = [
             { content: 'game4_q1', answer: 16 },
             { content: 'game4_q2', answer: 6 },

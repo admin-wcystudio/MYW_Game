@@ -65,6 +65,14 @@ export class GameScene_5 extends BaseGameScene {
     }
 
     setupGameObjects() {
+        this.isHit = false;
+        this.isValid = false;
+        this.isGameWin = false;
+        this.arrowSpeed = 8;
+        if (this.arrow) {
+            this.arrow.setPosition(800, 340);
+        }
+
         let randomX = Phaser.Math.Between(600, 1300);
         console.log("Target Position:", randomX, 540);
         this.targetArea.setPosition(randomX, 540);

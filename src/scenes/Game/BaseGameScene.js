@@ -31,7 +31,11 @@ export default class BaseGameScene extends Phaser.Scene {
     initGame(bgKey, titleKey, descriptionKey, depth = 10, skipIntroBubble = false, autoStart = true) {
         this.gameState = 'init';
 
-        this.currentFailCount = 0; // Reset fail count on init
+        // Reset core game state variables
+        this.currentFailCount = 0;
+        this.roundIndex = 0;
+        this.totalUsedSeconds = 0;
+        this.isGameActive = false;
 
         const gender = localStorage.getItem('player') ? JSON.parse(localStorage.getItem('player')).gender : 'M';
 

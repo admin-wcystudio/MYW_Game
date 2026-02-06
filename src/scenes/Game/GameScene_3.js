@@ -48,6 +48,7 @@ export class GameScene_3 extends BaseGameScene {
      * init game 時會被呼叫
      */
     setupGameObjects() {
+        this.isChecked = false; // Reset checking flag
         const centerX = this.cameras.main.width / 2;
         const centerY = this.cameras.main.height / 2;
 

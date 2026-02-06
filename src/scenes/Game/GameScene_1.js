@@ -46,6 +46,11 @@ export class GameScene_1 extends BaseGameScene {
      * init game 時會被呼叫
      */
     setupGameObjects() {
+        this.selectedPuzzle = null;
+        if (this.puzzleGroup) {
+            this.puzzleGroup.clear(true, true);
+        }
+
         const centerX = this.cameras.main.width / 2;
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
