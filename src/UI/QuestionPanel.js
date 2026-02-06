@@ -1,7 +1,5 @@
 import { CustomButton } from './Button.js';
 
-import Phaser from 'phaser';
-
 export class QuestionPanel extends Phaser.GameObjects.Container {
     constructor(scene, questions, titles, onComplete, depth) {
         super(scene, 960, 540); // 放在畫面中央

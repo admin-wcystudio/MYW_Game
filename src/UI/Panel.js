@@ -1,5 +1,4 @@
 import { CustomButton, CustomButton2 } from './Button.js';
-import Phaser from 'phaser';
 
 export class CustomPanel extends Phaser.GameObjects.Container {
     constructor(scene, x, y, pages) {
