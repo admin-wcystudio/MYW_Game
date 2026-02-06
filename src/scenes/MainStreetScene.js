@@ -186,27 +186,12 @@ export class MainStreetScene extends Phaser.Scene {
 
 
         this.player.x = Phaser.Math.Clamp(this.player.x, 100, 8314);
-
-        // --- PERFORMANCE FIX: Cull off-screen videos ---
-        // Only play videos that are inside the camera view to save memory on mobile
-        const camView = this.cameras.main.worldView;
-        const buffer = 300; // Load slightly before they appear
-
+        // 檢查 NPC 距離以決定是否可互動
         const allNpcs = [...this.interactiveNpcs, ...this.fakeNpcs];
+
         this.currentNpcActivated = null;
 
         allNpcs.forEach(npc => {
-            // 1. Check Visibility (Culling)
-            // Determine if NPC is within camera bounds (with buffer)
-            const inView = (npc.x > camView.x - buffer) && (npc.x < camView.x + camView.width + buffer);
-
-            if (inView) {
-                if (!npc.isPlaying()) npc.play(true);
-            } else {
-                if (npc.isPlaying()) npc.stop();
-            }
-
-            // 2. Interaction Logic
             const dist = Math.abs(this.player.x - npc.x);
 
             if (dist < npc.proximityDistance) {
