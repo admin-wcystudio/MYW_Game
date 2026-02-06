@@ -10,7 +10,7 @@ import { GameScene_4 } from './scenes/Game/GameScene_4.js';
 import { GameScene_5 } from './scenes/Game/GameScene_5.js';
 import { GameScene_6 } from './scenes/Game/GameScene_6.js';
 import { GameScene_7 } from './scenes/Game/GameScene_7.js';
-import { GameResult } from './scenes/GameResult.js';
+import { GameResultScene } from './scenes/GameResultScene.js';
 
 
 var config = {
@@ -21,6 +21,7 @@ var config = {
     width: 1920,
     height: 1080,
     backgroundColor: '#000000',
+    preserveDrawingBuffer: true, // Required for taking screenshots in WebGL
     pixelArt: false,
     scene: [
         BootScene,
@@ -35,7 +36,7 @@ var config = {
         GameScene_5,
         GameScene_6,
         GameScene_7,
-        GameResult
+        GameResultScene
     ],
     scale: {
         mode: Phaser.Scale.FIT,

@@ -3,6 +3,7 @@ import { CustomDescriptionPanel, CustomPanel, CustomSinglePanel, SettingPanel } 
 import { QuestionPanel_7 } from '../../UI/QuestionPanel.js';
 import UIHelper from '../../UI/UIHelper.js';
 import BaseGameScene from './BaseGameScene.js';
+import GameManager from '../GameManager.js';
 
 export class GameScene_7 extends BaseGameScene {
     constructor() {
@@ -61,7 +62,9 @@ export class GameScene_7 extends BaseGameScene {
     }
 
     create() {
-        this.initGame('game7_bg', 'game7_title', 'game7_description', 10, true, false);
+        // Pass null for titleKey so we can add it manually with higher depth
+        this.initGame('game7_bg', null, 'game7_description', 10, true, false);
+        this.add.image(this.cameras.main.width / 2, 80, 'game7_title').setDepth(100);
     }
 
 
@@ -166,6 +169,7 @@ export class GameScene_7 extends BaseGameScene {
             ending2.setVisible(true);
         }).setDepth(30).setVisible(false);
         const ending2 = new CustomSinglePanel(this, 960, 540, 'game7_ending2', () => {
+            GameManager.switchToGameScene(this, 'GameResultScene');
         }).setDepth(30).setVisible(false);
 
         this.add.existing(ending1);

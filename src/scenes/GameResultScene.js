@@ -2,9 +2,9 @@ import { CustomButton } from "../UI/Button.js";
 import UIHelper from "../UI/UIHelper.js";
 import GameManager from "./GameManager.js";
 
-export class GameResult extends Phaser.Scene {
+export class GameResultScene extends Phaser.Scene {
     constructor() {
-        super('GameResult');
+        super('GameResultScene');
     }
 
     preload() {
@@ -79,11 +79,23 @@ export class GameResult extends Phaser.Scene {
 
         this.closeButton = new CustomButton(this, 1600, 200, 'finishpage_close_button'
             , 'finishpage_close_button_select', () => {
-                this.time.delayedCall(2000, () => {
+                this.takeScreenshot();
+                this.time.delayedCall(5000, () => {
                     GameManager.switchToGameScene(this, 'GameStartScene');
                 });
             }).setDepth(11).setVisible(true);
 
+    }
+
+    takeScreenshot() {
+        this.game.renderer.snapshot((image) => {
+            const link = document.createElement('a');
+            link.setAttribute('download', `GameResult_${new Date().getTime()}.png`);
+            link.setAttribute('href', image.src);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
     }
 
     getResultContent() {
