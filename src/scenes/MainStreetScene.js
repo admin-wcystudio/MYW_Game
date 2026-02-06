@@ -220,8 +220,6 @@ export class MainStreetScene extends Phaser.Scene {
     }
 
     changePlayerVideo(key) {
-        if (this.player.videoKey === key) return;
-
         this.player.stop();
         this.player.changeSource(key); // 更換影片源
         this.player.play(true);
