@@ -272,10 +272,14 @@ export default class BaseGameScene extends Phaser.Scene {
     }
 
     updateRoundUI(isSuccess) {
-        if (this.gameUI?.roundStates[this.roundIndex]) {
-            const state = this.gameUI.roundStates[this.roundIndex];
-            state.content.setTexture(isSuccess ? 'game_success' : 'game_fail');
-            state.isSuccess = isSuccess;
+        // Reverse order to update from Left to Right
+        if (this.gameUI?.roundStates) {
+            const index = this.gameUI.roundStates.length - 1 - this.roundIndex;
+            const state = this.gameUI.roundStates[index];
+            if (state) {
+                state.content.setTexture(isSuccess ? 'game_success' : 'game_fail');
+                state.isSuccess = isSuccess;
+            }
         }
     }
 
