@@ -2,8 +2,6 @@ import { CustomButton } from '../UI/Button.js';
 import { CustomPanel, SettingPanel } from '../UI/Panel.js';
 import UIHelper from '../UI/UIHelper.js';
 
-import Phaser from 'phaser';
-
 export class GameStartScene extends Phaser.Scene {
     constructor() {
         super('GameStartScene');

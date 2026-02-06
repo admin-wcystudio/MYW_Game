@@ -1,5 +1,3 @@
-import Phaser from 'phaser';
-
 export class TransitionScene extends Phaser.Scene {
     constructor() {
         super('TransitionScene');
