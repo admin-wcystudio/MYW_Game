@@ -71,6 +71,7 @@ export class MainStreetScene extends Phaser.Scene {
         const npc3_bubbles = ['npc3_bubble_1', 'npc3_bubble_2', 'npc3_bubble_3', 'npc3_bubble_4'];
         const npc4_bubbles = ['npc4_bubble_1', 'npc4_bubble_2', 'npc4_bubble_3', 'npc4_bubble_4'];
         const npc5_bubbles = ['npc5_bubble_1', 'npc5_bubble_2', 'npc5_bubble_3'];
+        const npc5_reject_bubbles = ['npc5_bubble_reject'];
         const npc6_bubbles = ['npc6_bubble_1', 'npc6_bubble_2', 'npc6_bubble_3'];
 
         const fake_npc1_bubbles = ['fake_npc_1_bubble1', 'fake_npc_1_bubble2'];
@@ -219,6 +220,22 @@ export class MainStreetScene extends Phaser.Scene {
 
         if (this.currentActiveBubble) {
             this.currentActiveBubble.destroy();
+        }
+
+        // Special handling for NPC 5: Check if Games 1-4 are completed
+        if (targetNpc.id === 5) {
+            const allResults = GameManager.loadGameResult();
+            // Check if games 1, 2, 3, and 4 are finished
+            const canStartGame5 = [1, 2, 3, 4].every(num => {
+                const res = allResults.find(r => r.game === num);
+                return res && res.isFinished;
+            });
+
+            if (!canStartGame5) {
+                console.log("Game 5 locked. Prerequisites (Games 1-4) not met.");
+                bubbles = ['npc5_bubble_reject'];
+                sceneKey = null; // Prevent starting the game
+            }
         }
 
         const centerX = this.cameras.main.width / 2;
