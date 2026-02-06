@@ -148,7 +148,7 @@ export class GameScene_2 extends BaseGameScene {
             this.handleWinBeforeBubble();
         });
 
-        this.questionPanel.setDepth(500).setVisible(false);
+        this.questionPanel.setDepth(559).setVisible(false);
     }
 
     enableGameInteraction(enable) {
@@ -199,7 +199,7 @@ export class GameScene_2 extends BaseGameScene {
     showAddOn(addOnKey) {
         this.optionButtons.forEach(btn => btn.setVisible(false));
 
-        const addOnImg = this.scene.add.image(0, 0, addOnKey)
+        const addOnImg = this.scene.add.image(0, -50, addOnKey)
             .setInteractive({ useHandCursor: true });
         this.add(addOnImg);
 
