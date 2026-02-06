@@ -1,3 +1,5 @@
+import Phaser from 'phaser';
+
 export class CustomButton extends Phaser.GameObjects.Image {
     constructor(scene, x, y, normalKey, pressedKey, callbackDown, callbackUp) {
         super(scene, x, y, normalKey);

@@ -11,7 +11,7 @@ import { GameScene_5 } from './scenes/Game/GameScene_5.js';
 import { GameScene_6 } from './scenes/Game/GameScene_6.js';
 import { GameScene_7 } from './scenes/Game/GameScene_7.js';
 import { GameResultScene } from './scenes/GameResultScene.js';
-
+import Phaser from 'phaser';
 
 var config = {
     type: Phaser.AUTO,
