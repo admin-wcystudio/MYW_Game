@@ -168,13 +168,16 @@ export class MainStreetScene extends Phaser.Scene {
         if (this.isLeftDown) {
             this.player.x -= speed;
             isLeft = true;
+            isMoving = true;
         } else if (this.isRightDown) {
             this.player.x += speed;
             isLeft = false;
             isMoving = true;
         } else {
+            this.player.x += 0;
             isMoving = false;
         }
+        //console.log(`isLeftDown: ${this.isLeftDown}, isRightDown: ${this.isRightDown}, isMoving: ${isMoving}, isLeft: ${isLeft}`);
         // 紀錄最後方向供 handleAnimation 使用
         this.player.lastDirectionLeft = isLeft;
 
@@ -182,12 +185,22 @@ export class MainStreetScene extends Phaser.Scene {
 
 
         this.player.x = Phaser.Math.Clamp(this.player.x, 100, 8314);
-        // 檢查 NPC 距離以決定是否可互動
-        const allNpcs = [...this.interactiveNpcs, ...this.fakeNpcs];
+        const camView = this.cameras.main.worldView;
+        const buffer = 300; // Load slightly before they appear
 
+        const allNpcs = [...this.interactiveNpcs, ...this.fakeNpcs];
         this.currentNpcActivated = null;
 
         allNpcs.forEach(npc => {
+            // Culling check
+            const inView = (npc.x > camView.x - buffer) && (npc.x < camView.x + camView.width + buffer);
+
+            if (inView) {
+                if (!npc.isPlaying()) npc.play(true);
+            } else {
+                if (npc.isPlaying()) npc.stop();
+            }
+
             const dist = Math.abs(this.player.x - npc.x);
 
             if (dist < npc.proximityDistance) {
