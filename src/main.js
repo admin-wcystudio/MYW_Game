@@ -44,6 +44,13 @@ var config = {
     },
     dom: {
         createContainer: true
+    },
+    callbacks: {
+        preBoot: function (game) {
+            const vid = document.createElement('video');
+            game.device.video.mov = vid.canPlayType('video/quicktime') !== '';
+            console.info('game.device.video.mov', game.device.video.mov);
+        }
     }
 }
 

@@ -15,6 +15,7 @@ export class GameStartScene extends Phaser.Scene {
         localStorage.removeItem('hasSeenMainStreetIntro');
 
         this.bgVideo = this.add.video(960, 540, 'cover_video');
+        this.bgVideo.getFirstFrame();
         this.bgVideo.setMute(false);
         this.bgVideo.play(true); // loop
 
