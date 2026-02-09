@@ -75,29 +75,29 @@ export class BootScene extends Phaser.Scene {
         this.load.image('bubble2', loginPath + 'choosepage_bubble2.png');
 
         this.load.video('boy_chinese', [
-            loginPath + 'choosepage_boy_chinese.webm',
-            loginPath + 'choosepage_boy_chinese.mov'
+            loginPath + 'choosepage_boy_chinese.mov',
+            loginPath + 'choosepage_boy_chinese.webm'
         ]);
 
         this.load.video('girl_chinese', [
-            loginPath + 'choosepage_girl_chinese.webm',
-            loginPath + 'choosepage_girl_chinese.mov'
+            loginPath + 'choosepage_girl_chinese.mov',
+            loginPath + 'choosepage_girl_chinese.webm'
         ]);
         this.load.video('boy_galaxy', [
-            loginPath + 'choosepage_boy_galaxy.webm',
-            loginPath + 'choosepage_boy_galaxy.mov'
+            loginPath + 'choosepage_boy_galaxy.mov',
+            loginPath + 'choosepage_boy_galaxy.webm'
         ]);
         this.load.video('girl_galaxy', [
-            loginPath + 'choosepage_girl_galaxy.webm',
-            loginPath + 'choosepage_girl_galaxy.mov'
+            loginPath + 'choosepage_girl_galaxy.mov',
+            loginPath + 'choosepage_girl_galaxy.webm'
         ]);
         this.load.video('boy_transition', [
-            loginPath + 'choosepage_boy_galaxytochinese_transition.webm',
-            loginPath + 'choosepage_boy_galaxytochinese_transition.mov'
+            loginPath + 'choosepage_boy_galaxytochinese_transition.mov',
+            loginPath + 'choosepage_boy_galaxytochinese_transition.webm'
         ]);
         this.load.video('girl_transition', [
-            loginPath + 'choosepage_girl_galaxytochinese_transition.webm',
-            loginPath + 'choosepage_girl_galaxytochinese_transition.mov'
+            loginPath + 'choosepage_girl_galaxytochinese_transition.mov',
+            loginPath + 'choosepage_girl_galaxytochinese_transition.webm'
         ]);
         this.load.video('transition', loginPath + 'transition.webm');
 
