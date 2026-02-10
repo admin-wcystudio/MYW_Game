@@ -72,18 +72,32 @@ export class GameResultScene extends Phaser.Scene {
                     const itemKey = this.getRandomItem();
                     this.itemImage = this.add.image(centerX, centerY + 200, itemKey).setDepth(11);
                     this.haveItem = true;
+                    this.resultGroup.add(this.itemImage);
                 }
 
             }).setDepth(11);
         this.resultGroup.add(this.button);
 
+
         this.closeButton = new CustomButton(this, 1600, 200, 'finishpage_close_button'
             , 'finishpage_close_button_select', () => {
+                if (this.itemImage == null) return; // Ensure the item has been revealed before allowing to close
+
                 this.takeScreenshot();
+
                 this.time.delayedCall(5000, () => {
-                    GameManager.switchToGameScene(this, 'GameStartScene');
+                    this.resultGroup.setVisible(false);
+                    this.ui.descriptionPanel.setVisible(true);
+
+                    this.time.delayedCall(10000, () => {
+                        this.ui.descriptionPanel.setVisible(false);
+                        GameManager.switchToGameScene(this, 'GameStartScene');
+                    });
+
                 });
+
             }).setDepth(11).setVisible(true);
+        this.resultGroup.add(this.closeButton);
 
     }
 
