@@ -108,7 +108,7 @@ export class GameScene_2 extends BaseGameScene {
             {
                 content: 'game2_q1_question',
                 option: ['game2_q1_a_button', 'game2_q1_b_button', 'game2_q1_c_button', 'game2_q1_d_button'],
-                answer: 2, addOn: 'game2_q1_additions'
+                answer: 0, addOn: 'game2_q1_additions'
             },
             {
                 content: 'game2_q2_question',
@@ -128,7 +128,7 @@ export class GameScene_2 extends BaseGameScene {
             {
                 content: 'game2_q5_question',
                 option: ['game2_q5_a_button', 'game2_q5_b_button', 'game2_q5_c_button', 'game2_q5_d_button'],
-                answer: 0, addOn: 'game2_q5_additions'
+                answer: 2, addOn: 'game2_q5_additions'
             }
         ];
 

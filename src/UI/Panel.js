@@ -366,23 +366,25 @@ export class ItemsPanel extends Phaser.GameObjects.Container {
                 itemDescriptionKey: 'itempage_item1_description'
             },
             {
-                itemKey: 'itempage_item2',
-                itemSelectKey: 'itempage_item2_select',
-                itemDescriptionKey: 'itempage_item2_description1',
-                itemDescriptionKey1: 'itempage_item2_description2'
-            },
-            {
-                itemKey: 'itempage_item3',
-                itemSelectKey: 'itempage_item3_select',
-                itemDescriptionKey: 'itempage_item3_description'
-            },
-            {
                 itemKey: 'itempage_item4',
                 itemSelectKey: 'itempage_item4_select',
                 itemDescriptionKey: 'itempage_item4_description',
                 itemDescriptionKey1: 'itempage_item4_description1',
                 itemDescriptionKey2: 'itempage_item4_description2'
             },
+
+            {
+                itemKey: 'itempage_item3',
+                itemSelectKey: 'itempage_item3_select',
+                itemDescriptionKey: 'itempage_item3_description'
+            },
+            {
+                itemKey: 'itempage_item2',
+                itemSelectKey: 'itempage_item2_select',
+                itemDescriptionKey: 'itempage_item2_description1',
+                itemDescriptionKey1: 'itempage_item2_description2'
+            },
+
             {
                 itemKey: 'itempage_item5',
                 itemSelectKey: 'itempage_item5_select',
