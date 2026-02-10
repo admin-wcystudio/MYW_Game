@@ -216,17 +216,35 @@ export default class UIHelper {
         scene.add.existing(settingPanel);
 
         const descriptionPanel = new CustomPanel(scene, 960, 540, descriptionPages).setScrollFactor(0);
-        descriptionPanel.prevBtn.setTexture('left_arrow_button');
-        descriptionPanel.prevBtn.normalKey = 'left_arrow_button';
-        descriptionPanel.prevBtn.pressedKey = 'left_arrow_button_click';
 
-        descriptionPanel.nextBtn.setTexture('right_arrow_button');
-        descriptionPanel.nextBtn.normalKey = 'right_arrow_button';
-        descriptionPanel.nextBtn.pressedKey = 'right_arrow_button_click';
+        // Hide navigation buttons and override refresh to keep them hidden
+        descriptionPanel.prevBtn.setVisible(false).setActive(false);
+        descriptionPanel.nextBtn.setVisible(false).setActive(false);
+        const originalRefresh = descriptionPanel.refresh.bind(descriptionPanel);
+        descriptionPanel.refresh = () => {
+            originalRefresh();
+            descriptionPanel.prevBtn.setVisible(false);
+            descriptionPanel.nextBtn.setVisible(false);
+        };
 
         descriptionPanel.setVisible(false);
         descriptionPanel.setDepth(999);
         scene.add.existing(descriptionPanel);
+
+        // Auto-switch pages
+        scene.time.addEvent({
+            delay: 5000,
+            loop: true,
+            callback: () => {
+                if (descriptionPanel.visible && descriptionPanel.pages.length > 1) {
+                    descriptionPanel.currentPage++;
+                    if (descriptionPanel.currentPage >= descriptionPanel.pages.length) {
+                        descriptionPanel.currentPage = 0;
+                    }
+                    descriptionPanel.refresh();
+                }
+            }
+        });
 
         const itemPanel = new ItemsPanel(scene, 960, 540).setScrollFactor(0);
         itemPanel.setVisible(false);

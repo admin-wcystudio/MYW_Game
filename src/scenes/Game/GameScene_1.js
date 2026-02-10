@@ -8,8 +8,10 @@ export class GameScene_1 extends BaseGameScene {
     constructor() {
         super('GameScene_1');
         this.roundPerSeconds = 30;
-        this.targetRounds = 2;
+        this.targetRounds = 3;
         this.sceneIndex = 1;
+        this.isContinuousTimer = false;
+        this.isAllowRoundFail = false;
     }
 
     preload() {
@@ -19,7 +21,10 @@ export class GameScene_1 extends BaseGameScene {
         this.load.image('game1_title', `${path}game1_title.png`);
         this.load.image('game1_rotate', `${path}game1_rotate.png`);
         this.load.image('game1_description', `${path}game1_description.png`);
+        this.load.image('game1_description2', `${path}game1_description2.png`);
         this.load.image('game1_object_description', `${path}game1_object_description.png`);
+
+        this.load.image('game1_puzzle_guide', `${path}game1_puzzle_guide.png`);
 
         // NPC 泡泡
         this.load.image('game1_npc_box_intro', `${path}game1_npc_box1.png`);
@@ -37,7 +42,7 @@ export class GameScene_1 extends BaseGameScene {
     }
 
     create() {
-        this.initGame('game1_bg', 'game1_title', 'game1_description');
+        this.initGame('game1_bg', 'game1_title', ['game1_description', 'game1_description2'], 10);
 
     }
 
@@ -47,9 +52,11 @@ export class GameScene_1 extends BaseGameScene {
      */
     setupGameObjects() {
         this.selectedPuzzle = null;
-        if (this.puzzleGroup) {
-            this.puzzleGroup.clear(true, true);
-        }
+
+        if (this.guide) this.guide.destroy();
+        if (this.rotateButton) this.rotateButton.destroy();
+        this.input.removeAllListeners('drag');
+        this.input.removeAllListeners('dragend');
 
         const centerX = this.cameras.main.width / 2;
         const width = this.cameras.main.width;
@@ -65,6 +72,9 @@ export class GameScene_1 extends BaseGameScene {
         ];
 
         this.puzzleGroup = this.add.group();
+
+
+        this.guide = this.add.image(centerX, 460, 'game1_puzzle_guide').setDepth(10);
 
         defaultPuzzles.forEach(data => {
             let piece = this.add.image(0, 0, data.content).setDepth(50);
@@ -90,6 +100,32 @@ export class GameScene_1 extends BaseGameScene {
             gameObject.setDepth(50);
             this.checkSnap(gameObject);
         });
+
+
+        //==== Debug Graphics ===========================================================
+        // const debugGraphics = this.add.graphics().setDepth(2); // 擺喺背景上面，物件下面
+        // debugGraphics.lineStyle(3, 0xff0000, 1); // 紅色線，粗度 2
+
+        // defaultPuzzles.forEach(data => {
+        //     const rectSize = 200;
+        //     const startX = data.targetX - rectSize / 2;
+        //     const startY = data.targetY - rectSize / 2;
+
+        //     // 畫出目標區域矩形
+        //     debugGraphics.strokeRect(startX, startY, rectSize, rectSize);
+
+        //     // 喺方框旁邊寫低係邊塊 Puzzle，方便對號入座
+        //     this.add.text(startX, startY - 20, data.content, {
+        //         fontSize: '16px',
+        //         fill: '#ff0000'
+        //     }).setDepth(1);
+        // });
+
+        // const tolerance = 60; // 同你 checkSnap 裡面個數值一樣
+        // defaultPuzzles.forEach(data => {
+        //     debugGraphics.lineStyle(1, 0x00ff00, 0.5); // 綠色虛線感
+        //     debugGraphics.strokeCircle(data.targetX, data.targetY, tolerance);
+        // });
     }
     /**
      * 控制拼圖是否可被操作
@@ -102,6 +138,7 @@ export class GameScene_1 extends BaseGameScene {
                 p.disableInteractive();
             }
         });
+        this.guide.setVisible(enabled);
     }
 
 
@@ -145,37 +182,14 @@ export class GameScene_1 extends BaseGameScene {
         }
     }
 
-    handleWinBeforeBubble() {
-        // Override to ensure feedback plays
-        if (!this.isGameActive || this.gameState === 'gameWin') return;
-
-        this.gameState = 'gameWin';
-        console.log('遊戲狀態改為:', this.gameState);
-
-        if (this.gameTimer) this.gameTimer.stop();
-
-        if (this.gameTimer && typeof this.gameTimer.getRemaining === 'function') {
-            const used = Math.max(0, this.roundPerSeconds - this.gameTimer.getRemaining());
-            this.totalUsedSeconds += used;
-        }
-
-        this.enableGameInteraction(false);
-        this.updateRoundUI(true);
-
-        this.playFeedback();
-
-        this.gameTimer.reset(this.roundPerSeconds);
-        this.time.delayedCall(500, () => {
-            this.showBubble('win');
-        });
-    }
-    /**
-     * 播放過場影片
-     */
-    playFeedback() {
+    playFeedback(isSuccess, onComplete) {
         this.puzzleGroup.setVisible(false);
+        if (this.successVideo) this.successVideo.destroy();
         this.successVideo = this.add.video(960, 440, 'game1_success_preview').setDepth(200).setScrollFactor(0);
         this.successVideo.play();
+        this.time.delayedCall(500, () => {
+            if (onComplete) onComplete();
+        });
     }
 
     /**

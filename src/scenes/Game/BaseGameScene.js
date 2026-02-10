@@ -8,14 +8,16 @@ export default class BaseGameScene extends Phaser.Scene {
         super(key);
         // 預設參數
         this.depth = 10;
-        this.roundPerSeconds = 35;
+        this.roundPerSeconds = 30;
         this.targetRounds = 3;
         this.roundIndex = 0;
         this.isGameActive = false;
         this.sceneIndex = -1;
         this.gameState = 'init'; // 'init', 'playing', 'roundWin', 'gameWin', 'lose' , 'roundLose'
         this.currentBubbleImg = null;
-        this.totalUsedSeconds = 0
+        this.totalUsedSeconds = 0;
+        this.isContinuousTimer = false;
+        this.isAllowRoundFail = false; // If true, failing a round doesn't end the game immediately, but consumes a "chance"
     }
 
     /**
@@ -28,7 +30,7 @@ export default class BaseGameScene extends Phaser.Scene {
      * @param {number} depth
      * @param {boolean} skipIntroBubble - if true, skip the first intro bubble and start game immediately
      */
-    initGame(bgKey, titleKey, descriptionKey, depth = 10, skipIntroBubble = false, autoStart = true) {
+    initGame(bgKey, titleKey, descriptionKey, depth = 10, skipIntroBubble = false, autoStart = false) {
         this.gameState = 'init';
 
         // Reset core game state variables
@@ -39,12 +41,20 @@ export default class BaseGameScene extends Phaser.Scene {
 
         const gender = localStorage.getItem('player') ? JSON.parse(localStorage.getItem('player')).gender : 'M';
 
-        const descriptionPages = [
-            {
-                content: descriptionKey,
+        let descriptionPages = [];
+        if (Array.isArray(descriptionKey)) {
+            descriptionPages = descriptionKey.map(key => ({
+                content: key,
                 closeBtn: 'close_button', closeBtnClick: 'close_button_click'
-            }
-        ];
+            }));
+        } else {
+            descriptionPages = [
+                {
+                    content: descriptionKey,
+                    closeBtn: 'close_button', closeBtnClick: 'close_button_click'
+                }
+            ];
+        }
 
         // 建立通用 UI
         this.gameUI = UIHelper.createGameCommonUI(this, bgKey, titleKey,
@@ -81,7 +91,14 @@ export default class BaseGameScene extends Phaser.Scene {
             if (autoStart)
                 this.startGame();
         } else {
-            this.showBubble('intro', gender);
+            if (this.gameUI && this.gameUI.descriptionPanel) {
+                this.gameUI.descriptionPanel.setCloseCallBack(() => {
+                    if (!this.isGameActive && this.gameState === 'init') {
+                        this.showBubble('intro', gender);
+                    }
+                });
+            }
+
         }
     }
 
@@ -197,28 +214,6 @@ export default class BaseGameScene extends Phaser.Scene {
                 }
             });
 
-            // if (options.autoCloseMs) {
-            //     this.time.delayedCall(options.autoCloseMs, () => {
-            //         if (!closed) {
-            //             closeBubble();
-            //             if (this.isAllowRoundFail) {
-            //                 if (this.roundIndex + 1 < this.targetRounds) {
-            //                     this.nextRound();
-            //                 } else {
-            //                     this.showLose(() => { this.showFailPanel(); });
-            //                 }
-            //             } else if (this.failChances > 0) {
-            //                 if (this.currentFailCount >= this.failChances) {
-            //                     this.showLose(() => { this.showFailPanel(); });
-            //                 } else {
-            //                     this.retryRound();
-            //                 }
-            //             } else {
-            //                 this.showLose(() => { this.showFailPanel(); });
-            //             }
-            //         }
-            //     });
-            // }
         } else if (type === 'lock') {
             this.currentBubbleImg.once('pointerdown', () => {
                 closeBubble();
@@ -231,6 +226,8 @@ export default class BaseGameScene extends Phaser.Scene {
                     GameManager.backToMainStreet(this);
                 });
             }
+        } else if (type === 'noBubble') {
+            this.handleWinAfterBubble();
         }
     }
     /**
@@ -257,7 +254,17 @@ export default class BaseGameScene extends Phaser.Scene {
             isGameWin = true;
         }
 
-        this.playFeedback();
+        if (this.playFeedback && this.playFeedback.length > 0) {
+            this.playFeedback(true, () => {
+                this.showBubble('win');
+            });
+        } else {
+            this.playFeedback();
+            this.time.delayedCall(300, () => {
+                this.showBubble('win');
+            });
+        }
+
         if (isGameWin) {
             this.label = this.add.image(1650, 350, 'game_success_label').setDepth(555);
         }
@@ -266,16 +273,23 @@ export default class BaseGameScene extends Phaser.Scene {
         if (this.gameTimer) this.gameTimer.stop();
 
         if (this.gameTimer && typeof this.gameTimer.getRemaining === 'function') {
-            const used = Math.max(0, this.roundPerSeconds - this.gameTimer.getRemaining());
-            this.totalUsedSeconds += used;
+            if (this.isContinuousTimer) {
+                if (isGameWin) {
+                    this.totalUsedSeconds = Math.max(0, this.roundPerSeconds - this.gameTimer.getRemaining());
+                }
+            } else {
+                const used = Math.max(0, this.roundPerSeconds - this.gameTimer.getRemaining());
+                this.totalUsedSeconds += used;
+            }
         }
 
         this.enableGameInteraction(false);
         this.updateRoundUI(true);
-        this.gameTimer.reset(this.roundPerSeconds);
-        this.time.delayedCall(500, () => {
-            this.showBubble('win');
-        });
+        if (!this.isContinuousTimer) {
+            this.gameTimer.reset(this.roundPerSeconds);
+        }
+
+
     }
 
     handleWinAfterBubble() {

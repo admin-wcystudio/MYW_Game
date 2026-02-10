@@ -12,8 +12,8 @@ export class CustomPanel extends Phaser.GameObjects.Container {
         this.contentImage = scene.add.image(0, 0, contentKey).setScrollFactor(0);
         this.add(this.contentImage);
 
-        this.prevBtn = new CustomButton(scene, -570, 260, null, null, () => this.changePage(-1)).setScrollFactor(0);
-        this.nextBtn = new CustomButton(scene, 570, 260, null, null, () => this.changePage(1)).setScrollFactor(0);
+        this.prevBtn = new CustomButton(scene, -570, 260, 'prev_button', 'prev_button_click', () => this.changePage(-1)).setScrollFactor(0);
+        this.nextBtn = new CustomButton(scene, 570, 260, 'next_button', 'next_button_click', () => this.changePage(1)).setScrollFactor(0);
 
         this.closeBtn = new CustomButton(scene, 625, -295, null, null, () => {
             this.setVisible(false);
@@ -366,23 +366,25 @@ export class ItemsPanel extends Phaser.GameObjects.Container {
                 itemDescriptionKey: 'itempage_item1_description'
             },
             {
-                itemKey: 'itempage_item2',
-                itemSelectKey: 'itempage_item2_select',
-                itemDescriptionKey: 'itempage_item2_description1',
-                itemDescriptionKey1: 'itempage_item2_description2'
-            },
-            {
-                itemKey: 'itempage_item3',
-                itemSelectKey: 'itempage_item3_select',
-                itemDescriptionKey: 'itempage_item3_description'
-            },
-            {
                 itemKey: 'itempage_item4',
                 itemSelectKey: 'itempage_item4_select',
                 itemDescriptionKey: 'itempage_item4_description',
                 itemDescriptionKey1: 'itempage_item4_description1',
                 itemDescriptionKey2: 'itempage_item4_description2'
             },
+
+            {
+                itemKey: 'itempage_item3',
+                itemSelectKey: 'itempage_item3_select',
+                itemDescriptionKey: 'itempage_item3_description'
+            },
+            {
+                itemKey: 'itempage_item2',
+                itemSelectKey: 'itempage_item2_select',
+                itemDescriptionKey: 'itempage_item2_description1',
+                itemDescriptionKey1: 'itempage_item2_description2'
+            },
+
             {
                 itemKey: 'itempage_item5',
                 itemSelectKey: 'itempage_item5_select',

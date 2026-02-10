@@ -9,8 +9,9 @@ export class GameScene_5 extends BaseGameScene {
     constructor() {
         super('GameScene_5');
         this.roundPerSeconds = 30;
-        this.targetRounds = 2;
+        this.targetRounds = 3;
         this.sceneIndex = 5;
+        this.isContinuousTimer = true;
     }
 
     preload() {
@@ -35,18 +36,18 @@ export class GameScene_5 extends BaseGameScene {
     }
 
     create() {
-        this.gameResult_1 = GameManager.loadOneGameResult(1);
-        this.gameResult_4 = GameManager.loadOneGameResult(4);
-        this.canPlay = false;
-        console.log("Game 5 - Can Play:", this.canPlay);
-        if (this.gameResult_1 && this.gameResult_1.isFinished &&
-            this.gameResult_4 && this.gameResult_4.isFinished) {
-            this.canPlay = true;
-            this.initGame('game5_bg', 'game5_title', 'game5_description', 10, true);
-        } else {
-            this.add.image(960, 540, 'game5_bg');
-            this.showBubble('lock');
-        }
+        // this.gameResult_1 = GameManager.loadOneGameResult(1);
+        // this.gameResult_4 = GameManager.loadOneGameResult(4);
+        // this.canPlay = false;
+        // console.log("Game 5 - Can Play:", this.canPlay);
+        // if (this.gameResult_1 && this.gameResult_1.isFinished &&
+        //     this.gameResult_4 && this.gameResult_4.isFinished) {
+        //     this.canPlay = true;
+        //     this.initGame('game5_bg', 'game5_title', 'game5_description', 10, true);
+        // } else {
+        //     this.add.image(960, 540, 'game5_bg');
+        //     this.showBubble('lock');
+        // }
 
         this.isHit = false;
         this.isValid = false;
@@ -61,7 +62,7 @@ export class GameScene_5 extends BaseGameScene {
             }
         }).setDepth(20);
 
-        this.initGame('game5_bg', 'game5_title', 'game5_description', 10, true);
+        this.initGame('game5_bg', 'game5_title', 'game5_description', 10, true, false);
     }
 
     setupGameObjects() {
@@ -126,11 +127,13 @@ export class GameScene_5 extends BaseGameScene {
 
     showWin() {
         this.isGameWin = true;
-        this.playFeedback(true, () => {
-            const descriptionPages = ['game5_object_description'];
-            const objectPanel = new CustomDescriptionPanel(this, 960, 600, descriptionPages, () => GameManager.backToMainStreet(this));
-            objectPanel.setDepth(1000).setVisible(true);
-        });
+        if (this.video) {
+            this.video.destroy();
+            this.video = null;
+        }
+        const descriptionPages = ['game5_object_description'];
+        const objectPanel = new CustomDescriptionPanel(this, 960, 600, descriptionPages, () => GameManager.backToMainStreet(this));
+        objectPanel.setDepth(1000).setVisible(true);
     }
 
     handleHit() {
@@ -148,5 +151,43 @@ export class GameScene_5 extends BaseGameScene {
         } else {
             this.handleLose();
         }
+    }
+
+    handleWinBeforeBubble() {
+        if (!this.isGameActive || this.gameState === 'gameWin') return;
+
+        // Determine if this is the last round
+        let isGameWin = (this.roundIndex + 1 >= this.targetRounds);
+        console.log('遊戲狀態改為:', isGameWin ? 'gameWin' : 'roundWin');
+
+
+        if (isGameWin) {
+            this.label = this.add.image(1650, 350, 'game_success_label').setDepth(555);
+            //no bubble to show
+            this.playFeedback(true, () => {
+                this.showBubble('noBubble');
+            });
+        } else {
+            this.playFeedback(true, () => {
+                this.showBubble('win');
+            });
+        }
+        this.gameState = isGameWin ? 'gameWin' : 'roundWin';
+
+        if (this.gameTimer) this.gameTimer.stop();
+
+        if (this.gameTimer && typeof this.gameTimer.getRemaining === 'function') {
+            if (this.isContinuousTimer) {
+                if (isGameWin) {
+                    this.totalUsedSeconds = Math.max(0, this.roundPerSeconds - this.gameTimer.getRemaining());
+                }
+            } else {
+                const used = Math.max(0, this.roundPerSeconds - this.gameTimer.getRemaining());
+                this.totalUsedSeconds += used;
+            }
+        }
+        this.enableGameInteraction(false);
+        this.updateRoundUI(true);
+
     }
 }

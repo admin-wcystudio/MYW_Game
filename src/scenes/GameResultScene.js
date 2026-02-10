@@ -56,7 +56,7 @@ export class GameResultScene extends Phaser.Scene {
         // Background
         this.add.image(centerX, centerY, 'finishpage_bg');
 
-        this.playerInfo = localStorage.getItem('playerInfo') ? JSON.parse(localStorage.getItem('playerInfo')) : null;
+        this.playerInfo = localStorage.getItem('player') ? JSON.parse(localStorage.getItem('player')) : null;
         this.gameResults = GameManager.loadGameResult();
 
         this.resultGroup = this.add.group();
@@ -72,25 +72,40 @@ export class GameResultScene extends Phaser.Scene {
                     const itemKey = this.getRandomItem();
                     this.itemImage = this.add.image(centerX, centerY + 200, itemKey).setDepth(11);
                     this.haveItem = true;
+                    this.resultGroup.add(this.itemImage);
                 }
 
             }).setDepth(11);
         this.resultGroup.add(this.button);
 
+
         this.closeButton = new CustomButton(this, 1600, 200, 'finishpage_close_button'
             , 'finishpage_close_button_select', () => {
+                if (this.itemImage == null) return; // Ensure the item has been revealed before allowing to close
+
                 this.takeScreenshot();
+
                 this.time.delayedCall(5000, () => {
-                    GameManager.switchToGameScene(this, 'GameStartScene');
+                    this.resultGroup.setVisible(false);
+                    this.ui.descriptionPanel.setVisible(true);
+
+                    this.time.delayedCall(20000, () => {
+                        this.ui.descriptionPanel.setVisible(false);
+                        GameManager.switchToGameScene(this, 'GameStartScene');
+                    });
+
                 });
+
             }).setDepth(11).setVisible(true);
+        this.resultGroup.add(this.closeButton);
 
     }
 
     takeScreenshot() {
+        const playerName = this.playerInfo ? this.playerInfo.name : "玩家 1";
         this.game.renderer.snapshot((image) => {
             const link = document.createElement('a');
-            link.setAttribute('download', `GameResult_${new Date().getTime()}.png`);
+            link.setAttribute('download', `賣油翁_${playerName}_${new Date().getTime()}.png`);
             link.setAttribute('href', image.src);
             document.body.appendChild(link);
             link.click();
