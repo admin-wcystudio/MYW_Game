@@ -114,10 +114,14 @@ export class GameScene_6 extends BaseGameScene {
         this.fallingArrows = [];
 
         if (this.buttonGroup) {
-            this.buttonGroup.clear(true, true);
+            if (this.buttonGroup.scene) {
+                this.buttonGroup.destroy(true);
+            }
         }
         if (this.arrowGroup) {
-            this.arrowGroup.clear(true, true);
+            if (this.arrowGroup.scene) {
+                this.arrowGroup.destroy(true);
+            }
         }
 
         this.buttonGroup = this.add.group();

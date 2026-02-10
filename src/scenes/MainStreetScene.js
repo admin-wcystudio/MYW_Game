@@ -246,21 +246,21 @@ export class MainStreetScene extends Phaser.Scene {
         }
 
         // Special handling for NPC 5 and 6: Check if Games 1-4 are completed
-        if (targetNpc.id === 5 || targetNpc.id === 6) {
-            const allResults = GameManager.loadGameResult();
-            // Check if games 1, 2, 3, and 4 are finished
-            const canStartGame = [1, 2, 3, 4].every(num => {
-                const res = allResults.find(r => r.game === num);
-                return res && res.isFinished;
-            });
+        // if (targetNpc.id === 5 || targetNpc.id === 6) {
+        //     const allResults = GameManager.loadGameResult();
+        //     // Check if games 1, 2, 3, and 4 are finished
+        //     const canStartGame = [1, 2, 3, 4].every(num => {
+        //         const res = allResults.find(r => r.game === num);
+        //         return res && res.isFinished;
+        //     });
 
-            if (!canStartGame) {
-                console.log("Game is locked. Prerequisites (Games 1-4) not met.");
-                // Use string arrays directly as the variables are not in scope here
-                bubbles = targetNpc.id === 5 ? ['npc5_bubble_reject'] : ['npc6_bubble_reject'];
-                sceneKey = null; // Prevent starting the game
-            }
-        }
+        //     if (!canStartGame) {
+        //         console.log("Game is locked. Prerequisites (Games 1-4) not met.");
+        //         // Use string arrays directly as the variables are not in scope here
+        //         bubbles = targetNpc.id === 5 ? ['npc5_bubble_reject'] : ['npc6_bubble_reject'];
+        //         sceneKey = null; // Prevent starting the game
+        //     }
+        // }
 
         const centerX = this.cameras.main.width / 2;
         const centerY = this.cameras.main.height / 2;
