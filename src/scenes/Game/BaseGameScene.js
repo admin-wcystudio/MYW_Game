@@ -41,12 +41,20 @@ export default class BaseGameScene extends Phaser.Scene {
 
         const gender = localStorage.getItem('player') ? JSON.parse(localStorage.getItem('player')).gender : 'M';
 
-        const descriptionPages = [
-            {
-                content: descriptionKey,
+        let descriptionPages = [];
+        if (Array.isArray(descriptionKey)) {
+            descriptionPages = descriptionKey.map(key => ({
+                content: key,
                 closeBtn: 'close_button', closeBtnClick: 'close_button_click'
-            }
-        ];
+            }));
+        } else {
+            descriptionPages = [
+                {
+                    content: descriptionKey,
+                    closeBtn: 'close_button', closeBtnClick: 'close_button_click'
+                }
+            ];
+        }
 
         // 建立通用 UI
         this.gameUI = UIHelper.createGameCommonUI(this, bgKey, titleKey,
@@ -83,7 +91,14 @@ export default class BaseGameScene extends Phaser.Scene {
             if (autoStart)
                 this.startGame();
         } else {
-            this.showBubble('intro', gender);
+            if (this.gameUI && this.gameUI.descriptionPanel) {
+                this.gameUI.descriptionPanel.setCloseCallBack(() => {
+                    if (!this.isGameActive && this.gameState === 'init') {
+                        this.showBubble('intro', gender);
+                    }
+                });
+            }
+
         }
     }
 
@@ -245,7 +260,7 @@ export default class BaseGameScene extends Phaser.Scene {
             });
         } else {
             this.playFeedback();
-            this.time.delayedCall(1000, () => {
+            this.time.delayedCall(300, () => {
                 this.showBubble('win');
             });
         }
