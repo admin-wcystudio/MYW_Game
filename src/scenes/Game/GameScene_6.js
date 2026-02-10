@@ -226,21 +226,18 @@ export class GameScene_6 extends BaseGameScene {
     handleArrowClick(index) {
         if (!this.fallingArrows || this.fallingArrows.length === 0) return;
 
-        // Find the first arrow that is within the hit zone
-        const hitIndex = this.fallingArrows.findIndex(arrow => arrow.x >= 920 && arrow.x <= 1080);
+        // Find any arrow that matches the color and is within the hit zone
+        const hitIndex = this.fallingArrows.findIndex(arrow =>
+            arrow.x >= 920 && arrow.x <= 1080 && arrow.colorIndex === index
+        );
         let winRound = false;
 
         if (hitIndex !== -1 && this.isHitPointValid) {
             const arrow = this.fallingArrows[hitIndex];
-            console.log('Hit arrow index:', hitIndex, 'Position:', arrow.x);
-
-            if (arrow.colorIndex === index) {
-                winRound = true;
-            } else {
-                console.log("Wrong color clicked");
-            }
+            console.log('Hit matching arrow index:', hitIndex, 'Position:', arrow.x);
+            winRound = true;
         } else {
-            console.log("No arrow in hit zone / or hit point not valid");
+            console.log("No matching arrow in hit zone / or hit point not valid");
         }
 
         // Common cleanup: destroy arrows, hitPoint, and hide barBG
@@ -276,32 +273,20 @@ export class GameScene_6 extends BaseGameScene {
         this.gameState = isGameWin ? 'gameWin' : 'roundWin';
         console.log('遊戲狀態改為:', this.gameState);
         if (this.gameTimer) this.gameTimer.stop(); // Stop/Pause the timer
+
+        if (this.gameTimer && typeof this.gameTimer.getRemaining === 'function') {
+            const used = Math.max(0, this.roundPerSeconds - this.gameTimer.getRemaining());
+            this.totalUsedSeconds += used;
+        }
+
         this.enableGameInteraction(false);
         this.updateRoundUI(true);
 
-        if (this.gameState === 'gameWin') {
-            this.time.delayedCall(500, () => {
-                this.addOnBubble = this.add.image(960, 540,
-                    'game6_npc_box_win_round_addon').setDepth(1000)
-                    .setInteractive({ useHandCursor: true });
-
-                this.tweens.add({
-                    targets: this.addOnBubble,
-                    scale: { from: 0.5, to: 1 },
-                    duration: 200,
-                    ease: 'Back.easeOut'
-                });
-
-                this.addOnBubble.on('pointerdown', () => {
-                    this.addOnBubble.destroy();
-                    this.addOnBubble = null;
-                });
-
-                this.showBubble('win');
-            });
-        } else {
-            this.showBubble('win');
+        if (this.gameTimer) {
+            this.gameTimer.reset(this.roundPerSeconds);
         }
+
+        this.showBubble('win');
     }
 
     showWin() {
@@ -309,16 +294,62 @@ export class GameScene_6 extends BaseGameScene {
         this.isLastGamePlayed = lastGameResult.isFinished ? true : false;
         console.log("Is Last Game Played:", this.isLastGamePlayed);
 
-        if (this.isLastGamePlayed) {
-            //item page
-            console.log("Show item page");
-        } else {
-            this.time.delayedCall(1000, () => {
-                GameManager.switchToGameScene(this, 'GameScene_7');
+
+        this.time.delayedCall(500, () => {
+            this.addOnBubble = this.add.image(960, this.cameras.main.height * 0.8,
+                'game6_npc_box_win').setDepth(1000); // Changed Y to 540 and removed interactive
+
+            this.tweens.add({
+                targets: this.addOnBubble,
+                scale: { from: 0.5, to: 1 },
+                duration: 200,
+                ease: 'Back.easeOut'
             });
-        }
+        });
+
+        this.time.delayedCall(1200, () => { // Increased delay so they appear sequentially
+            this.addOnBubble2 = this.add.image(960, 540,
+                'game6_npc_box_win_round_addon').setDepth(1001)
+                .setInteractive({ useHandCursor: true });
+
+            this.tweens.add({
+                targets: this.addOnBubble2,
+                scale: { from: 0.5, to: 1 },
+                duration: 200,
+                ease: 'Back.easeOut'
+            });
+
+            this.addOnBubble2.on('pointerdown', () => {
+                this.addOnBubble2.destroy();
+                this.addOnBubble2 = null;
+
+                if (this.addOnBubble) {
+                    this.addOnBubble.destroy();
+                    this.addOnBubble = null;
+                }
+
+                if (this.isLastGamePlayed) {
+                    //item page
+                    console.log("Show item page");
+                } else {
+                    this.time.delayedCall(1000, () => {
+                        GameManager.switchToGameScene(this, 'GameScene_7');
+                    });
+                }
+            });
+        });
     }
 
+
+    resetWholeGame() {
+        this.hitPoint.destroy();
+        this.canSpawn = false;
+        this.spawnHitPoint = false;
+        this.isHitPointValid = false;
+        this.updateTargetImage(0);
+        this.currentRound = 0;
+        super.resetWholeGame();
+    }
 
 
 }
