@@ -84,8 +84,8 @@ export class BootScene extends Phaser.Scene {
             loginPath + 'choosepage_girl_chinese.webm'
         ]);
         this.load.video('boy_galaxy', [
-            loginPath + 'choosepage_boy_galaxy.webm',
-            loginPath + 'choosepage_boy_galaxy.mp4'
+            loginPath + 'choosepage_boy_galaxy.mov',
+            loginPath + 'choosepage_boy_galaxy.webm'
         ]);
         this.load.video('girl_galaxy', [
             loginPath + 'choosepage_girl_galaxy.mov',
