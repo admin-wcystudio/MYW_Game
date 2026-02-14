@@ -4,14 +4,20 @@ export class TransitionScene extends Phaser.Scene {
     }
 
     create() {
-        this.bgVideo = this.add.video(960, 540, 'transition').setDepth(12);
-        this.bgVideo.setMute(false);
-        this.bgVideo.play(false);
+        // Debug Text
+        this.add.text(960, 100, 'Transition Playing...', { fontSize: '102px', color: '#ffffff' }).setOrigin(0.5);
 
-        this.time.delayedCall(1000, () => {
-            {
+        // Create a sprite and assign it to this.sprite
+        this.sprite = this.add.sprite(960, 540, 'transition')
+            .setDepth(1).setScrollFactor(0);
+
+        this.sprite.play('transition_anim');
+
+        this.sprite.on('animationcomplete', () => {
+            console.log('Playing transition end');
+            this.time.delayedCall(1000, () => {
                 this.scene.start('MainStreetScene');
-            }
+            });
         });
     }
 }

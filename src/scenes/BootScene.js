@@ -74,32 +74,26 @@ export class BootScene extends Phaser.Scene {
         this.load.image('bubble1', loginPath + 'choosepage_bubble1.png');
         this.load.image('bubble2', loginPath + 'choosepage_bubble2.png');
 
-        this.load.video('boy_chinese', [
-            loginPath + 'choosepage_boy_chinese.webm',
-            loginPath + 'choosepage_boy_chinese.mov'
-        ]);
+        this.load.spritesheet('boy_galaxy', loginPath + 'choosepage_boy_galaxy.png',
+            { frameWidth: 700, frameHeight: 900 });
 
-        this.load.video('girl_chinese', [
-            loginPath + 'choosepage_girl_chinese.webm',
-            loginPath + 'choosepage_girl_chinese.mov'
-        ]);
-        this.load.video('boy_galaxy', [
-            loginPath + 'choosepage_boy_galaxy.webm',
-            loginPath + 'choosepage_boy_galaxy.mov'
-        ]);
-        this.load.video('girl_galaxy', [
-            loginPath + 'choosepage_girl_galaxy.webm',
-            loginPath + 'choosepage_girl_galaxy.mov'
-        ]);
-        this.load.video('boy_transition', [
-            loginPath + 'choosepage_boy_galaxytochinese_transition.webm',
-            loginPath + 'choosepage_boy_galaxytochinese_transition.mov'
-        ]);
-        this.load.video('girl_transition', [
-            loginPath + 'choosepage_girl_galaxytochinese_transition.webm',
-            loginPath + 'choosepage_girl_galaxytochinese_transition.mov'
-        ]);
-        this.load.video('transition', loginPath + 'transition.webm');
+        this.load.spritesheet('boy_chinese', loginPath + 'choosepage_boy_chinese.png',
+            { frameWidth: 700, frameHeight: 900 });
+
+        this.load.spritesheet('boy_transition', loginPath + 'choosepage_boy_galaxytochinese_transition.png',
+            { frameWidth: 700, frameHeight: 900 });
+
+        this.load.spritesheet('girl_galaxy', loginPath + 'choosepage_girl_galaxy.png',
+            { frameWidth: 700, frameHeight: 900 });
+
+        this.load.spritesheet('girl_chinese', loginPath + 'choosepage_girl_chinese.png',
+            { frameWidth: 700, frameHeight: 900 });
+
+        this.load.spritesheet('girl_transition', loginPath + 'choosepage_girl_galaxytochinese_transition.png',
+            { frameWidth: 700, frameHeight: 900 });
+
+        this.load.spritesheet('transition', loginPath + 'transition.png',
+            { frameWidth: 1024, frameHeight: 1024 });
 
         //main street
         this.load.image('stage', 'assets/MainStreet/stage.png');
@@ -239,7 +233,60 @@ export class BootScene extends Phaser.Scene {
 
             this.registry.set('globalSettings', settings);
         }
-        this.scene.start('GameStartScene');
+
+        this.createAnimations();
+        this.scene.start('LoginScene');
+    }
+
+    createAnimations() {
+        this.anims.create({
+            key: 'boy_galaxy_anim',  // Name you will use in other scenes
+            frames: this.anims.generateFrameNumbers('boy_galaxy', { start: 0, end: 98 }),
+            frameRate: 30,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'boy_chinese_anim',  // Name you will use in other scenes
+            frames: this.anims.generateFrameNumbers('boy_galaxy', { start: 0, end: 98 }),
+            frameRate: 30,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'boy_transition_anim',  // Name you will use in other scenes
+            frames: this.anims.generateFrameNumbers('boy_transition', { start: 0, end: 98 }),
+            frameRate: 30,
+            repeat: 0
+        });
+
+        this.anims.create({
+            key: 'girl_galaxy_anim',
+            frames: this.anims.generateFrameNumbers('girl_galaxy', { start: 0, end: 98 }),
+            frameRate: 30,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'girl_chinese_anim',
+            frames: this.anims.generateFrameNumbers('girl_chinese', { start: 0, end: 98 }),
+            frameRate: 30,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'girl_transition_anim',  // Name you will use in other scenes
+            frames: this.anims.generateFrameNumbers('girl_transition', { start: 0, end: 98 }),
+            frameRate: 30,
+            repeat: 0
+        });
+
+        this.anims.create({
+            key: 'transition_anim',  // Name you will use in other scenes
+            frames: this.anims.generateFrameNumbers('transition', { start: 3, end: 52 }),
+            frameRate: 30,
+            repeat: 0
+        });
+
     }
 
 }
