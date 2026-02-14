@@ -173,11 +173,16 @@ export class BootScene extends Phaser.Scene {
         this.load.image('npc6_bubble_3', 'assets/MainStreet/NPCs/NPC_6/game6_npc3_bubble.png');
         this.load.image('npc6_bubble_reject', 'assets/MainStreet/NPCs/NPC_6/game6_npc1_bubble.png');
 
-        this.load.video('fake_npc_1', 'assets/MainStreet/NPCs/NPC_only/fakenpc1.webm');
-        this.load.video('fake_npc_2', 'assets/MainStreet/NPCs/NPC_only/fakenpc2.webm');
-        this.load.video('fake_npc_3', 'assets/MainStreet/NPCs/NPC_only/fakenpc3.webm');
-        this.load.video('fake_npc_4', 'assets/MainStreet/NPCs/NPC_only/fakenpc4.webm');
-        this.load.video('fake_npc_5', 'assets/MainStreet/NPCs/NPC_only/fakenpc5.webm');
+        this.load.spritesheet('fake_npc_1', 'assets/MainStreet/NPCs/NPC_only/fakenpc1.png',
+            { frameWidth: 500, frameHeight: 500 });
+        this.load.spritesheet('fake_npc_2', 'assets/MainStreet/NPCs/NPC_only/fakenpc2.png',
+            { frameWidth: 500, frameHeight: 500 });
+        this.load.spritesheet('fake_npc_3', 'assets/MainStreet/NPCs/NPC_only/fakenpc3.png',
+            { frameWidth: 300, frameHeight: 300 });
+        this.load.spritesheet('fake_npc_4', 'assets/MainStreet/NPCs/NPC_only/fakenpc4.png',
+            { frameWidth: 756, frameHeight: 447 });
+        this.load.spritesheet('fake_npc_5', 'assets/MainStreet/NPCs/NPC_only/fakenpc5.png',
+            { frameWidth: 500, frameHeight: 500 });
 
         this.load.image('fake_npc_1_bubble', 'assets/MainStreet/NPCs/NPC_only/fakenpc1_bubble.png');
         this.load.image('fake_npc_1_bubble1', 'assets/MainStreet/NPCs/NPC_only/fakenpc1_bubble1.png');
@@ -343,6 +348,42 @@ export class BootScene extends Phaser.Scene {
         this.anims.create({
             key: 'npc6_anim',
             frames: this.anims.generateFrameNumbers('npc6', { start: 0, end: 96 }),
+            frameRate: 30,
+            repeat: -1
+        });
+
+        // Fake NPC Animations
+        this.anims.create({
+            key: 'fake_npc_1_anim',
+            frames: this.anims.generateFrameNumbers('fake_npc_1', { start: 0, end: 96 }),
+            frameRate: 30,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'fake_npc_2_anim',
+            frames: this.anims.generateFrameNumbers('fake_npc_2', { start: 0, end: 96 }),
+            frameRate: 30,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'fake_npc_3_anim',
+            frames: this.anims.generateFrameNumbers('fake_npc_3', { start: 0, end: 95 }),
+            frameRate: 30,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'fake_npc_4_anim',
+            frames: this.anims.generateFrameNumbers('fake_npc_4', { start: 0, end: 121 }),
+            frameRate: 30,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'fake_npc_5_anim',
+            frames: this.anims.generateFrameNumbers('fake_npc_5', { start: 0, end: 282 }),
             frameRate: 30,
             repeat: -1
         });

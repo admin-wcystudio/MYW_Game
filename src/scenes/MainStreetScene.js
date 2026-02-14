@@ -113,17 +113,17 @@ export class MainStreetScene extends Phaser.Scene {
         this.interactiveNpcs.push(n6);
 
         // Fake NPCs (random talk)
-        // const f1 = NpcHelper.createNpc(this, 7, 2800, 500, 1, 'fake_npc_1', fake_npc1_bubbles, 6);
-        // const f2 = NpcHelper.createNpc(this, 8, 3400, 440, 1, 'fake_npc_2', null, 6);
-        // const f3 = NpcHelper.createNpc(this, 9, 3250, 300, 1, 'fake_npc_3', fake_npc3_bubbles, 6);
-        // const f4 = NpcHelper.createNpc(this, 10, 4000, 850, 1, 'fake_npc_4', fake_npc4_bubbles, 15);
-        // const f5 = NpcHelper.createNpc(this, 11, 4450, 350, 1, 'fake_npc_5', fake_npc5_bubbles, 6);
+        const f1 = NpcHelper.createNpc(this, 7, 2800, 500, 1, 'fake_npc_1', fake_npc1_bubbles, 6, 'fake_npc_1_anim');
+        const f2 = NpcHelper.createNpc(this, 8, 3400, 440, 1, 'fake_npc_2', null, 6, 'fake_npc_2_anim');
+        const f3 = NpcHelper.createNpc(this, 9, 3250, 300, 1, 'fake_npc_3', fake_npc3_bubbles, 6, 'fake_npc_3_anim');
+        const f4 = NpcHelper.createNpc(this, 10, 4000, 850, 1, 'fake_npc_4', fake_npc4_bubbles, 15, 'fake_npc_4_anim');
+        const f5 = NpcHelper.createNpc(this, 11, 4450, 350, 1, 'fake_npc_5', fake_npc5_bubbles, 6, 'fake_npc_5_anim');
 
-        // this.fakeNpcs.push(f1);
-        // this.fakeNpcs.push(f2);
-        // this.fakeNpcs.push(f3);
-        // this.fakeNpcs.push(f4);
-        // this.fakeNpcs.push(f5);
+        this.fakeNpcs.push(f1);
+        this.fakeNpcs.push(f2);
+        this.fakeNpcs.push(f3);
+        this.fakeNpcs.push(f4);
+        this.fakeNpcs.push(f5);
 
         this.currentInteractiveNpc = null;
 
