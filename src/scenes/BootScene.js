@@ -115,7 +115,7 @@ export class BootScene extends Phaser.Scene {
         this.load.image('bubble2', loginPath + 'choosepage_bubble2.png');
 
         this.load.spritesheet('boy_galaxy', loginPath + 'choosepage_boy_galaxy.png',
-            { frameWidth: 700, frameHeight: 900 });
+            { frameWidth: 350, frameHeight: 450 });
 
         this.load.spritesheet('boy_chinese', loginPath + 'choosepage_boy_chinese.png',
             { frameWidth: 700, frameHeight: 900 });
