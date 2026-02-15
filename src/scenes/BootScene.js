@@ -93,9 +93,6 @@ export class BootScene extends Phaser.Scene {
         this.load.spritesheet('girl_transition', loginPath + 'choosepage_girl_galaxytochinese_transition.png',
             { frameWidth: 700, frameHeight: 900 });
 
-        this.load.spritesheet('transition', loginPath + 'transition.png',
-            { frameWidth: 1024, frameHeight: 1024 });
-
         // MainStreet assets are now lazy-loaded in MainStreetScene
 
         // load game scenes assets ( general )
@@ -144,6 +141,8 @@ export class BootScene extends Phaser.Scene {
         this.load.image('itempage_item5_select', path2 + 'itempage_item5_select.png');
         this.load.image('itempage_item5', path2 + 'itempage_item5.png');
         this.load.image('panel_bg', path2 + 'itempage_panel_bg.png');
+
+        this.load.video('transition', 'assets/Login/transition.webm');
 
     }
 
@@ -206,12 +205,6 @@ export class BootScene extends Phaser.Scene {
             repeat: 0
         });
 
-        this.anims.create({
-            key: 'transition_anim',  // Name you will use in other scenes
-            frames: this.anims.generateFrameNumbers('transition', { start: 3, end: 52 }),
-            frameRate: 30,
-            repeat: 0
-        });
 
         // NPC Animations are now created in MainStreetScene
     }
