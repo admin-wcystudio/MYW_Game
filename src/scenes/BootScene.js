@@ -60,7 +60,51 @@ export class BootScene extends Phaser.Scene {
         this.load.image('save_btn', 'assets/Settings/setting_page_save.png');
         this.load.image('save_btn_click', 'assets/Settings/setting_page_save_click.png');
 
-        // Login, MainStreet, and Game assets are lazy-loaded in their respective scenes
+
+        // Game scene assets
+        const gamePath = 'assets/Game_1/';
+        this.load.image('game_success', `${gamePath}game1_success.png`);
+        this.load.image('game_success_label', `${gamePath}game1_success_icon.png`);
+        this.load.image('game_fail', `${gamePath}game1_fail.png`);
+        this.load.image('game_fail_label', `${gamePath}game1_fail_icon.png`);
+        this.load.image('game_gamechance', `${gamePath}game1_gamechance.png`);
+        this.load.image('game_tryagain', `${gamePath}again_button.png`);
+        this.load.image('game_tryagain_click', `${gamePath}again_button_mouseover.png`);
+        this.load.image('game_quit', `${gamePath}leave_button.png`);
+        this.load.image('game_quit_click', `${gamePath}leave_button_mouseover.png`);
+        this.load.image('popup_bg', `${gamePath}popup_bg.png`);
+        this.load.image('game_timer_bg', `${gamePath}game1_timer.png`);
+
+        this.load.image('game_confirm_button', 'assets/Game_3/game3_confirm_button.png');
+        this.load.image('game_confirm_button_select', 'assets/Game_3/game3_confirm_button_select.png');
+
+        // Items page assets
+        const itemsPath = 'assets/Items/';
+        this.load.image('itempage_bg', itemsPath + 'itempage_bg.png');
+        this.load.image('itempage_close_button_select', itemsPath + 'itempage_close_button_select.png');
+        this.load.image('itempage_close_button', itemsPath + 'itempage_close_button.png');
+        this.load.image('itempage_confirm_button_select', itemsPath + 'itempage_confirm_button_select.png');
+        this.load.image('itempage_confirm_button', itemsPath + 'itempage_confirm_button.png');
+        this.load.image('itempage_item_box', itemsPath + 'itempage_item_box.png');
+        this.load.image('itempage_item1_description', itemsPath + 'itempage_item1_description.png');
+        this.load.image('itempage_item1_select', itemsPath + 'itempage_item1_select.png');
+        this.load.image('itempage_item1', itemsPath + 'itempage_item1.png');
+        this.load.image('itempage_item2_select', itemsPath + 'itempage_item2_click.png');
+        this.load.image('itempage_item2', itemsPath + 'itempage_item2.png');
+        this.load.image('itempage_item2_description1', itemsPath + 'itempage_item2_description1.png');
+        this.load.image('itempage_item2_description2', itemsPath + 'itempage_item2_description2.png');
+        this.load.image('itempage_item3_description', itemsPath + 'itempage_item3_description.png');
+        this.load.image('itempage_item3_select', itemsPath + 'itempage_item3_select.png');
+        this.load.image('itempage_item3', itemsPath + 'itempage_item3.png');
+        this.load.image('itempage_item4_description', itemsPath + 'itempage_item4_description.png');
+        this.load.image('itempage_item4_description1', itemsPath + 'itempage_item4_description1.png');
+        this.load.image('itempage_item4_description2', itemsPath + 'itempage_item4_description2.png');
+        this.load.image('itempage_item4_select', itemsPath + 'itempage_item4_select.png');
+        this.load.image('itempage_item4', itemsPath + 'itempage_item4.png');
+        this.load.image('itempage_item5_description', itemsPath + 'itempage_item5_description.png');
+        this.load.image('itempage_item5_select', itemsPath + 'itempage_item5_select.png');
+        this.load.image('itempage_item5', itemsPath + 'itempage_item5.png');
+        this.load.image('panel_bg', itemsPath + 'itempage_panel_bg.png');
 
     }
 
