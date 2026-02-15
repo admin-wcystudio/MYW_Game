@@ -1,10 +1,14 @@
 export default class NpcHelper {
 
-    static createNpc(scene, id, x, y, npcScale = 1, videoKey, bubbles, depth = 10) {
+    static createNpc(scene, id, x, y, npcScale = 1, key, bubbles, depth = 10, animKey = null) {
 
-        const npc = scene.add.video(x, y, videoKey).setDepth(depth);
+        let npc;
+
+        npc = scene.add.sprite(x, y, key).setDepth(depth);
+        npc.play(animKey);
+
+
         npc.setScale(npcScale);
-        npc.play(true);
         npc.bubbles = bubbles;
         npc.setInteractive({ useHandCursor: true });
         npc.id = id;

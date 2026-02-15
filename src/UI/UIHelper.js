@@ -382,6 +382,74 @@ export default class UIHelper {
 
         return transitionVideo;
     }
+
+    static switchAnimation(scene, currentObject, transitionKey, finalKey, x, y, duration = 2000, onComplete) {
+        // 1. 先將舊物件淡出，然後銷毀
+        if (currentObject) {
+            scene.tweens.add({
+                targets: currentObject,
+                alpha: 0,
+                duration: 300,
+                onComplete: () => {
+                    if (currentObject.stop) currentObject.stop();
+                    currentObject.destroy();
+                }
+            });
+        }
+
+        // 2. 建立過場動畫 Sprite
+        const transitionSprite = scene.add.sprite(x, y, undefined)
+            .setDepth(10)
+            .setScrollFactor(0)
+            .setAlpha(0);
+
+        transitionSprite.play(transitionKey);
+
+        // 淡入過場
+        scene.tweens.add({
+            targets: transitionSprite,
+            alpha: 1,
+            duration: 300
+        });
+
+        console.log(`UIHelper: 播放過場動畫 ${transitionKey}`);
+
+        // 3. 設定定時器切換到最終動畫
+        scene.time.delayedCall(duration, () => {
+            if (transitionSprite) {
+                // 過場淡出
+                scene.tweens.add({
+                    targets: transitionSprite,
+                    alpha: 0,
+                    duration: 500,
+                    onComplete: () => {
+                        transitionSprite.stop();
+                        transitionSprite.destroy();
+                    }
+                });
+            }
+
+            // 建立最終循環 Sprite
+            const finalSprite = scene.add.sprite(x, y, undefined)
+                .setDepth(10)
+                .setScrollFactor(0)
+                .setAlpha(0);
+
+            finalSprite.play(finalKey);
+
+            scene.tweens.add({
+                targets: finalSprite,
+                alpha: 1,
+                duration: 0
+            });
+
+            console.log(`UIHelper: 切換至循環動畫 ${finalKey}`);
+
+            if (onComplete) onComplete(finalSprite);
+        });
+
+        return transitionSprite;
+    }
     /**
      * 新增：取代 alert 的 UI 提示
      */

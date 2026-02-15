@@ -98,12 +98,12 @@ export class MainStreetScene extends Phaser.Scene {
         this.fakeNpcs = [];
 
 
-        const n1 = NpcHelper.createNpc(this, 1, 1000, 450, 1, 'npc1', npc1_bubbles, 6);
-        const n2 = NpcHelper.createNpc(this, 2, 4000, 480, 1, 'npc2', npc2_bubbles, 6);
-        const n3 = NpcHelper.createNpc(this, 3, 2000, 550, 1, 'npc3', npc3_bubbles, 6);
-        const n4 = NpcHelper.createNpc(this, 4, 330, 750, 1, 'npc4', npc4_bubbles, 15);
-        const n5 = NpcHelper.createNpc(this, 5, 5100, 750, 1, 'npc5', npc5_bubbles, 15);
-        const n6 = NpcHelper.createNpc(this, 6, 7900, 420, 1, 'npc6', npc6_bubbles, 6);
+        const n1 = NpcHelper.createNpc(this, 1, 1000, 450, 1, 'npc1', npc1_bubbles, 6, 'npc1_anim');
+        const n2 = NpcHelper.createNpc(this, 2, 4000, 480, 1, 'npc2', npc2_bubbles, 6, 'npc2_anim');
+        const n3 = NpcHelper.createNpc(this, 3, 2000, 550, 1, 'npc3', npc3_bubbles, 6, 'npc3_anim');
+        const n4 = NpcHelper.createNpc(this, 4, 330, 750, 1, 'npc4', npc4_bubbles, 15, 'npc4_anim');
+        const n5 = NpcHelper.createNpc(this, 5, 5100, 750, 1, 'npc5', npc5_bubbles, 15, 'npc5_anim');
+        const n6 = NpcHelper.createNpc(this, 6, 7900, 420, 1, 'npc6', npc6_bubbles, 6, 'npc6_anim');
 
         this.interactiveNpcs.push(n1);
         this.interactiveNpcs.push(n2);
@@ -113,11 +113,11 @@ export class MainStreetScene extends Phaser.Scene {
         this.interactiveNpcs.push(n6);
 
         // Fake NPCs (random talk)
-        const f1 = NpcHelper.createNpc(this, 7, 2800, 500, 1, 'fake_npc_1', fake_npc1_bubbles, 6);
-        const f2 = NpcHelper.createNpc(this, 8, 3400, 440, 1, 'fake_npc_2', null, 6);
-        const f3 = NpcHelper.createNpc(this, 9, 3250, 300, 1, 'fake_npc_3', fake_npc3_bubbles, 6);
-        const f4 = NpcHelper.createNpc(this, 10, 4000, 850, 1, 'fake_npc_4', fake_npc4_bubbles, 15);
-        const f5 = NpcHelper.createNpc(this, 11, 4450, 350, 1, 'fake_npc_5', fake_npc5_bubbles, 6);
+        const f1 = NpcHelper.createNpc(this, 7, 2800, 500, 1, 'fake_npc_1', fake_npc1_bubbles, 6, 'fake_npc_1_anim');
+        const f2 = NpcHelper.createNpc(this, 8, 3400, 440, 1, 'fake_npc_2', null, 6, 'fake_npc_2_anim');
+        const f3 = NpcHelper.createNpc(this, 9, 3250, 300, 1, 'fake_npc_3', fake_npc3_bubbles, 6, 'fake_npc_3_anim');
+        const f4 = NpcHelper.createNpc(this, 10, 4000, 850, 1, 'fake_npc_4', fake_npc4_bubbles, 15, 'fake_npc_4_anim');
+        const f5 = NpcHelper.createNpc(this, 11, 4450, 350, 1, 'fake_npc_5', fake_npc5_bubbles, 6, 'fake_npc_5_anim');
 
         this.fakeNpcs.push(f1);
         this.fakeNpcs.push(f2);
@@ -193,13 +193,19 @@ export class MainStreetScene extends Phaser.Scene {
 
         allNpcs.forEach(npc => {
             // Culling check
-            const inView = (npc.x > camView.x - buffer) && (npc.x < camView.x + camView.width + buffer);
+            // const inView = (npc.x > camView.x - buffer) && (npc.x < camView.x + camView.width + buffer);
 
-            if (inView) {
-                if (!npc.isPlaying()) npc.play(true);
-            } else {
-                if (npc.isPlaying()) npc.stop();
-            }
+            // if (npc.type === 'Sprite') {
+            //     if (inView) {
+            //         if (!npc.anims.isPlaying) {
+            //             npc.play(npc.animKey);
+            //         }
+            //     } else {
+            //         if (npc.anims.isPlaying) {
+            //             npc.anims.stop();
+            //         }
+            //     }
+            // }
 
             const dist = Math.abs(this.player.x - npc.x);
 

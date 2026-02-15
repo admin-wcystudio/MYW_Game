@@ -84,20 +84,19 @@ export class LoginScene extends Phaser.Scene {
 
         this.selectedGender = 'M';
 
-        this.video = this.add.video(620, 540, 'boy_galaxy')
-            .play(true)
+        // 1. Add the sprite (using the image key from BootScene)
+        this.boySprite = this.add.sprite(620, 540, 'boy_galaxy')
             .setDepth(10)
             .setScrollFactor(0);
 
+        this.boySprite.play('boy_galaxy_anim');
 
-        var boyVideo = this.video;
-
-        this.video = this.add.video(1300, 560, 'girl_galaxy')
-            .play(true)
+        this.girlSprite = this.add.sprite(1300, 560, 'girl_galaxy')
             .setDepth(10)
             .setScrollFactor(0);
 
-        var girlVideo = this.video;
+        this.girlSprite.play('girl_galaxy_anim');
+
 
         this.add.image(340, 350, 'bubble1').setDepth(11);
         this.add.image(1650, 360, 'bubble2').setDepth(11);
@@ -106,8 +105,7 @@ export class LoginScene extends Phaser.Scene {
             this, 620, 950,
             'login_boy_btn', 'login_boy_btn_click',
             () => {
-                this.savePlayerInfo('M', boyVideo);
-                girlVideo.setVisible(true).resume();
+                this.savePlayerInfo('M');
 
             }, () => { });
 
@@ -115,19 +113,21 @@ export class LoginScene extends Phaser.Scene {
             this, 1300, 950,
             'login_girl_btn', 'login_girl_btn_click',
             () => {
-                this.savePlayerInfo('F', girlVideo);
-                boyVideo.setVisible(true).resume();
+                this.savePlayerInfo('F');
             }, () => { });
 
     }
 
-    savePlayerInfo(gender, defaultVideo) {
+    savePlayerInfo(gender, currentSprite) {
         const playerName = this.nameInput.text;
 
         if (!playerName || playerName.trim() === "") {
             UIHelper.showToast(this, "請先輸入名字"); // 使用 Helper 提示
             return;
         }
+
+        this.selectedGender = gender;
+        this.switchAnimation();
 
         // 儲存資料
         const player = { name: playerName, gender: gender };
@@ -144,29 +144,34 @@ export class LoginScene extends Phaser.Scene {
         ];
         localStorage.setItem('allGamesResult', JSON.stringify(allGamesResult));
 
-        const transitionKey = (gender === 'M') ? 'boy_transition' : 'girl_transition';
-        const loopKey = (gender === 'M') ? 'boy_chinese' : 'girl_chinese';
-        const posX = (gender === 'M') ? 620 : 1300; // 根據角色位置播放
-        const posY = (gender === 'M') ? 540 : 560;
+        this.switchToTransitionScene();
+    }
 
-        defaultVideo.setVisible(false).pause();
+    switchAnimation() {
+        if (this.selectedGender === 'M') {
+            this.girlSprite.play('girl_galaxy_anim');
+            this.boySprite.play('boy_transition_anim');
+            this.boySprite.on('animationcomplete', () => {
+                this.time.delayedCall(1000, () => {
+                    this.boySprite.play('boy_chinese_anim');
+                });
+            });
 
-        this.activeVideo = UIHelper.switchVideo(
-            this,
-            this.activeVideo,
-            transitionKey,
-            loopKey,
-            posX,
-            posY,
-            4000, // 過場時間
-            (newVideo) => { this.activeVideo = newVideo; }
-        );
+        } else {
+            this.boySprite.play('boy_galaxy_anim');
+            this.girlSprite.play('girl_transition_anim');
+            this.girlSprite.on('animationcomplete', () => {
+                this.time.delayedCall(1000, () => {
+                    this.girlSprite.play('girl_chinese_anim');
+                });
+            });
+        }
+    }
 
-        // go to transition scene-> main street
-        this.time.delayedCall(4200, () => {
+    switchToTransitionScene() {
+        this.time.delayedCall(4000, () => {
             this.scene.start('TransitionScene');
         });
-
     }
 
 }
