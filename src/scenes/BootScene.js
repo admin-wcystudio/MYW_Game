@@ -3,46 +3,6 @@ export class BootScene extends Phaser.Scene {
         super('BootScene');
     }
     preload() {
-
-        const width = this.cameras.main.width;
-        const height = this.cameras.main.height;
-
-        // Loading bar background
-        const barBg = this.add.rectangle(width / 2, height / 2, 400, 30, 0x222222);
-        barBg.setStrokeStyle(2, 0xffffff);
-
-        // Loading bar fill
-        const barFill = this.add.rectangle(width / 2 - 195, height / 2, 0, 22, 0x00ff00);
-        barFill.setOrigin(0, 0.5);
-
-        // Loading text
-        const loadingText = this.add.text(width / 2, height / 2 - 50, '載入中...', {
-            fontSize: '24px',
-            fontFamily: 'Arial',
-            color: '#ffffff'
-        }).setOrigin(0.5);
-
-        // Percentage text
-        const percentText = this.add.text(width / 2, height / 2 + 50, '0%', {
-            fontSize: '20px',
-            fontFamily: 'Arial',
-            color: '#ffffff'
-        }).setOrigin(0.5);
-
-        // Update progress bar on load progress
-        this.load.on('progress', (value) => {
-            barFill.width = 390 * value;
-            percentText.setText(Math.round(value * 100) + '%');
-        });
-
-        // Clean up when loading complete
-        this.load.on('complete', () => {
-            barBg.destroy();
-            barFill.destroy();
-            loadingText.destroy();
-            percentText.destroy();
-        });
-
         this.load.plugin('rexinputtextplugin', 'https://cdn.jsdelivr.net/npm/phaser3-rex-plugins@1.80.17/dist/rexinputtextplugin.min.js', true);
 
         //game start background
@@ -100,88 +60,7 @@ export class BootScene extends Phaser.Scene {
         this.load.image('save_btn', 'assets/Settings/setting_page_save.png');
         this.load.image('save_btn_click', 'assets/Settings/setting_page_save_click.png');
 
-        //login page
-        const loginPath = 'assets/Login/';
-        this.load.video('login_bg_video', loginPath + 'choosepage_bg.mp4');
-
-        this.load.image('login_boy_btn', loginPath + 'choosepage_boy_button.png');
-        this.load.image('login_boy_btn_click', loginPath + 'choosepage_boy_button_click.png');
-
-        this.load.image('login_girl_btn', loginPath + 'choosepage_girl_button.png');
-        this.load.image('login_girl_btn_click', loginPath + 'choosepage_girl_button_click.png');
-
-        this.load.image('login_namebar', loginPath + 'choosepage_namebar.png');
-        this.load.image('bubble1', loginPath + 'choosepage_bubble1.png');
-        this.load.image('bubble2', loginPath + 'choosepage_bubble2.png');
-
-        this.load.spritesheet('boy_galaxy', loginPath + 'choosepage_boy_galaxy.png',
-            { frameWidth: 700, frameHeight: 900 });
-
-        this.load.spritesheet('boy_chinese', loginPath + 'choosepage_boy_chinese.png',
-            { frameWidth: 700, frameHeight: 900 });
-
-        this.load.spritesheet('boy_transition', loginPath + 'choosepage_boy_galaxytochinese_transition.png',
-            { frameWidth: 700, frameHeight: 900 });
-
-        this.load.spritesheet('girl_galaxy', loginPath + 'choosepage_girl_galaxy.png',
-            { frameWidth: 700, frameHeight: 900 });
-
-        this.load.spritesheet('girl_chinese', loginPath + 'choosepage_girl_chinese.png',
-            { frameWidth: 700, frameHeight: 900 });
-
-        this.load.spritesheet('girl_transition', loginPath + 'choosepage_girl_galaxytochinese_transition.png',
-            { frameWidth: 700, frameHeight: 900 });
-
-        // MainStreet assets are now lazy-loaded in MainStreetScene
-
-        // load game scenes assets ( general )
-        const path = 'assets/Game_1/';
-
-        this.load.image('game_success', `${path}game1_success.png`);
-        this.load.image('game_success_label', `${path}game1_success_icon.png`);
-        this.load.image('game_fail', `${path}game1_fail.png`);
-        this.load.image('game_fail_label', `${path}game1_fail_icon.png`);
-        this.load.image('game_gamechance', `${path}game1_gamechance.png`);
-
-        this.load.image('game_tryagain', `${path}again_button.png`);
-        this.load.image('game_tryagain_click', `${path}again_button_mouseover.png`);
-        this.load.image('game_quit', `${path}leave_button.png`);
-        this.load.image('game_quit_click', `${path}leave_button_mouseover.png`);
-        this.load.image('popup_bg', `${path}popup_bg.png`);
-        this.load.image('game_timer_bg', `${path}game1_timer.png`);
-
-        this.load.image('game_confirm_button', 'assets/Game_3/game3_confirm_button.png');
-        this.load.image('game_confirm_button_select', 'assets/Game_3/game3_confirm_button_select.png');
-
-
-        const path2 = 'assets/Items/';
-        this.load.image('itempage_bg', path2 + 'itempage_bg.png');
-        this.load.image('itempage_close_button_select', path2 + 'itempage_close_button_select.png');
-        this.load.image('itempage_close_button', path2 + 'itempage_close_button.png');
-        this.load.image('itempage_confirm_button_select', path2 + 'itempage_confirm_button_select.png');
-        this.load.image('itempage_confirm_button', path2 + 'itempage_confirm_button.png');
-        this.load.image('itempage_item_box', path2 + 'itempage_item_box.png');
-        this.load.image('itempage_item1_description', path2 + 'itempage_item1_description.png');
-        this.load.image('itempage_item1_select', path2 + 'itempage_item1_select.png');
-        this.load.image('itempage_item1', path2 + 'itempage_item1.png');
-        this.load.image('itempage_item2_select', path2 + 'itempage_item2_click.png');
-        this.load.image('itempage_item2', path2 + 'itempage_item2.png');
-        this.load.image('itempage_item2_description1', path2 + 'itempage_item2_description1.png');
-        this.load.image('itempage_item2_description2', path2 + 'itempage_item2_description2.png');
-        this.load.image('itempage_item3_description', path2 + 'itempage_item3_description.png');
-        this.load.image('itempage_item3_select', path2 + 'itempage_item3_select.png');
-        this.load.image('itempage_item3', path2 + 'itempage_item3.png');
-        this.load.image('itempage_item4_description', path2 + 'itempage_item4_description.png');
-        this.load.image('itempage_item4_description1', path2 + 'itempage_item4_description1.png');
-        this.load.image('itempage_item4_description2', path2 + 'itempage_item4_description2.png');
-        this.load.image('itempage_item4_select', path2 + 'itempage_item4_select.png');
-        this.load.image('itempage_item4', path2 + 'itempage_item4.png');
-        this.load.image('itempage_item5_description', path2 + 'itempage_item5_description.png');
-        this.load.image('itempage_item5_select', path2 + 'itempage_item5_select.png');
-        this.load.image('itempage_item5', path2 + 'itempage_item5.png');
-        this.load.image('panel_bg', path2 + 'itempage_panel_bg.png');
-
-        this.load.video('transition', 'assets/Login/transition.webm');
+        // Login, MainStreet, and Game assets are lazy-loaded in their respective scenes
 
     }
 
@@ -198,54 +77,8 @@ export class BootScene extends Phaser.Scene {
             this.registry.set('globalSettings', settings);
         }
 
-        this.createAnimations();
+        // Animations are now created in their respective scenes (LoginScene, MainStreetScene)
         this.scene.start('GameStartScene');
-    }
-
-    createAnimations() {
-        this.anims.create({
-            key: 'boy_galaxy_anim',  // Name you will use in other scenes
-            frames: this.anims.generateFrameNumbers('boy_galaxy', { start: 0, end: 98 }),
-            frameRate: 30,
-            repeat: -1
-        });
-        this.anims.create({
-            key: 'boy_chinese_anim',  // Name you will use in other scenes
-            frames: this.anims.generateFrameNumbers('boy_galaxy', { start: 0, end: 98 }),
-            frameRate: 30,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'boy_transition_anim',  // Name you will use in other scenes
-            frames: this.anims.generateFrameNumbers('boy_transition', { start: 0, end: 98 }),
-            frameRate: 30,
-            repeat: 0
-        });
-
-        this.anims.create({
-            key: 'girl_galaxy_anim',
-            frames: this.anims.generateFrameNumbers('girl_galaxy', { start: 0, end: 98 }),
-            frameRate: 30,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'girl_chinese_anim',
-            frames: this.anims.generateFrameNumbers('girl_chinese', { start: 0, end: 98 }),
-            frameRate: 30,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'girl_transition_anim',  // Name you will use in other scenes
-            frames: this.anims.generateFrameNumbers('girl_transition', { start: 0, end: 98 }),
-            frameRate: 30,
-            repeat: 0
-        });
-
-
-        // NPC Animations are now created in MainStreetScene
     }
 
 }
