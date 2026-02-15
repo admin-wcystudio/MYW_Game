@@ -9,38 +9,38 @@ export class LoginScene extends Phaser.Scene {
 
     preload() {
         // // Create loading bar UI
-        // const width = this.cameras.main.width;
-        // const height = this.cameras.main.height;
+        const width = this.cameras.main.width;
+        const height = this.cameras.main.height;
 
-        // const barBg = this.add.rectangle(width / 2, height / 2, 400, 30, 0x222222);
-        // barBg.setStrokeStyle(2, 0xffffff);
+        const barBg = this.add.rectangle(width / 2, height / 2, 400, 30, 0x222222);
+        barBg.setStrokeStyle(2, 0xffffff);
 
-        // const barFill = this.add.rectangle(width / 2 - 195, height / 2, 0, 22, 0x00ff00);
-        // barFill.setOrigin(0, 0.5);
+        const barFill = this.add.rectangle(width / 2 - 195, height / 2, 0, 22, 0x00ff00);
+        barFill.setOrigin(0, 0.5);
 
-        // const loadingText = this.add.text(width / 2, height / 2 - 50, '載入中...', {
-        //     fontSize: '24px',
-        //     fontFamily: 'Arial',
-        //     color: '#ffffff'
-        // }).setOrigin(0.5);
+        const loadingText = this.add.text(width / 2, height / 2 - 50, '載入中...', {
+            fontSize: '24px',
+            fontFamily: 'Arial',
+            color: '#ffffff'
+        }).setOrigin(0.5);
 
-        // const percentText = this.add.text(width / 2, height / 2 + 50, '0%', {
-        //     fontSize: '20px',
-        //     fontFamily: 'Arial',
-        //     color: '#ffffff'
-        // }).setOrigin(0.5);
+        const percentText = this.add.text(width / 2, height / 2 + 50, '0%', {
+            fontSize: '20px',
+            fontFamily: 'Arial',
+            color: '#ffffff'
+        }).setOrigin(0.5);
 
-        // this.load.on('progress', (value) => {
-        //     barFill.width = 390 * value;
-        //     percentText.setText(Math.round(value * 100) + '%');
-        // });
+        this.load.on('progress', (value) => {
+            barFill.width = 390 * value;
+            percentText.setText(Math.round(value * 100) + '%');
+        });
 
-        // this.load.on('complete', () => {
-        //     barBg.destroy();
-        //     barFill.destroy();
-        //     loadingText.destroy();
-        //     percentText.destroy();
-        // });
+        this.load.on('complete', () => {
+            barBg.destroy();
+            barFill.destroy();
+            loadingText.destroy();
+            percentText.destroy();
+        });
 
         // Login page assets
         const loginPath = 'assets/Login/';
