@@ -7,14 +7,59 @@ export class LoginScene extends Phaser.Scene {
         super('LoginScene');
     }
 
-    create() {
-        this.bgVideo = this.add.video(960, 540, 'login_bg_video');
-        this.bgVideo.getFirstFrame();
-        // // Auto-mute on mobile devices (iOS/Android) to ensure autoplay works
-        // // Desktop can stay unmuted if user interaction occurred previously
-        // const isMobile = !this.sys.game.device.os.desktop;
-        this.bgVideo.setMute(false);
+    preload() {
 
+        const width = this.cameras.main.width;
+        const height = this.cameras.main.height;
+
+        // Loading bar background
+        const barBg = this.add.rectangle(width / 2, height / 2, 400, 30, 0x222222);
+        barBg.setStrokeStyle(2, 0xffffff);
+
+        // Loading bar fill
+        const barFill = this.add.rectangle(width / 2 - 195, height / 2, 0, 22, 0x00ff00);
+        barFill.setOrigin(0, 0.5);
+
+        // Loading text
+        const loadingText = this.add.text(width / 2, height / 2 - 50, '載入中...', {
+            fontSize: '24px',
+            fontFamily: 'Arial',
+            color: '#ffffff'
+        }).setOrigin(0.5);
+
+        // Percentage text
+        const percentText = this.add.text(width / 2, height / 2 + 50, '0%', {
+            fontSize: '20px',
+            fontFamily: 'Arial',
+            color: '#ffffff'
+        }).setOrigin(0.5);
+
+        // Update progress bar on load progress
+        this.load.on('progress', (value) => {
+            barFill.width = 390 * value;
+            percentText.setText(Math.round(value * 100) + '%');
+        });
+
+        // Clean up when loading complete
+        this.load.on('complete', () => {
+            barBg.destroy();
+            barFill.destroy();
+            loadingText.destroy();
+            percentText.destroy();
+        });
+        const loginPath = 'assets/Login/';
+        this.load.spritesheet('girl_chinese', loginPath + 'choosepage_girl_chinese.png',
+            { frameWidth: 700, frameHeight: 900 });
+
+        this.load.spritesheet('girl_transition', loginPath + 'choosepage_girl_galaxytochinese_transition.png',
+            { frameWidth: 700, frameHeight: 900 });
+    }
+
+    create() {
+
+        this.createAnimations();
+        this.bgVideo = this.add.video(960, 540, 'login_bg_video');
+        this.bgVideo.setMute(false);
         this.bgVideo.play(true); // loop
 
         const descriptionPages = [
@@ -172,6 +217,24 @@ export class LoginScene extends Phaser.Scene {
         this.time.delayedCall(4000, () => {
             this.scene.start('TransitionScene');
         });
+    }
+
+    createAnimations() {
+
+        this.anims.create({
+            key: 'girl_chinese_anim',
+            frames: this.anims.generateFrameNumbers('girl_chinese', { start: 0, end: 98 }),
+            frameRate: 30,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'girl_transition_anim',  // Name you will use in other scenes
+            frames: this.anims.generateFrameNumbers('girl_transition', { start: 0, end: 98 }),
+            frameRate: 30,
+            repeat: 0
+        });
+
     }
 
 }

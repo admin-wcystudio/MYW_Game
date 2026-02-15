@@ -4,44 +4,44 @@ export class BootScene extends Phaser.Scene {
     }
     preload() {
 
-        const width = this.cameras.main.width;
-        const height = this.cameras.main.height;
+        // const width = this.cameras.main.width;
+        // const height = this.cameras.main.height;
 
-        // Loading bar background
-        const barBg = this.add.rectangle(width / 2, height / 2, 400, 30, 0x222222);
-        barBg.setStrokeStyle(2, 0xffffff);
+        // // Loading bar background
+        // const barBg = this.add.rectangle(width / 2, height / 2, 400, 30, 0x222222);
+        // barBg.setStrokeStyle(2, 0xffffff);
 
-        // Loading bar fill
-        const barFill = this.add.rectangle(width / 2 - 195, height / 2, 0, 22, 0x00ff00);
-        barFill.setOrigin(0, 0.5);
+        // // Loading bar fill
+        // const barFill = this.add.rectangle(width / 2 - 195, height / 2, 0, 22, 0x00ff00);
+        // barFill.setOrigin(0, 0.5);
 
-        // Loading text
-        const loadingText = this.add.text(width / 2, height / 2 - 50, '載入中...', {
-            fontSize: '24px',
-            fontFamily: 'Arial',
-            color: '#ffffff'
-        }).setOrigin(0.5);
+        // // Loading text
+        // const loadingText = this.add.text(width / 2, height / 2 - 50, '載入中...', {
+        //     fontSize: '24px',
+        //     fontFamily: 'Arial',
+        //     color: '#ffffff'
+        // }).setOrigin(0.5);
 
-        // Percentage text
-        const percentText = this.add.text(width / 2, height / 2 + 50, '0%', {
-            fontSize: '20px',
-            fontFamily: 'Arial',
-            color: '#ffffff'
-        }).setOrigin(0.5);
+        // // Percentage text
+        // const percentText = this.add.text(width / 2, height / 2 + 50, '0%', {
+        //     fontSize: '20px',
+        //     fontFamily: 'Arial',
+        //     color: '#ffffff'
+        // }).setOrigin(0.5);
 
-        // Update progress bar on load progress
-        this.load.on('progress', (value) => {
-            barFill.width = 390 * value;
-            percentText.setText(Math.round(value * 100) + '%');
-        });
+        // // Update progress bar on load progress
+        // this.load.on('progress', (value) => {
+        //     barFill.width = 390 * value;
+        //     percentText.setText(Math.round(value * 100) + '%');
+        // });
 
-        // Clean up when loading complete
-        this.load.on('complete', () => {
-            barBg.destroy();
-            barFill.destroy();
-            loadingText.destroy();
-            percentText.destroy();
-        });
+        // // Clean up when loading complete
+        // this.load.on('complete', () => {
+        //     barBg.destroy();
+        //     barFill.destroy();
+        //     loadingText.destroy();
+        //     percentText.destroy();
+        // });
 
         this.load.plugin('rexinputtextplugin', 'https://cdn.jsdelivr.net/npm/phaser3-rex-plugins@1.80.17/dist/rexinputtextplugin.min.js', true);
 
@@ -126,11 +126,6 @@ export class BootScene extends Phaser.Scene {
         this.load.spritesheet('girl_galaxy', loginPath + 'choosepage_girl_galaxy.png',
             { frameWidth: 700, frameHeight: 900 });
 
-        this.load.spritesheet('girl_chinese', loginPath + 'choosepage_girl_chinese.png',
-            { frameWidth: 700, frameHeight: 900 });
-
-        this.load.spritesheet('girl_transition', loginPath + 'choosepage_girl_galaxytochinese_transition.png',
-            { frameWidth: 700, frameHeight: 900 });
 
         // MainStreet assets are now lazy-loaded in MainStreetScene
 
@@ -228,20 +223,6 @@ export class BootScene extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers('girl_galaxy', { start: 0, end: 98 }),
             frameRate: 30,
             repeat: -1
-        });
-
-        this.anims.create({
-            key: 'girl_chinese_anim',
-            frames: this.anims.generateFrameNumbers('girl_chinese', { start: 0, end: 98 }),
-            frameRate: 30,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'girl_transition_anim',  // Name you will use in other scenes
-            frames: this.anims.generateFrameNumbers('girl_transition', { start: 0, end: 98 }),
-            frameRate: 30,
-            repeat: 0
         });
 
 
