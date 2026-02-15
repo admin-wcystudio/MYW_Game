@@ -56,28 +56,49 @@ export class LoginScene extends Phaser.Scene {
         this.load.image('bubble2', loginPath + 'choosepage_bubble2.png');
 
         // Character spritesheets (WARNING: These are very large and may cause WebGL errors)
-        // this.load.spritesheet('boy_galaxy', loginPath + 'choosepage_boy_galaxy.png',
-        //     { frameWidth: 700, frameHeight: 900 });
 
-        for (let i = 0; i < 4; i++) {
-            this.load.spritesheet(`boy_galaxy_${i}`, loginPath + `boy_galaxy/choosepage_boy_galaxy_${i}.png`, {
-                frameWidth: 700,   // adjust to your actual frame width
-                frameHeight: 900   // adjust to your actual frame height
+        for (let i = 0; i < 5; i++) {
+            this.load.spritesheet(`boy_galaxy_${i}`, loginPath + `choosepage_boy_galaxy/choosepage_boy_galaxy-${i}.png`, {
+                frameWidth: 700,
+                frameHeight: 900
             });
         }
 
-        // this.load.spritesheet('boy_chinese', loginPath + 'choosepage_boy_chinese.png',
-        //     { frameWidth: 700, frameHeight: 900 });
-        // this.load.spritesheet('boy_transition', loginPath + 'choosepage_boy_galaxytochinese_transition.png',
-        //     { frameWidth: 700, frameHeight: 900 });
 
+        for (let i = 0; i < 5; i++) {
+            this.load.spritesheet(`boy_chinese_${i}`, loginPath + `choosepage_boy_chinese/choosepage_boy_chinese-${i}.png`, {
+                frameWidth: 700,
+                frameHeight: 900
+            });
+        }
 
-        // this.load.spritesheet('girl_galaxy', loginPath + 'choosepage_girl_galaxy.png',
-        //     { frameWidth: 700, frameHeight: 900 });
-        // this.load.spritesheet('girl_chinese', loginPath + 'choosepage_girl_chinese.png',
-        //     { frameWidth: 700, frameHeight: 900 });
-        // this.load.spritesheet('girl_transition', loginPath + 'choosepage_girl_galaxytochinese_transition.png',
-        //     { frameWidth: 315, frameHeight: 397 });
+        for (let i = 0; i < 3; i++) {
+            this.load.spritesheet(`boy_transition_${i}`, loginPath + `choosepage_boy_transition/choosepage_boy_galaxytochinese_transition-${i}.png`, {
+                frameWidth: 700,
+                frameHeight: 900
+            });
+        }
+
+        for (let i = 0; i < 3; i++) {
+            this.load.spritesheet(`girl_galaxy_${i}`, loginPath + `choosepage_girl_galaxy/choosepage_girl_galaxy-${i}.png`, {
+                frameWidth: 700,
+                frameHeight: 900
+            });
+        }
+
+        for (let i = 0; i < 5; i++) {
+            this.load.spritesheet(`girl_chinese_${i}`, loginPath + `choosepage_girl_chinese/choosepage_girl_chinese-${i}.png`, {
+                frameWidth: 700,
+                frameHeight: 900
+            });
+        }
+
+        for (let i = 0; i < 5; i++) {
+            this.load.spritesheet(`girl_transition_${i}`, loginPath + `choosepage_girl_transition/choosepage_girl_galaxytochinese_transition-${i}.png`, {
+                frameWidth: 700,
+                frameHeight: 900
+            });
+        }
 
     }
 
@@ -160,14 +181,14 @@ export class LoginScene extends Phaser.Scene {
 
         this.selectedGender = 'M';
 
-        // 1. Add the sprite (using the image key from BootScene)
-        this.boySprite = this.add.sprite(620, 540, 'boy_galaxy')
+        // 1. Add the sprite (using the first spritesheet as initial texture)
+        this.boySprite = this.add.sprite(620, 540, 'boy_galaxy_0')
             .setDepth(10)
             .setScrollFactor(0);
 
         this.boySprite.play('boy_galaxy_anim');
 
-        this.girlSprite = this.add.sprite(1300, 560, 'girl_galaxy')
+        this.girlSprite = this.add.sprite(1300, 560, 'girl_galaxy_0')
             .setDepth(10)
             .setScrollFactor(0);
 
@@ -252,54 +273,107 @@ export class LoginScene extends Phaser.Scene {
 
     createAnimations() {
 
-        const frames = [];
-
-        for (let i = 0; i < 4; i++) {
+        // Boy galaxy animation
+        const boyGalaxyFrames = [];
+        for (let i = 0; i < 5; i++) {
             const textureKey = `boy_galaxy_${i}`;
             const texture = this.textures.get(textureKey);
-            const frameCount = texture.frameTotal - 1; // Exclude __BASE frame
-
+            const frameCount = texture.frameTotal - 1;
             for (let f = 0; f < frameCount; f++) {
-                frames.push({ key: textureKey, frame: f });
+                boyGalaxyFrames.push({ key: textureKey, frame: f });
             }
         }
-
         this.anims.create({
             key: 'boy_galaxy_anim',
-            frames: frames,
+            frames: boyGalaxyFrames,
             frameRate: 24,
             repeat: -1
         });
-        // this.anims.create({
-        //     key: 'boy_chinese_anim',
-        //     frames: this.anims.generateFrameNumbers('boy_chinese', { start: 0, end: 98 }),
-        //     frameRate: 30,
-        //     repeat: -1
-        // });
-        // this.anims.create({
-        //     key: 'boy_transition_anim',
-        //     frames: this.anims.generateFrameNumbers('boy_transition', { start: 0, end: 98 }),
-        //     frameRate: 30,
-        //     repeat: 0
-        // });
-        // this.anims.create({
-        //     key: 'girl_galaxy_anim',
-        //     frames: this.anims.generateFrameNumbers('girl_galaxy', { start: 0, end: 98 }),
-        //     frameRate: 30,
-        //     repeat: -1
-        // });
-        // this.anims.create({
-        //     key: 'girl_chinese_anim',
-        //     frames: this.anims.generateFrameNumbers('girl_chinese', { start: 0, end: 98 }),
-        //     frameRate: 30,
-        //     repeat: -1
-        // });
-        // this.anims.create({
-        //     key: 'girl_transition_anim',
-        //     frames: this.anims.generateFrameNumbers('girl_transition', { start: 0, end: 98 }),
-        //     frameRate: 30,
-        //     repeat: 0
-        // });
+
+        // Boy chinese animation
+        const boyChineseFrames = [];
+        for (let i = 0; i < 5; i++) {
+            const textureKey = `boy_chinese_${i}`;
+            const texture = this.textures.get(textureKey);
+            const frameCount = texture.frameTotal - 1;
+            for (let f = 0; f < frameCount; f++) {
+                boyChineseFrames.push({ key: textureKey, frame: f });
+            }
+        }
+        this.anims.create({
+            key: 'boy_chinese_anim',
+            frames: boyChineseFrames,
+            frameRate: 24,
+            repeat: -1
+        });
+
+        // Boy transition animation
+        const boyTransitionFrames = [];
+        for (let i = 0; i < 3; i++) {
+            const textureKey = `boy_transition_${i}`;
+            const texture = this.textures.get(textureKey);
+            const frameCount = texture.frameTotal - 1;
+            for (let f = 0; f < frameCount; f++) {
+                boyTransitionFrames.push({ key: textureKey, frame: f });
+            }
+        }
+        this.anims.create({
+            key: 'boy_transition_anim',
+            frames: boyTransitionFrames,
+            frameRate: 24,
+            repeat: 0
+        });
+
+        // Girl galaxy animation
+        const girlGalaxyFrames = [];
+        for (let i = 0; i < 3; i++) {
+            const textureKey = `girl_galaxy_${i}`;
+            const texture = this.textures.get(textureKey);
+            const frameCount = texture.frameTotal - 1;
+            for (let f = 0; f < frameCount; f++) {
+                girlGalaxyFrames.push({ key: textureKey, frame: f });
+            }
+        }
+        this.anims.create({
+            key: 'girl_galaxy_anim',
+            frames: girlGalaxyFrames,
+            frameRate: 24,
+            repeat: -1
+        });
+
+        // Girl chinese animation
+        const girlChineseFrames = [];
+        for (let i = 0; i < 5; i++) {
+            const textureKey = `girl_chinese_${i}`;
+            const texture = this.textures.get(textureKey);
+            const frameCount = texture.frameTotal - 1;
+            for (let f = 0; f < frameCount; f++) {
+                girlChineseFrames.push({ key: textureKey, frame: f });
+            }
+        }
+        this.anims.create({
+            key: 'girl_chinese_anim',
+            frames: girlChineseFrames,
+            frameRate: 24,
+            repeat: -1
+        });
+
+        // Girl transition animation
+        const girlTransitionFrames = [];
+        for (let i = 0; i < 5; i++) {
+            const textureKey = `girl_transition_${i}`;
+            const texture = this.textures.get(textureKey);
+            const frameCount = texture.frameTotal - 1;
+            for (let f = 0; f < frameCount; f++) {
+                girlTransitionFrames.push({ key: textureKey, frame: f });
+            }
+        }
+        this.anims.create({
+            key: 'girl_transition_anim',
+            frames: girlTransitionFrames,
+            frameRate: 24,
+            repeat: 0
+        });
     }
 
 }
