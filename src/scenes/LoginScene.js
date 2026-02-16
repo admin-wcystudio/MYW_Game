@@ -85,15 +85,15 @@ export class LoginScene extends Phaser.Scene {
         this.selectedGender = 'M';
 
         // 1. Add the sprite (using the first spritesheet as initial texture)
-        this.boySprite = this.add.sprite(620, 540, 'boy_galaxy_0')
+        this.boySprite = this.add.sprite(620, 540, 'boy_galaxy')
             .setDepth(10)
-            .setScrollFactor(0);
+            .setScrollFactor(0).setScale(2);
 
         this.boySprite.play('boy_galaxy_anim');
 
-        this.girlSprite = this.add.sprite(1300, 560, 'girl_galaxy_0')
+        this.girlSprite = this.add.sprite(1300, 560, 'girl_galaxy')
             .setDepth(10)
-            .setScrollFactor(0);
+            .setScrollFactor(0).setScale(2);
 
         this.girlSprite.play('girl_galaxy_anim');
 
