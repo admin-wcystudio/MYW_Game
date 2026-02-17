@@ -182,7 +182,7 @@ export class GameScene_6 extends BaseGameScene {
         });
 
 
-        this.time.delayedCall(1500, () => {
+        this.time.delayedCall(2500, () => {
             if (this.hitPoint) {
                 this.tweens.add({
                     targets: this.hitPoint,
@@ -228,7 +228,7 @@ export class GameScene_6 extends BaseGameScene {
 
         // Find any arrow that matches the color and is within the hit zone
         const hitIndex = this.fallingArrows.findIndex(arrow =>
-            arrow.x >= 920 && arrow.x <= 1080 && arrow.colorIndex === index
+            arrow.x >= 900 && arrow.x <= 1100 && arrow.colorIndex === index
         );
         let winRound = false;
 
