@@ -43,12 +43,29 @@ export class MainStreetScene extends Phaser.Scene {
             percentText.setText(Math.round(value * 100) + '%');
         });
 
+        // Minimum wait time in ms (30 seconds)
+        const minWaitTime = 30000;
+        const startTime = Date.now();
+        let isAssetsLoaded = false;
+
+        const checkLoadingComplete = () => {
+            const elapsedTime = Date.now() - startTime;
+            if (isAssetsLoaded && elapsedTime >= minWaitTime) {
+                barBg.destroy();
+                barFill.destroy();
+                loadingText.destroy();
+                percentText.destroy();
+            } else if (isAssetsLoaded) {
+                // If assets loaded but time hasn't passed, check again later
+                const remainingTime = minWaitTime - elapsedTime;
+                this.time.delayedCall(remainingTime, checkLoadingComplete, [], this);
+            }
+        };
+
         // Clean up when loading complete
         this.load.on('complete', () => {
-            barBg.destroy();
-            barFill.destroy();
-            loadingText.destroy();
-            percentText.destroy();
+            isAssetsLoaded = true;
+            checkLoadingComplete();
         });
         //main street backgrounds
         this.load.image('stage', 'assets/MainStreet/stage.png');
@@ -551,7 +568,7 @@ export class MainStreetScene extends Phaser.Scene {
         // Fake NPC Animations
         this.anims.create({
             key: 'fake_npc_1_anim',
-            frames: this.anims.generateFrameNumbers('fake_npc_1', { start: 0, end: 96}),
+            frames: this.anims.generateFrameNumbers('fake_npc_1', { start: 0, end: 96 }),
             frameRate: 30,
             repeat: -1
         });
