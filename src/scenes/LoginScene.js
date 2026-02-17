@@ -178,7 +178,7 @@ export class LoginScene extends Phaser.Scene {
         ];
         localStorage.setItem('allGamesResult', JSON.stringify(allGamesResult));
 
-        //this.switchToTransitionScene();
+        this.switchToTransitionScene();
     }
 
     switchAnimation() {

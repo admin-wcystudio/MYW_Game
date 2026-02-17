@@ -128,7 +128,7 @@ export class MainStreetScene extends Phaser.Scene {
         this.load.spritesheet('fake_npc_3', 'assets/MainStreet/NPCs/NPC_only/fakenpc3.png',
             { frameWidth: 150, frameHeight: 150 });
         this.load.spritesheet('fake_npc_4', 'assets/MainStreet/NPCs/NPC_only/fakenpc4.png',
-            { frameWidth: 378, frameHeight: 224 });
+            { frameWidth: 378, frameHeight: 213 });
         this.load.spritesheet('fake_npc_5', 'assets/MainStreet/NPCs/NPC_only/fakenpc5.png',
             { frameWidth: 250, frameHeight: 250 });
 
@@ -508,28 +508,28 @@ export class MainStreetScene extends Phaser.Scene {
         // NPC Animations
         this.anims.create({
             key: 'npc1_anim',
-            frames: this.anims.generateFrameNumbers('npc1', { start: 0, end: 72 }),
+            frames: this.anims.generateFrameNumbers('npc1', { start: 0, end: 70 }),
             frameRate: 30,
             repeat: -1
         });
 
         this.anims.create({
             key: 'npc2_anim',
-            frames: this.anims.generateFrameNumbers('npc2', { start: 0, end: 70 }),
+            frames: this.anims.generateFrameNumbers('npc2', { start: 0, end: 68 }),
             frameRate: 30,
             repeat: -1
         });
 
         this.anims.create({
             key: 'npc3_anim',
-            frames: this.anims.generateFrameNumbers('npc3', { start: 0, end: 78 }),
+            frames: this.anims.generateFrameNumbers('npc3', { start: 0, end: 75 }),
             frameRate: 30,
             repeat: -1
         });
 
         this.anims.create({
             key: 'npc4_anim',
-            frames: this.anims.generateFrameNumbers('npc4', { start: 0, end: 96 }),
+            frames: this.anims.generateFrameNumbers('npc4', { start: 0, end: 94 }),
             frameRate: 30,
             repeat: -1
         });
@@ -543,7 +543,7 @@ export class MainStreetScene extends Phaser.Scene {
 
         this.anims.create({
             key: 'npc6_anim',
-            frames: this.anims.generateFrameNumbers('npc6', { start: 0, end: 96 }),
+            frames: this.anims.generateFrameNumbers('npc6', { start: 0, end: 94 }),
             frameRate: 30,
             repeat: -1
         });
@@ -551,35 +551,35 @@ export class MainStreetScene extends Phaser.Scene {
         // Fake NPC Animations
         this.anims.create({
             key: 'fake_npc_1_anim',
-            frames: this.anims.generateFrameNumbers('fake_npc_1', { start: 0, end: 96 }),
+            frames: this.anims.generateFrameNumbers('fake_npc_1', { start: 0, end: 96}),
             frameRate: 30,
             repeat: -1
         });
 
         this.anims.create({
             key: 'fake_npc_2_anim',
-            frames: this.anims.generateFrameNumbers('fake_npc_2', { start: 0, end: 96 }),
+            frames: this.anims.generateFrameNumbers('fake_npc_2', { start: 0, end: 94 }),
             frameRate: 30,
             repeat: -1
         });
 
         this.anims.create({
             key: 'fake_npc_3_anim',
-            frames: this.anims.generateFrameNumbers('fake_npc_3', { start: 0, end: 95 }),
+            frames: this.anims.generateFrameNumbers('fake_npc_3', { start: 0, end: 94 }),
             frameRate: 30,
             repeat: -1
         });
 
         this.anims.create({
             key: 'fake_npc_4_anim',
-            frames: this.anims.generateFrameNumbers('fake_npc_4', { start: 0, end: 121 }),
+            frames: this.anims.generateFrameNumbers('fake_npc_4', { start: 6, end: 117 }),
             frameRate: 30,
             repeat: -1
         });
 
         this.anims.create({
             key: 'fake_npc_5_anim',
-            frames: this.anims.generateFrameNumbers('fake_npc_5', { start: 0, end: 282 }),
+            frames: this.anims.generateFrameNumbers('fake_npc_5', { start: 0, end: 280 }),
             frameRate: 30,
             repeat: -1
         });
