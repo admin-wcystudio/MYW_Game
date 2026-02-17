@@ -11,45 +11,45 @@ export class MainStreetScene extends Phaser.Scene {
 
     preload() {
 
-        // // Create loading bar UI
-        // const width = this.cameras.main.width;
-        // const height = this.cameras.main.height;
+        // Create loading bar UI
+        const width = this.cameras.main.width;
+        const height = this.cameras.main.height;
 
-        // // Loading bar background
-        // const barBg = this.add.rectangle(width / 2, height / 2, 400, 30, 0x222222);
-        // barBg.setStrokeStyle(2, 0xffffff);
+        // Loading bar background
+        const barBg = this.add.rectangle(width / 2, height / 2, 400, 30, 0x222222);
+        barBg.setStrokeStyle(2, 0xffffff);
 
-        // // Loading bar fill
-        // const barFill = this.add.rectangle(width / 2 - 195, height / 2, 0, 22, 0x00ff00);
-        // barFill.setOrigin(0, 0.5);
+        // Loading bar fill
+        const barFill = this.add.rectangle(width / 2 - 195, height / 2, 0, 22, 0x00ff00);
+        barFill.setOrigin(0, 0.5);
 
-        // // Loading text
-        // const loadingText = this.add.text(width / 2, height / 2 - 50, '載入中...', {
-        //     fontSize: '24px',
-        //     fontFamily: 'Arial',
-        //     color: '#ffffff'
-        // }).setOrigin(0.5);
+        // Loading text
+        const loadingText = this.add.text(width / 2, height / 2 - 50, '載入中...', {
+            fontSize: '24px',
+            fontFamily: 'Arial',
+            color: '#ffffff'
+        }).setOrigin(0.5);
 
-        // // Percentage text
-        // const percentText = this.add.text(width / 2, height / 2 + 50, '0%', {
-        //     fontSize: '20px',
-        //     fontFamily: 'Arial',
-        //     color: '#ffffff'
-        // }).setOrigin(0.5);
+        // Percentage text
+        const percentText = this.add.text(width / 2, height / 2 + 50, '0%', {
+            fontSize: '20px',
+            fontFamily: 'Arial',
+            color: '#ffffff'
+        }).setOrigin(0.5);
 
-        // // Update progress bar on load progress
-        // this.load.on('progress', (value) => {
-        //     barFill.width = 390 * value;
-        //     percentText.setText(Math.round(value * 100) + '%');
-        // });
+        // Update progress bar on load progress
+        this.load.on('progress', (value) => {
+            barFill.width = 390 * value;
+            percentText.setText(Math.round(value * 100) + '%');
+        });
 
-        // // Clean up when loading complete
-        // this.load.on('complete', () => {
-        //     barBg.destroy();
-        //     barFill.destroy();
-        //     loadingText.destroy();
-        //     percentText.destroy();
-        // });
+        // Clean up when loading complete
+        this.load.on('complete', () => {
+            barBg.destroy();
+            barFill.destroy();
+            loadingText.destroy();
+            percentText.destroy();
+        });
         //main street backgrounds
         this.load.image('stage', 'assets/MainStreet/stage.png');
         this.load.image('stage1', 'assets/MainStreet/stage1.png');

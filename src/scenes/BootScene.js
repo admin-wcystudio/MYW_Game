@@ -61,37 +61,6 @@ export class BootScene extends Phaser.Scene {
         this.load.image('save_btn', 'assets/Settings/setting_page_save.png');
         this.load.image('save_btn_click', 'assets/Settings/setting_page_save_click.png');
 
-        //login page
-        const loginPath = 'assets/Login/';
-        this.load.video('login_bg_video', loginPath + 'choosepage_bg.mp4');
-
-        this.load.image('login_boy_btn', loginPath + 'choosepage_boy_button.png');
-        this.load.image('login_boy_btn_click', loginPath + 'choosepage_boy_button_click.png');
-
-        this.load.image('login_girl_btn', loginPath + 'choosepage_girl_button.png');
-        this.load.image('login_girl_btn_click', loginPath + 'choosepage_girl_button_click.png');
-
-        this.load.image('login_namebar', loginPath + 'choosepage_namebar.png');
-        this.load.image('bubble1', loginPath + 'choosepage_bubble1.png');
-        this.load.image('bubble2', loginPath + 'choosepage_bubble2.png');
-
-        this.load.spritesheet('boy_galaxy', loginPath + 'choosepage_boy_galaxy.png',
-            { frameWidth: 350, frameHeight: 450 });
-
-        this.load.spritesheet('boy_chinese', loginPath + 'choosepage_boy_chinese.png',
-            { frameWidth: 350, frameHeight: 450 });
-
-        this.load.spritesheet('boy_transition', loginPath + 'choosepage_boy_galaxytochinese_transition.png',
-            { frameWidth: 350, frameHeight: 450 });
-
-        this.load.spritesheet('girl_galaxy', loginPath + 'choosepage_girl_galaxy.png',
-            { frameWidth: 350, frameHeight: 450 });
-
-        this.load.spritesheet('girl_chinese', loginPath + 'choosepage_girl_chinese.png',
-            { frameWidth: 350, frameHeight: 450 });
-        this.load.spritesheet('girl_transition', loginPath + 'choosepage_girl_galaxytochinese_transition.png',
-            { frameWidth: 350, frameHeight: 450 });
-
 
         // load game scenes assets ( general )
         const path = 'assets/Game_1/';
@@ -158,53 +127,9 @@ export class BootScene extends Phaser.Scene {
         }
 
         this.createAnimations();
-        this.scene.start('MainStreetScene');
+        this.scene.start('GameStartScene');
     }
 
-    createAnimations() {
-        this.anims.create({
-            key: 'boy_galaxy_anim',  // Name you will use in other scenes
-            frames: this.anims.generateFrameNumbers('boy_galaxy', { start: 0, end: 98 }),
-            frameRate: 30,
-            repeat: -1
-        });
-        this.anims.create({
-            key: 'boy_chinese_anim',  // Name you will use in other scenes
-            frames: this.anims.generateFrameNumbers('boy_galaxy', { start: 0, end: 98 }),
-            frameRate: 30,
-            repeat: -1
-        });
 
-        this.anims.create({
-            key: 'boy_transition_anim',  // Name you will use in other scenes
-            frames: this.anims.generateFrameNumbers('boy_transition', { start: 0, end: 98 }),
-            frameRate: 30,
-            repeat: 0
-        });
-
-        this.anims.create({
-            key: 'girl_galaxy_anim',
-            frames: this.anims.generateFrameNumbers('girl_galaxy', { start: 0, end: 98 }),
-            frameRate: 30,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'girl_chinese_anim',
-            frames: this.anims.generateFrameNumbers('girl_chinese', { start: 0, end: 98 }),
-            frameRate: 30,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'girl_transition_anim',  // Name you will use in other scenes
-            frames: this.anims.generateFrameNumbers('girl_transition', { start: 0, end: 98 }),
-            frameRate: 30,
-            repeat: 0
-        });
-
-
-        // NPC Animations are now created in MainStreetScene
-    }
 
 }
