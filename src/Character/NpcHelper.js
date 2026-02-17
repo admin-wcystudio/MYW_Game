@@ -1,6 +1,6 @@
 export default class NpcHelper {
 
-    static createNpc(scene, id, x, y, npcScale = 1, key, bubbles, depth = 10, animKey = null) {
+    static createNpc(scene, id, x, y, npcScale = 2, key, bubbles, depth = 10, animKey = null) {
 
         let npc;
 
@@ -8,7 +8,7 @@ export default class NpcHelper {
         npc.play(animKey);
 
 
-        npc.setScale(npcScale);
+        npc.setScale(2);
         npc.bubbles = bubbles;
         npc.setInteractive({ useHandCursor: true });
         npc.id = id;

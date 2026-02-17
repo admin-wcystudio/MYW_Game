@@ -11,45 +11,45 @@ export class MainStreetScene extends Phaser.Scene {
 
     preload() {
 
-        // Create loading bar UI
-        const width = this.cameras.main.width;
-        const height = this.cameras.main.height;
+        // // Create loading bar UI
+        // const width = this.cameras.main.width;
+        // const height = this.cameras.main.height;
 
-        // Loading bar background
-        const barBg = this.add.rectangle(width / 2, height / 2, 400, 30, 0x222222);
-        barBg.setStrokeStyle(2, 0xffffff);
+        // // Loading bar background
+        // const barBg = this.add.rectangle(width / 2, height / 2, 400, 30, 0x222222);
+        // barBg.setStrokeStyle(2, 0xffffff);
 
-        // Loading bar fill
-        const barFill = this.add.rectangle(width / 2 - 195, height / 2, 0, 22, 0x00ff00);
-        barFill.setOrigin(0, 0.5);
+        // // Loading bar fill
+        // const barFill = this.add.rectangle(width / 2 - 195, height / 2, 0, 22, 0x00ff00);
+        // barFill.setOrigin(0, 0.5);
 
-        // Loading text
-        const loadingText = this.add.text(width / 2, height / 2 - 50, '載入中...', {
-            fontSize: '24px',
-            fontFamily: 'Arial',
-            color: '#ffffff'
-        }).setOrigin(0.5);
+        // // Loading text
+        // const loadingText = this.add.text(width / 2, height / 2 - 50, '載入中...', {
+        //     fontSize: '24px',
+        //     fontFamily: 'Arial',
+        //     color: '#ffffff'
+        // }).setOrigin(0.5);
 
-        // Percentage text
-        const percentText = this.add.text(width / 2, height / 2 + 50, '0%', {
-            fontSize: '20px',
-            fontFamily: 'Arial',
-            color: '#ffffff'
-        }).setOrigin(0.5);
+        // // Percentage text
+        // const percentText = this.add.text(width / 2, height / 2 + 50, '0%', {
+        //     fontSize: '20px',
+        //     fontFamily: 'Arial',
+        //     color: '#ffffff'
+        // }).setOrigin(0.5);
 
-        // Update progress bar on load progress
-        this.load.on('progress', (value) => {
-            barFill.width = 390 * value;
-            percentText.setText(Math.round(value * 100) + '%');
-        });
+        // // Update progress bar on load progress
+        // this.load.on('progress', (value) => {
+        //     barFill.width = 390 * value;
+        //     percentText.setText(Math.round(value * 100) + '%');
+        // });
 
-        // Clean up when loading complete
-        this.load.on('complete', () => {
-            barBg.destroy();
-            barFill.destroy();
-            loadingText.destroy();
-            percentText.destroy();
-        });
+        // // Clean up when loading complete
+        // this.load.on('complete', () => {
+        //     barBg.destroy();
+        //     barFill.destroy();
+        //     loadingText.destroy();
+        //     percentText.destroy();
+        // });
         //main street backgrounds
         this.load.image('stage', 'assets/MainStreet/stage.png');
         this.load.image('stage1', 'assets/MainStreet/stage1.png');
@@ -80,17 +80,17 @@ export class MainStreetScene extends Phaser.Scene {
 
         // NPC spritesheets
         this.load.spritesheet('npc1', 'assets/MainStreet/NPCs/NPC_1/game1_npc.png',
-            { frameWidth: 450, frameHeight: 580 });
+            { frameWidth: 225, frameHeight: 290 });
         this.load.spritesheet('npc2', 'assets/MainStreet/NPCs/NPC_2/game2_npc.png',
-            { frameWidth: 500, frameHeight: 500 });
+            { frameWidth: 250, frameHeight: 250 });
         this.load.spritesheet('npc3', 'assets/MainStreet/NPCs/NPC_3/game3_npc.png',
-            { frameWidth: 304, frameHeight: 462 });
+            { frameWidth: 152, frameHeight: 231 });
         this.load.spritesheet('npc4', 'assets/MainStreet/NPCs/NPC_4/game4_npc.png',
-            { frameWidth: 400, frameHeight: 500 });
+            { frameWidth: 200, frameHeight: 250 });
         this.load.spritesheet('npc5', 'assets/MainStreet/NPCs/NPC_5/game5_npc.png',
-            { frameWidth: 500, frameHeight: 500 });
+            { frameWidth: 250, frameHeight: 250 });
         this.load.spritesheet('npc6', 'assets/MainStreet/NPCs/NPC_6/game6_npc.png',
-            { frameWidth: 500, frameHeight: 600 });
+            { frameWidth: 250, frameHeight: 300 });
 
         // NPC bubbles
         this.load.image('npc1_bubble_1', 'assets/MainStreet/NPCs/NPC_1/game1_npc1_bubble.png');
@@ -122,15 +122,15 @@ export class MainStreetScene extends Phaser.Scene {
 
         // Fake NPCs
         this.load.spritesheet('fake_npc_1', 'assets/MainStreet/NPCs/NPC_only/fakenpc1.png',
-            { frameWidth: 500, frameHeight: 500 });
+            { frameWidth: 250, frameHeight: 250 });
         this.load.spritesheet('fake_npc_2', 'assets/MainStreet/NPCs/NPC_only/fakenpc2.png',
-            { frameWidth: 500, frameHeight: 500 });
+            { frameWidth: 250, frameHeight: 250 });
         this.load.spritesheet('fake_npc_3', 'assets/MainStreet/NPCs/NPC_only/fakenpc3.png',
-            { frameWidth: 300, frameHeight: 300 });
+            { frameWidth: 150, frameHeight: 150 });
         this.load.spritesheet('fake_npc_4', 'assets/MainStreet/NPCs/NPC_only/fakenpc4.png',
-            { frameWidth: 756, frameHeight: 447 });
+            { frameWidth: 378, frameHeight: 224 });
         this.load.spritesheet('fake_npc_5', 'assets/MainStreet/NPCs/NPC_only/fakenpc5.png',
-            { frameWidth: 500, frameHeight: 500 });
+            { frameWidth: 250, frameHeight: 250 });
 
         this.load.image('fake_npc_1_bubble', 'assets/MainStreet/NPCs/NPC_only/fakenpc1_bubble.png');
         this.load.image('fake_npc_1_bubble1', 'assets/MainStreet/NPCs/NPC_only/fakenpc1_bubble1.png');
@@ -508,7 +508,7 @@ export class MainStreetScene extends Phaser.Scene {
         // NPC Animations
         this.anims.create({
             key: 'npc1_anim',
-            frames: this.anims.generateFrameNumbers('npc1', { start: 0, end: 70 }),
+            frames: this.anims.generateFrameNumbers('npc1', { start: 0, end: 72 }),
             frameRate: 30,
             repeat: -1
         });

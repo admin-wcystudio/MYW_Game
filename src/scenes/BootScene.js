@@ -92,7 +92,6 @@ export class BootScene extends Phaser.Scene {
         this.load.spritesheet('girl_transition', loginPath + 'choosepage_girl_galaxytochinese_transition.png',
             { frameWidth: 350, frameHeight: 450 });
 
-        // MainStreet assets are now lazy-loaded in MainStreetScene
 
         // load game scenes assets ( general )
         const path = 'assets/Game_1/';
@@ -159,7 +158,7 @@ export class BootScene extends Phaser.Scene {
         }
 
         this.createAnimations();
-        this.scene.start('GameStartScene');
+        this.scene.start('MainStreetScene');
     }
 
     createAnimations() {
