@@ -125,6 +125,7 @@ export default class BaseGameScene extends Phaser.Scene {
             'win': `${prefix}_npc_box_win`,
             'gameWin': `${prefix}_npc_box_win`, // fallback to win bubble, can customize if needed
             'tryagain': `${prefix}_npc_box_tryagain`,
+            'tryagain2': `${prefix}_npc_box_tryagain2`,
             'lock': `${prefix}_npc_box_lock`
         };
 
@@ -188,7 +189,7 @@ export default class BaseGameScene extends Phaser.Scene {
                     }
                 });
             }
-        } else if (type === 'tryagain') {
+        } else if (type === 'tryagain' || type === 'tryagain2') {
             this.currentBubbleImg.once('pointerdown', () => {
                 closeBubble();
 

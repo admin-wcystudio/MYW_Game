@@ -17,12 +17,12 @@ export class GameScene_6 extends BaseGameScene {
         this.load.image('game6_title', `${path}game6_title.png`);
         this.load.image('game6_description', `${path}game6_description.png`);
 
-        this.load.image('game6_npc_box_win', `${path}game6_npc_box1.png`);
-        this.load.image('game6_npc_box_win_round3', `${path}game6_npc_box2.png`);
-        this.load.image('game6_npc_box_win_round1', `${path}game6_npc_box3.png`);
-        this.load.image('game6_npc_box_win_round2', `${path}game6_npc_box4.png`);
-        this.load.image('game6_npc_box_win_round_addon', `${path}game6_npc_box5.png`);
-        this.load.image('game6_npc_box_tryagain', `${path}game6_npc_box6.png`);
+        this.load.image('game6_npc_box_win_d1', `${path}game6_npc_box1.png`);
+        this.load.image('game6_npc_box_win', `${path}game6_npc_box2.png`);
+        this.load.image('game6_npc_box_tryagain', `${path}game6_npc_box3.png`);
+        this.load.image('game6_npc_box_tryagain2', `${path}game6_npc_box4.png`);
+        this.load.image('game6_npc_box_win_d2', `${path}game6_npc_box5.png`);
+
 
         // Arrows
         this.load.image('game6_arrow_blue', `${path}game6_arrow_blue.png`);
@@ -289,6 +289,47 @@ export class GameScene_6 extends BaseGameScene {
         this.showBubble('win');
     }
 
+
+    handleLose() {
+        // Prevent multiple entries
+        if (this.gameState === 'gameLose') return;
+
+        this.currentFailCount = (this.currentFailCount || 0) + 1; // Increment fail count
+
+        // In AllowRoundFail mode, losing a round doesn't mean Game Over unless we are out of rounds
+        if (this.isAllowRoundFail) {
+            this.isGameActive = false;
+            this.gameState = 'roundLose';
+
+            if (this.gameTimer) this.gameTimer.stop();
+            this.enableGameInteraction(false);
+            this.updateRoundUI(false);
+
+            // Check if this was the last round (Game Over) or just a round loss
+            if (this.roundIndex + 1 >= this.targetRounds) {
+                this.gameState = 'gameLose'; // Will trigger Fail Panel after bubble
+                this.label = this.add.image(1650, 350, 'game_fail_label').setDepth(555);
+            }
+        } else {
+            // Standard Logic
+            this.isGameActive = false;
+            this.gameState = 'gameLose';
+
+            this.label = this.add.image(1650, 350, 'game_fail_label').setDepth(555);
+            if (this.gameTimer) this.gameTimer.stop();
+            this.enableGameInteraction(false);
+            this.updateRoundUI(false);
+
+
+            if (this.roundIndex + 1 >= this.targetRounds) {
+                this.showBubble('tryagain2');
+            } else {
+                this.showBubble('tryagain');
+            }
+        }
+
+    }
+
     showWin() {
         const lastGameResult = GameManager.loadOneGameResult(7);
         this.isLastGamePlayed = lastGameResult.isFinished ? true : false;
@@ -297,7 +338,7 @@ export class GameScene_6 extends BaseGameScene {
 
         this.time.delayedCall(500, () => {
             this.addOnBubble = this.add.image(960, this.cameras.main.height * 0.8,
-                'game6_npc_box_win').setDepth(1000); // Changed Y to 540 and removed interactive
+                'game6_npc_box_win_d1').setDepth(1000); // Changed Y to 540 and removed interactive
 
             this.tweens.add({
                 targets: this.addOnBubble,
@@ -309,7 +350,7 @@ export class GameScene_6 extends BaseGameScene {
 
         this.time.delayedCall(1200, () => { // Increased delay so they appear sequentially
             this.addOnBubble2 = this.add.image(960, 540,
-                'game6_npc_box_win_round_addon').setDepth(1001)
+                'game6_npc_box_win_d2').setDepth(1001)
                 .setInteractive({ useHandCursor: true });
 
             this.tweens.add({
