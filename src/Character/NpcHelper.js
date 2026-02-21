@@ -17,15 +17,14 @@ export default class NpcHelper {
         return npc;
     }
 
-    static createCharacter(scene, x, y, dialogueX, dialogueY, npcScale = 1, dialogScale = 1,
-        videoKey, hasDialogue = false, dialogueKey = '', isVisible = false, depth = 10) {
+    static createCharacter(scene, x, y, npcScale = 1,
+        spriteKey, depth = 10, animKey = null) {
 
-        const character = scene.add.video(x, y, videoKey).setDepth(depth);
+        // Use sprite instead of video for NPC
+        let character = scene.add.sprite(x, y, spriteKey).setDepth(depth);
         character.setScale(npcScale);
-        character.play(true);
-
-        character.videoKey = videoKey;
-
+        character.play(animKey);
+        character.spriteKey = spriteKey;
         return character;
     }
 
