@@ -82,39 +82,40 @@ export class MainStreetScene extends Phaser.Scene {
         this.load.image('gameintro_closebutton_click', 'assets/MainStreet/gameintro_closebutton_click.png');
         this.load.image('stage_building', 'assets/MainStreet/stage_building.png');
 
-        // Player character videos
-        this.load.spritesheet('boy_idle', 'assets/MainStreet/Boy/maincharacter_boy_middlestand.png',
-            { frameWidth: 600, frameHeight: 700 });
 
-        this.load.spritesheet('boy_left_talk', 'assets/MainStreet/Boy/maincharacter_boy_lefttalking.png',
-            { frameWidth: 600, frameHeight: 700 });
+        // Only load spritesheets for the selected gender
+        let gender = 'M';
+        try {
+            if (localStorage.getItem('player')) {
+                gender = JSON.parse(localStorage.getItem('player')).gender || 'M';
+            }
+        } catch (e) {
+            gender = 'M';
+        }
 
-        this.load.spritesheet('boy_right_talk', 'assets/MainStreet/Boy/maincharacter_boy_righttalking.png',
-            { frameWidth: 600, frameHeight: 700 });
-
-        this.load.spritesheet('boy_left_walk', 'assets/MainStreet/Boy/maincharacter_boy_leftwalk.png',
-            { frameWidth: 600, frameHeight: 700 });
-
-        this.load.spritesheet('boy_right_walk', 'assets/MainStreet/Boy/maincharacter_boy_rightwalk.png',
-            { frameWidth: 600, frameHeight: 700 });
-
-
-        this.load.spritesheet('girl_idle', 'assets/MainStreet/Girl/maincharacter_girl_middlestand.png',
-            { frameWidth: 600, frameHeight: 700 });
-
-        this.load.spritesheet('girl_left_talk', 'assets/MainStreet/Girl/maincharacter_girl_lefttalking.png',
-            { frameWidth: 600, frameHeight: 700 });
-
-        this.load.spritesheet('girl_right_talk', 'assets/MainStreet/Girl/maincharacter_girl_righttalking.png',
-            { frameWidth: 600, frameHeight: 700 });
-
-        this.load.spritesheet('girl_left_walk', 'assets/MainStreet/Girl/maincharacter_girl_leftwalk.png',
-            { frameWidth: 600, frameHeight: 700 });
-
-        this.load.spritesheet('girl_right_walk', 'assets/MainStreet/Girl/maincharacter_girl_rightwalk.png',
-            { frameWidth: 600, frameHeight: 700 });
-
-
+        if (gender === 'M') {
+            this.load.spritesheet('boy_idle', 'assets/MainStreet/Boy/maincharacter_boy_middlestand.png',
+                { frameWidth: 600, frameHeight: 700 });
+            this.load.spritesheet('boy_left_talk', 'assets/MainStreet/Boy/maincharacter_boy_lefttalking.png',
+                { frameWidth: 600, frameHeight: 700 });
+            this.load.spritesheet('boy_right_talk', 'assets/MainStreet/Boy/maincharacter_boy_righttalking.png',
+                { frameWidth: 600, frameHeight: 700 });
+            this.load.spritesheet('boy_left_walk', 'assets/MainStreet/Boy/maincharacter_boy_leftwalk.png',
+                { frameWidth: 600, frameHeight: 700 });
+            // this.load.spritesheet('boy_right_walk', 'assets/MainStreet/Boy/maincharacter_boy_rightwalk.png',
+            //     { frameWidth: 600, frameHeight: 700 });
+        } else if (gender === 'F') {
+            this.load.spritesheet('girl_idle', 'assets/MainStreet/Girl/maincharacter_girl_middlestand.png',
+                { frameWidth: 600, frameHeight: 700 });
+            this.load.spritesheet('girl_left_talk', 'assets/MainStreet/Girl/maincharacter_girl_lefttalking.png',
+                { frameWidth: 600, frameHeight: 700 });
+            this.load.spritesheet('girl_right_talk', 'assets/MainStreet/Girl/maincharacter_girl_righttalking.png',
+                { frameWidth: 600, frameHeight: 700 });
+            this.load.spritesheet('girl_left_walk', 'assets/MainStreet/Girl/maincharacter_girl_leftwalk.png',
+                { frameWidth: 600, frameHeight: 700 });
+            // this.load.spritesheet('girl_right_walk', 'assets/MainStreet/Girl/maincharacter_girl_rightwalk.png',
+            //     { frameWidth: 600, frameHeight: 700 });
+        }
 
         // NPC spritesheets
         this.load.spritesheet('npc1', 'assets/MainStreet/NPCs/NPC_1/game1_npc.png',
@@ -361,20 +362,24 @@ export class MainStreetScene extends Phaser.Scene {
 
         this.playerSprite.x = Phaser.Math.Clamp(this.playerSprite.x, 100, 8314);
         const camView = this.cameras.main.worldView;
-        const buffer = 200; // Load slightly before they appear
+        const buffer = 100; // Load slightly before they appear
 
         const allNpcs = [...this.interactiveNpcs, ...this.fakeNpcs];
         this.currentNpcActivated = null;
 
         allNpcs.forEach(npc => {
             // Culling check
-            const inView = (npc.x > camView.x - buffer) && (npc.x < camView.x + camView.width + buffer);
-            console.log(`NPC ${npc.id} ${npc.animKey} in view: ${inView}`);
-            if (inView) {
-                if (!npc.anims.isPlaying) npc.anims.play(npc.animKey);
-            } else {
-                if (npc.anims.isPlaying) npc.anims.stop(); // Stop the lag from off-screen NPCs
-            }
+            // const inView = (npc.x > camView.x - buffer) && (npc.x < camView.x + camView.width + buffer);
+            // // Only log occasionally to avoid lag
+            // // if (Math.random() < 0.01) console.log(`NPC ${npc.id} ${npc.animKey} in view: ${inView}`);
+            // if (inView) {
+            //     // Only play if not already playing the correct animation
+            //     if (!npc.anims.isPlaying || npc.anims.currentAnim?.key !== npc.animKey) {
+            //         npc.anims.play(npc.animKey);
+            //     }
+            // } else {
+            //     if (npc.anims.isPlaying) npc.anims.stop(); // Stop the lag from off-screen NPCs
+            // }
 
             const dist = Math.abs(this.playerSprite.x - npc.x);
 
@@ -389,20 +394,26 @@ export class MainStreetScene extends Phaser.Scene {
                 if (this.currentActiveBubble && this.currentActiveBubble.ownerNpc === npc) {
                     this.currentActiveBubble.destroy();
                     this.currentActiveBubble = null;
-                    console.log("玩家遠離，自動關閉對話框");
+                    // if (Math.random() < 0.01) console.log("玩家遠離，自動關閉對話框");
                 }
             }
-
         });
     }
 
     handleAnimation(gender, isMoving, isLeft) {
-        let walkKey = isLeft ? `${gender}_left_walk_anim` : `${gender}_right_walk_anim`;
+        let walkKey = `${gender}_left_walk_anim`;
         let idleKey = `${gender}_idle_anim`;
+
+
 
         if (isMoving) {
             // true means: if 'walkKey' is already playing, don't restart it
             this.playerSprite.play(walkKey, true);
+            if (!isLeft) {
+                this.playerSprite.setFlipX(true);
+            } else {
+                this.playerSprite.setFlipX(false);
+            }
         } else {
             this.playerSprite.play(idleKey, true);
         }
