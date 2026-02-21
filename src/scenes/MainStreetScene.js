@@ -589,7 +589,7 @@ export class MainStreetScene extends Phaser.Scene {
 
         this.anims.create({
             key: 'fake_npc_4_anim',
-            frames: this.anims.generateFrameNumbers('fake_npc_4', { start: 6, end: 117 }),
+            frames: this.anims.generateFrameNumbers('fake_npc_4', { start: 8, end: 100 }),
             frameRate: 30,
             repeat: -1
         });
