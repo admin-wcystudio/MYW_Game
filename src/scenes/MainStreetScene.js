@@ -236,7 +236,10 @@ export class MainStreetScene extends Phaser.Scene {
         this.isTalking = false;
 
         this.btnLeft = new CustomButton(this, 150, height / 2, 'prev_button', 'prev_button_click',
-            () => { this.isLeftDown = true; },
+            () => {
+                this.isLeftDown = true;
+                this.handleAnimation(genderKey, true, true);
+            },
             () => {
                 this.isLeftDown = false;
                 this.handleAnimation(genderKey, false, true);
@@ -244,7 +247,10 @@ export class MainStreetScene extends Phaser.Scene {
         ).setScrollFactor(0).setDepth(100);
 
         this.btnRight = new CustomButton(this, width - 150, height / 2, 'next_button', 'next_button_click',
-            () => { this.isRightDown = true; },
+            () => {
+                this.isRightDown = true;
+                this.handleAnimation(genderKey, true, false);
+            },
             () => {
                 this.isRightDown = false;
                 this.handleAnimation(genderKey, false, true);
@@ -334,7 +340,7 @@ export class MainStreetScene extends Phaser.Scene {
     }
 
     update() {
-        const speed = 10;
+        const speed = 15;
         let isMoving = false;
         let isLeft = this.playerSprite.lastDirectionLeft; // 保持最後的方向狀態
 
@@ -351,35 +357,24 @@ export class MainStreetScene extends Phaser.Scene {
             this.playerSprite.x += 0;
             isMoving = false;
         }
-        //console.log(`isLeftDown: ${this.isLeftDown}, isRightDown: ${this.isRightDown}, isMoving: ${isMoving}, isLeft: ${isLeft}`);
-        // 紀錄最後方向供 handleAnimation 使用
         this.playerSprite.lastDirectionLeft = isLeft;
-
-        this.handleAnimation(this.genderKey, isMoving, isLeft);
-
 
         this.playerSprite.x = Phaser.Math.Clamp(this.playerSprite.x, 100, 8314);
         const camView = this.cameras.main.worldView;
-        const buffer = 300; // Load slightly before they appear
+        const buffer = 200; // Load slightly before they appear
 
         const allNpcs = [...this.interactiveNpcs, ...this.fakeNpcs];
         this.currentNpcActivated = null;
 
         allNpcs.forEach(npc => {
             // Culling check
-            // const inView = (npc.x > camView.x - buffer) && (npc.x < camView.x + camView.width + buffer);
-
-            // if (npc.type === 'Sprite') {
-            //     if (inView) {
-            //         if (!npc.anims.isPlaying) {
-            //             npc.play(npc.animKey);
-            //         }
-            //     } else {
-            //         if (npc.anims.isPlaying) {
-            //             npc.anims.stop();
-            //         }
-            //     }
-            // }
+            const inView = (npc.x > camView.x - buffer) && (npc.x < camView.x + camView.width + buffer);
+            console.log(`NPC ${npc.id} ${npc.animKey} in view: ${inView}`);
+            if (inView) {
+                if (!npc.anims.isPlaying) npc.anims.play(npc.animKey);
+            } else {
+                if (npc.anims.isPlaying) npc.anims.stop(); // Stop the lag from off-screen NPCs
+            }
 
             const dist = Math.abs(this.playerSprite.x - npc.x);
 
@@ -402,19 +397,16 @@ export class MainStreetScene extends Phaser.Scene {
     }
 
     handleAnimation(gender, isMoving, isLeft) {
-        const walkKey = isLeft ? `${gender}_left_walk_anim` : `${gender}_right_walk_anim`;
-        const idleKey = `${gender}_idle_anim`;
+        let walkKey = isLeft ? `${gender}_left_walk_anim` : `${gender}_right_walk_anim`;
+        let idleKey = `${gender}_idle_anim`;
 
         if (isMoving) {
-            this.playerSprite.play(walkKey);
+            // true means: if 'walkKey' is already playing, don't restart it
+            this.playerSprite.play(walkKey, true);
         } else {
-
-            this.playerSprite.play(idleKey);
-
-
+            this.playerSprite.play(idleKey, true);
         }
     }
-
 
 
     loadBubble(index = 0, bubbles, sceneKey, targetNpc) {
