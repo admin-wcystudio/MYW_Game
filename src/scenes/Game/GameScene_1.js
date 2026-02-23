@@ -38,11 +38,22 @@ export class GameScene_1 extends BaseGameScene {
             this.load.image(`game1_puzzle${i}`, `${path}game1_puzzle${i}.png`);
         }
 
-        this.load.video('game1_success_preview', `${path}game1_success_preview.webm`);
+        this.load.spritesheet('game1_success_preview',
+            `${path}game1_success_preview.png`, {
+            frameWidth: 316.52,
+            frameHeight: 360
+        });
     }
 
     create() {
         this.initGame('game1_bg', 'game1_title', ['game1_description', 'game1_description2'], 10);
+
+        this.anims.create({
+            key: 'success_preview_anim',
+            frames: this.anims.generateFrameNumbers('game1_success_preview', { start: 0, end: 125 }),
+            framerate: 30,
+            repeat: -1
+        });
 
     }
 
@@ -185,8 +196,12 @@ export class GameScene_1 extends BaseGameScene {
     playFeedback(isSuccess, onComplete) {
         this.puzzleGroup.setVisible(false);
         if (this.successVideo) this.successVideo.destroy();
-        this.successVideo = this.add.video(960, 440, 'game1_success_preview').setDepth(200).setScrollFactor(0);
-        this.successVideo.play();
+
+        this.previewSprite = this.add.sprite(960, 440,
+            'game1_success_preview').setDepth(1000).setScale(2);
+        this.previewSprite.play('success_preview_anim');
+
+
         this.time.delayedCall(500, () => {
             if (onComplete) onComplete();
         });
@@ -211,6 +226,7 @@ export class GameScene_1 extends BaseGameScene {
     resetForNewRound() {
         this.puzzleGroup.setVisible(true);
         this.puzzleGroup.getChildren().forEach(p => p.setData('isCorrect', false));
+        this.previewSprite.destroy();
         this.randomPuzzlePosition(this.puzzleGroup.getChildren());
     }
 
