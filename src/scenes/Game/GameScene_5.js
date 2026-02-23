@@ -28,8 +28,15 @@ export class GameScene_5 extends BaseGameScene {
         this.load.image('game5_target_area', `${path}game5_clickarea.png`);
         this.load.image('game5_bar', `${path}game5_bar.png`);
 
-        this.load.video('game5_success_preview', `${path}game5_success_ending.webm`);
-        this.load.video('game5_fail_preview', `${path}game5_fail_ending.webm`);
+        this.load.spritesheet('game5_success_preview', `${path}game5_success_ending.png`, {
+            frameWidth: 560,
+            frameHeight: 422
+        });
+
+        this.load.spritesheet('game5_fail_preview', `${path}game5_fail_ending.png`, {
+            frameWidth: 560,
+            frameHeight: 422
+        });
 
         this.load.image('game5_hit_button', `${path}game5_hit_button.png`);
         this.load.image('game5_hit_button_select', `${path}game5_hit_button_select.png`);
@@ -61,6 +68,19 @@ export class GameScene_5 extends BaseGameScene {
                 this.handleHit();
             }
         }).setDepth(20);
+
+        this.anims.create({
+            key: 'success_preview_anim',
+            frames: this.anims.generateFrameNumbers('game5_success_preview', { start: 0, end: 47 }),
+            framerate: 30,
+            repeat: 0
+        });
+        this.anims.create({
+            key: 'fail_preview_anim',
+            frames: this.anims.generateFrameNumbers('game5_fail_preview', { start: 0, end: 47 }),
+            framerate: 30,
+            repeat: 0
+        });
 
         this.initGame('game5_bg', 'game5_title', 'game5_description', 10, true, false);
     }
@@ -97,9 +117,9 @@ export class GameScene_5 extends BaseGameScene {
 
     resetForNewRound() {
         this.isHit = false;
-        if (this.video) {
-            this.video.destroy();
-            this.video = null;
+        if (this.previewSprite) {
+            this.previewSprite.destroy();
+            this.previewSprite = null;
         }
         this.isValid = false;
         this.arrow.x = 800;
@@ -107,16 +127,21 @@ export class GameScene_5 extends BaseGameScene {
     }
 
     playFeedback(isSuccess, onComplete) {
-        if (this.video) this.video.destroy();
-        this.video = this.add.video(960, 540,
-            isSuccess ? 'game5_success_preview' : 'game5_fail_preview').setDepth(200).setScrollFactor(0);
-        this.video.play();
 
-        this.video.on('complete', () => {
-            this.time.delayedCall(1000, () => {
-                if (typeof onComplete === 'function') onComplete();
-            });
+        console.log("Playing feedback animation for", isSuccess ? "success" : "failure");
+
+        // Create previewSprite for animation
+        this.previewSprite = this.add.sprite(960, 540,
+            isSuccess ? 'game5_success_preview' : 'game5_fail_preview').setDepth(1000).setScale(2);
+        this.previewSprite.play(isSuccess ? 'success_preview_anim' : 'fail_preview_anim', true);
+
+        this.time.delayedCall(3000, () => {
+            this.previewSprite?.destroy();
+
+            if (onComplete) onComplete();
+
         });
+
     }
 
     showLose(onComplete) {
@@ -127,10 +152,7 @@ export class GameScene_5 extends BaseGameScene {
 
     showWin() {
         this.isGameWin = true;
-        if (this.video) {
-            this.video.destroy();
-            this.video = null;
-        }
+
         const descriptionPages = ['game5_object_description'];
         const objectPanel = new CustomDescriptionPanel(this, 960, 600, descriptionPages, () => GameManager.backToMainStreet(this));
         objectPanel.setDepth(1000).setVisible(true);
