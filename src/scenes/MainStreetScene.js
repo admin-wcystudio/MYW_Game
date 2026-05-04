@@ -95,15 +95,15 @@ export class MainStreetScene extends Phaser.Scene {
 
         if (gender === 'M') {
             this.load.spritesheet('boy_idle', 'assets/MainStreet/Boy/maincharacter_boy_middlestand.png',
-                { frameWidth: 600, frameHeight: 700 });
+                { frameWidth: 300, frameHeight: 350 });
             this.load.spritesheet('boy_left_talk', 'assets/MainStreet/Boy/maincharacter_boy_lefttalking.png',
-                { frameWidth: 600, frameHeight: 700 });
+                { frameWidth: 300, frameHeight: 350 });
             this.load.spritesheet('boy_right_talk', 'assets/MainStreet/Boy/maincharacter_boy_righttalking.png',
-                { frameWidth: 600, frameHeight: 700 });
+                { frameWidth: 300, frameHeight: 350 });
             this.load.spritesheet('boy_left_walk', 'assets/MainStreet/Boy/maincharacter_boy_leftwalk.png',
-                { frameWidth: 600, frameHeight: 700 });
+                { frameWidth: 300, frameHeight: 350 });
             this.load.spritesheet('boy_right_walk', 'assets/MainStreet/Boy/maincharacter_boy_rightwalk.png',
-                { frameWidth: 600, frameHeight: 700 });
+                { frameWidth: 300, frameHeight: 350 });
         }
 
         if (gender === 'F') {
