@@ -224,6 +224,11 @@ export class GameScene_3 extends BaseGameScene {
             pos.occupiedBy = null;
         });
         this.isChecked = false;
+
+        // Reset the timer for the new round
+        if (this.gameTimer) {
+            this.gameTimer.reset(this.roundPerSeconds);
+        }
     }
 
 }
