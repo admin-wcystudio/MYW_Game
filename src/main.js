@@ -14,7 +14,7 @@ import { GameResultScene } from './scenes/GameResultScene.js';
 
 
 var config = {
-    type: Phaser.AUTO,
+    type: Phaser.CANVAS,
     title: 'Overlord Rising',
     description: '',
     parent: 'game-container',
