@@ -134,7 +134,7 @@ export class MainStreetScene extends Phaser.Scene {
         this.load.spritesheet('npc3', 'assets/MainStreet/NPCs/NPC_3/game3_npc.png',
             { frameWidth: 152, frameHeight: 231 }); // 760x693 / 5x3
         this.load.spritesheet('npc3_select', 'assets/MainStreet/NPCs/NPC_3/game3_npc_select.png',
-            { frameWidth: 125, frameHeight: 190 }); // 625x570 / 5x3
+            { frameWidth: 152, frameHeight: 231 }); // 625x570 / 5x3
         this.load.spritesheet('npc4', 'assets/MainStreet/NPCs/NPC_4/game4_npc.png',
             { frameWidth: 200, frameHeight: 250 }); // 1000x1000 / 5x4
         this.load.spritesheet('npc4_select', 'assets/MainStreet/NPCs/NPC_4/game4_npc_select.png',

@@ -148,6 +148,9 @@ export default class UIHelper {
                 openPanel(descriptionPanel, descBtn);
             }, () => {
                 descriptionPanel.setVisible(false);
+                if (typeof descriptionPanel.onClose === 'function') {
+                    descriptionPanel.onClose();
+                }
             }).setScrollFactor(0);
 
         descBtn.setDepth(999);
@@ -166,6 +169,8 @@ export default class UIHelper {
         descBtn.needClicked = true;
         itemBtn.needClicked = true;
 
+        descBtn.isClicked = true;
+        descBtn.setPressedState();
 
         descriptionPanel.toggleBtn = descBtn;
         itemBtn.toggleBtn = itemBtn;

@@ -30,6 +30,11 @@ export class GameScene_1 extends BaseGameScene {
         // NPC 泡泡
         VoiceOverHelper.preload(this);
         VoiceOverHelper.preloadImages(this, VoiceOverHelper.inGameImageKeys(1));
+        this.load.image('game1_npc_box4', `${path}game1_npc_box4.png`);
+        this.load.image('game1_npc_box5_boy', `${path}game1_npc_box5_boy.png`);
+        this.load.image('game1_npc_box5_girl', `${path}game1_npc_box5_girl.png`);
+        this.load.image('game1_npc_box6', `${path}game1_npc_box6.png`);
+        this.load.image('game1_npc_box7', `${path}game1_npc_box7.png`);
 
         // 拼圖物件
         for (let i = 1; i <= 6; i++) {
@@ -148,6 +153,7 @@ export class GameScene_1 extends BaseGameScene {
             }
         });
         this.guide.setVisible(enabled);
+        if (this.rotateButton) this.rotateButton.setActive(enabled);
     }
 
 
@@ -193,14 +199,13 @@ export class GameScene_1 extends BaseGameScene {
 
     playFeedback(isSuccess, onComplete) {
         this.puzzleGroup.setVisible(false);
-        if (this.successVideo) this.successVideo.destroy();
+        if (this.previewSprite) this.previewSprite.destroy();
 
-        this.previewSprite = this.add.sprite(960, 440,
-            'game1_success_preview').setDepth(1000).setScale(2);
+        this.previewSprite = this.add.sprite(960, 400,
+            'game1_success_preview').setDepth(80).setScale(1.4);
         this.previewSprite.play('success_preview_anim');
 
-
-        this.time.delayedCall(500, () => {
+        this.time.delayedCall(400, () => {
             if (onComplete) onComplete();
         });
     }
@@ -210,10 +215,14 @@ export class GameScene_1 extends BaseGameScene {
      */
     showWin() {
         this.puzzleGroup.setVisible(false);
+        if (this.previewSprite) {
+            this.previewSprite.destroy();
+            this.previewSprite = null;
+        }
 
         this.time.delayedCall(1000, () => {
             const objectPanel = new CustomSinglePanel(this, 960, 600, 'game1_object_description');
-            objectPanel.setDepth(1000).setVisible(true);
+            objectPanel.setDepth(1200).setVisible(true);
             objectPanel.setCloseCallBack(() => GameManager.backToMainStreet(this));
         });
     }

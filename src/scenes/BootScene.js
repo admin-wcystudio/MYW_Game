@@ -130,7 +130,7 @@ export class BootScene extends Phaser.Scene {
             this.registry.set('globalSettings', settings);
         }
 
-        this.scene.start('LoginScene');
+        this.scene.start('GameScene_1');
     }
 
 

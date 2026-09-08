@@ -15,7 +15,7 @@ export class CustomPanel extends Phaser.GameObjects.Container {
         this.prevBtn = new CustomButton(scene, -570, 260, 'prev_button', 'prev_button_click', () => this.changePage(-1)).setScrollFactor(0);
         this.nextBtn = new CustomButton(scene, 570, 260, 'next_button', 'next_button_click', () => this.changePage(1)).setScrollFactor(0);
 
-        this.closeBtn = new CustomButton(scene, 625, -295, null, null, () => {
+        this.closeBtn = new CustomButton(scene, 625, -295, 'close_button', 'close_button_click', () => {
             this.setVisible(false);
 
             if (this.toggleBtn) {

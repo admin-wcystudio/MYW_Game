@@ -19,6 +19,7 @@ export default class BaseGameScene extends Phaser.Scene {
         this.totalUsedSeconds = 0;
         this.isContinuousTimer = false;
         this.isAllowRoundFail = false; // If true, failing a round doesn't end the game immediately, but consumes a "chance"
+        this._introStarted = false;
     }
 
     /**
@@ -39,6 +40,7 @@ export default class BaseGameScene extends Phaser.Scene {
         this.roundIndex = 0;
         this.totalUsedSeconds = 0;
         this.isGameActive = false;
+        this._introStarted = false;
         this.events.once('shutdown', () => VoiceOverHelper.stop(this));
 
         const gender = localStorage.getItem('player') ? JSON.parse(localStorage.getItem('player')).gender : 'M';
@@ -80,27 +82,28 @@ export default class BaseGameScene extends Phaser.Scene {
         // 執行子類別的物件初始化
         this.setupGameObjects();
 
-        if (skipIntroBubble) {
-            // Setup close callback to start game if not auto-started
-            if (this.gameUI && this.gameUI.descriptionPanel) {
-                this.gameUI.descriptionPanel.setCloseCallBack(() => {
-                    if (!this.isGameActive && this.gameState === 'init') {
-                        this.startGame();
-                    }
-                });
-            }
-
-            if (autoStart)
+        const beginAfterDescription = () => {
+            if (this.isGameActive || this.gameState !== 'init' || this._introStarted) return;
+            this._introStarted = true;
+            if (skipIntroBubble) {
                 this.startGame();
-        } else {
-            if (this.gameUI && this.gameUI.descriptionPanel) {
-                this.gameUI.descriptionPanel.setCloseCallBack(() => {
-                    if (!this.isGameActive && this.gameState === 'init') {
-                        this.showBubble('intro', gender);
-                    }
-                });
+            } else {
+                this.showBubble('intro', gender);
             }
+        };
 
+        if (this.gameUI && this.gameUI.descriptionPanel) {
+            this.gameUI.descriptionPanel.setCloseCallBack(beginAfterDescription);
+            if (!this.gameUI.descriptionPanel.visible) {
+                beginAfterDescription();
+            }
+        } else if (!skipIntroBubble) {
+            beginAfterDescription();
+        }
+
+        if (skipIntroBubble && autoStart && !this.isGameActive) {
+            this._introStarted = true;
+            this.startGame();
         }
     }
 
@@ -184,15 +187,24 @@ export default class BaseGameScene extends Phaser.Scene {
             if (onComplete) onComplete();
         };
 
+        const nextAvailableKey = () => {
+            while (index < keys.length) {
+                const textureKey = VoiceOverHelper.resolveTexture(this, keys[index]);
+                if (textureKey) return textureKey;
+                index++;
+            }
+            return null;
+        };
+
         const showCurrent = () => {
-            const textureKey = VoiceOverHelper.resolveTexture(this, keys[index]);
-            if (!this.textures.exists(textureKey)) {
+            const textureKey = nextAvailableKey();
+            if (!textureKey) {
                 closeSequence();
                 return;
             }
             if (!this.currentBubbleImg) {
                 this.currentBubbleImg = this.add.image(centerX, centerY, textureKey)
-                    .setDepth(300)
+                    .setDepth(1100)
                     .setScrollFactor(0)
                     .setInteractive({ useHandCursor: true });
                 this.tweens.add({
@@ -213,7 +225,7 @@ export default class BaseGameScene extends Phaser.Scene {
             } else {
                 this.currentBubbleImg.setTexture(textureKey);
             }
-            VoiceOverHelper.playBubbleVo(this, keys[index]);
+            VoiceOverHelper.playBubbleVo(this, textureKey);
         };
 
         showCurrent();
@@ -394,7 +406,7 @@ export default class BaseGameScene extends Phaser.Scene {
         }, () => {
             GameManager.backToMainStreet(this);
         });
-        popupPanel.setDepth(1000);
+        popupPanel.setDepth(1200);
     }
 
     // 增加一個重置函數

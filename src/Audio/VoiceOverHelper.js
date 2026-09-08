@@ -202,10 +202,12 @@ export default class VoiceOverHelper {
     }
 
     static resolveTexture(scene, key) {
+        if (!key) return null;
         const genderTag = VoiceOverHelper.getGenderTag();
         const gendered = `${key}_${genderTag}`;
         if (scene.textures.exists(gendered)) return gendered;
-        return key;
+        if (scene.textures.exists(key)) return key;
+        return null;
     }
 
     static resolveKey(scene, boxBase, isPlayer) {
