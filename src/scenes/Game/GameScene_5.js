@@ -3,6 +3,7 @@ import { CustomPanel, SettingPanel, CustomDescriptionPanel } from '../../UI/Pane
 import UIHelper from '../../UI/UIHelper.js';
 import BaseGameScene from './BaseGameScene.js';
 import GameManager from '../GameManager.js';
+import VoiceOverHelper from '../../Audio/VoiceOverHelper.js';
 
 
 export class GameScene_5 extends BaseGameScene {
@@ -20,10 +21,8 @@ export class GameScene_5 extends BaseGameScene {
         this.load.image('game5_title', `${path}game5_title.png`);
         this.load.image('game5_description', `${path}game5_description.png`);
         this.load.image('game5_object_description', `${path}game5_object_description.png`);
-        // Load other necessary assets here
-        this.load.image('game5_npc_box_lock', `${path}game5_npc_box1.png`);
-        this.load.image('game5_npc_box_win', `${path}game5_npc_box2.png`);
-        this.load.image('game5_npc_box_tryagain', `${path}game5_npc_box3.png`);
+        VoiceOverHelper.preload(this);
+        VoiceOverHelper.preloadImages(this, VoiceOverHelper.inGameImageKeys(5));
         this.load.image('game5_target_arrow', `${path}game5_arrow.png`);
         this.load.image('game5_target_area', `${path}game5_clickarea.png`);
         this.load.image('game5_bar', `${path}game5_bar.png`);

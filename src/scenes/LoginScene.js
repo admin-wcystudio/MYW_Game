@@ -187,18 +187,14 @@ export class LoginScene extends Phaser.Scene {
             this.girlSprite.play('girl_galaxy_anim');
             this.boySprite.play('boy_transition_anim');
             this.boySprite.on('animationcomplete', () => {
-                this.time.delayedCall(1000, () => {
-                    this.boySprite.play('boy_chinese_anim');
-                });
+                this.boySprite.play('boy_chinese_anim');
             });
 
         } else {
             this.boySprite.play('boy_galaxy_anim');
             this.girlSprite.play('girl_transition_anim');
             this.girlSprite.on('animationcomplete', () => {
-                this.time.delayedCall(1000, () => {
-                    this.girlSprite.play('girl_chinese_anim');
-                });
+                this.girlSprite.play('girl_chinese_anim');
             });
         }
     }
@@ -213,41 +209,41 @@ export class LoginScene extends Phaser.Scene {
         this.anims.create({
             key: 'boy_galaxy_anim',  // Name you will use in other scenes
             frames: this.anims.generateFrameNumbers('boy_galaxy', { start: 0, end: 19 }),
-            frameRate: 30,
+            frameRate: 18,
             repeat: -1
         });
         this.anims.create({
             key: 'boy_chinese_anim',  // Name you will use in other scenes
             frames: this.anims.generateFrameNumbers('boy_chinese', { start: 0, end: 19 }),
-            frameRate: 30,
+            frameRate: 18,
             repeat: -1
         });
 
         this.anims.create({
             key: 'boy_transition_anim',  // Name you will use in other scenes
             frames: this.anims.generateFrameNumbers('boy_transition', { start: 0, end: 63 }),
-            frameRate: 30,
+            frameRate: 18,
             repeat: 0
         });
 
         this.anims.create({
             key: 'girl_galaxy_anim',
             frames: this.anims.generateFrameNumbers('girl_galaxy', { start: 0, end: 19 }),
-            frameRate: 30,
+            frameRate: 18,
             repeat: -1
         });
 
         this.anims.create({
             key: 'girl_chinese_anim',
             frames: this.anims.generateFrameNumbers('girl_chinese', { start: 0, end: 24 }),
-            frameRate: 30,
+            frameRate: 18,
             repeat: -1
         });
 
         this.anims.create({
             key: 'girl_transition_anim',  // Name you will use in other scenes
             frames: this.anims.generateFrameNumbers('girl_transition', { start: 0, end: 31 }),
-            frameRate: 30,
+            frameRate: 18,
             repeat: 0
         });
 

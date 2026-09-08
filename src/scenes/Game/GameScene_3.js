@@ -3,6 +3,7 @@ import { CustomPanel, SettingPanel, CustomSinglePanel } from '../../UI/Panel.js'
 import UIHelper from '../../UI/UIHelper.js';
 import BaseGameScene from './BaseGameScene.js';
 import GameManager from '../GameManager.js';
+import VoiceOverHelper from '../../Audio/VoiceOverHelper.js';
 
 export class GameScene_3 extends BaseGameScene {
     constructor() {
@@ -30,9 +31,8 @@ export class GameScene_3 extends BaseGameScene {
         this.load.image('game3_description', path + 'game3_description.png');
         this.load.image('game3_object_description', path + 'game3_object_description.png');
         this.load.image('game3_additions', path + 'game3_additions.png');
-        this.load.image('game3_npc_box_intro', path + 'game3_npc_box1.png');
-        this.load.image('game3_npc_box_tryagain', path + 'game3_npc_box2.png');
-        this.load.image('game3_npc_box_win', path + 'game3_npc_box3.png');
+        VoiceOverHelper.preload(this);
+        VoiceOverHelper.preloadImages(this, VoiceOverHelper.inGameImageKeys(3));
 
     }
 

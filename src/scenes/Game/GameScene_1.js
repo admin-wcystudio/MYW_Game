@@ -3,6 +3,7 @@ import { CustomPanel, CustomSinglePanel, CustomFailPanel } from '../../UI/Panel.
 import UIHelper from '../../UI/UIHelper.js';
 import GameManager from '../GameManager.js';
 import BaseGameScene from './BaseGameScene.js';
+import VoiceOverHelper from '../../Audio/VoiceOverHelper.js';
 
 export class GameScene_1 extends BaseGameScene {
     constructor() {
@@ -27,11 +28,8 @@ export class GameScene_1 extends BaseGameScene {
         this.load.image('game1_puzzle_guide', `${path}game1_puzzle_guide.png`);
 
         // NPC 泡泡
-        this.load.image('game1_npc_box_intro', `${path}game1_npc_box1.png`);
-        this.load.image('game1_npc_box_win', `${path}game1_npc_box2.png`);
-        this.load.image('game1_npc_box_tryagain', `${path}game1_npc_box3.png`);
-        this.load.image('game1_npc_box4', `${path}game1_npc_box4.png`);
-        this.load.image('game1_npc_box5', `${path}game1_npc_box5.png`);
+        VoiceOverHelper.preload(this);
+        VoiceOverHelper.preloadImages(this, VoiceOverHelper.inGameImageKeys(1));
 
         // 拼圖物件
         for (let i = 1; i <= 6; i++) {

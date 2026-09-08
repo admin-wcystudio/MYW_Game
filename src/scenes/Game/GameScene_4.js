@@ -3,6 +3,7 @@ import { CustomPanel, SettingPanel, CustomSinglePanel, CustomDescriptionPanel } 
 import UIHelper from '../../UI/UIHelper.js';
 import BaseGameScene from './BaseGameScene.js';
 import GameManager from '../GameManager.js';
+import VoiceOverHelper from '../../Audio/VoiceOverHelper.js';
 
 export class GameScene_4 extends BaseGameScene {
     constructor() {
@@ -20,9 +21,8 @@ export class GameScene_4 extends BaseGameScene {
         this.load.image('game4_object_description', `${path}game4_object_description.png`);
         this.load.image('game4_object_description2', `${path}game4_object_description2.png`);
         this.load.image('game4_input', `${path}game4_box.png`);
-        this.load.image('game4_npc_box_intro', `${path}game4_npc_box1.png`); // Corrected key for BaseGameScene
-        this.load.image('game4_npc_box_win', `${path}game4_npc_box1.png`);
-        this.load.image('game4_npc_box_tryagain', `${path}game4_npc_box2.png`);
+        VoiceOverHelper.preload(this);
+        VoiceOverHelper.preloadImages(this, VoiceOverHelper.inGameImageKeys(4));
 
         for (let i = 0; i <= 9; i++) {
             this.load.image(`game4_${i}_button`, `${path}game4_${i}_button.png`);

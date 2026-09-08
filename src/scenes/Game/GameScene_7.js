@@ -4,6 +4,7 @@ import { QuestionPanel_7 } from '../../UI/QuestionPanel.js';
 import UIHelper from '../../UI/UIHelper.js';
 import BaseGameScene from './BaseGameScene.js';
 import GameManager from '../GameManager.js';
+import VoiceOverHelper from '../../Audio/VoiceOverHelper.js';
 
 export class GameScene_7 extends BaseGameScene {
     constructor() {
@@ -27,6 +28,7 @@ export class GameScene_7 extends BaseGameScene {
         this.load.image('game7_closebutton_select', `${path}game7_closebutton_select.png`);
         this.load.image('game7_confirm_button', `${path}game7_confirm_button.png`);
         this.load.image('game7_confirm_button_select', `${path}game7_confirm_button_select.png`);
+        VoiceOverHelper.preload(this);
 
         // NPC Boxes
         for (let i = 1; i <= 4; i++) {
@@ -76,7 +78,8 @@ export class GameScene_7 extends BaseGameScene {
 
     setupGameObjects() {
 
-        this.introBubbles = ['game7_npc_box1', 'game7_npc_box2', 'game7_npc_box4'];
+        this.introBubbles = ['game7_npc_box1', 'game7_npc_box2', 'game7_npc_box3'];
+        this.bubbleMode = 'intro';
         const allQuestions = [
             {
                 content: 'game7_question1',
@@ -129,31 +132,48 @@ export class GameScene_7 extends BaseGameScene {
 
         this.currentVideo.setVisible(enabled);
         this.currentVideo.play(enabled);
+        if (enabled && this.bubbleMode === 'intro') {
+            VoiceOverHelper.playBubbleVo(this, this.introBubbles[this.roundIndex] || this.introBubbles[0]);
+        }
     }
 
     handleIntroBubbleClick() {
         if (!this.isGameActive) return;
 
-        console.log(`Intro Bubble Clicked: Round ${this.roundIndex}`);
-        if (this.introBubbles.length > 0 && this.roundIndex < 3) {
-            this.roundIndex++;
-            this.currentBubbleImg.setTexture(this.introBubbles[this.roundIndex]);
+        if (this.bubbleMode === 'middle') {
+            VoiceOverHelper.stop(this);
+            this.currentBubbleImg.setVisible(false);
+            this.currentVideo.setVisible(false);
+            this.questionPanel.setVisible(true);
+            this.bubbleMode = 'question';
+            return;
         }
-        if (this.roundIndex + 1 >= 3) {
+
+        if (this.bubbleMode !== 'intro') return;
+
+        this.roundIndex++;
+        if (this.roundIndex >= this.introBubbles.length) {
+            VoiceOverHelper.stop(this);
             this.startQuestion();
-            console.log('All intro bubbles done, starting questions');
+            return;
         }
+        this.currentBubbleImg.setTexture(this.introBubbles[this.roundIndex]);
+        VoiceOverHelper.playBubbleVo(this, this.introBubbles[this.roundIndex]);
     }
     handleMiddlePreview() {
+        this.bubbleMode = 'middle';
         this.questionPanel.setVisible(false);
-        this.currentBubbleImg.setTexture('game7_npc_box3').setVisible(true);
+        this.currentBubbleImg.setTexture('game7_npc_box4').setVisible(true);
+        VoiceOverHelper.playBubbleVo(this, 'game7_npc_box4');
         this.currentVideo = this.add.video(960, 540, 'game7_scene2').setDepth(19).setVisible(true);
         this.currentVideo.play(true);
     }
     startQuestion() {
+        VoiceOverHelper.stop(this);
         this.currentBubbleImg.setVisible(false);
         this.currentVideo.setVisible(false);
         this.questionPanel.setVisible(true);
+        this.bubbleMode = 'question';
     }
 
     handleWin() {

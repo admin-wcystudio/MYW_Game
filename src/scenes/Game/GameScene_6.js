@@ -3,6 +3,7 @@ import { CustomPanel, SettingPanel } from '../../UI/Panel.js';
 import UIHelper from '../../UI/UIHelper.js';
 import GameManager from '../GameManager.js';
 import BaseGameScene from './BaseGameScene.js';
+import VoiceOverHelper from '../../Audio/VoiceOverHelper.js';
 
 export class GameScene_6 extends BaseGameScene {
     constructor() {
@@ -16,12 +17,8 @@ export class GameScene_6 extends BaseGameScene {
         this.load.image('game6_bg', `${path}game6_bg.png`);
         this.load.image('game6_title', `${path}game6_title.png`);
         this.load.image('game6_description', `${path}game6_description.png`);
-
-        this.load.image('game6_npc_box_win_d1', `${path}game6_npc_box1.png`);
-        this.load.image('game6_npc_box_win', `${path}game6_npc_box2.png`);
-        this.load.image('game6_npc_box_tryagain', `${path}game6_npc_box3.png`);
-        this.load.image('game6_npc_box_tryagain2', `${path}game6_npc_box4.png`);
-        this.load.image('game6_npc_box_win_d2', `${path}game6_npc_box5.png`);
+        VoiceOverHelper.preload(this);
+        VoiceOverHelper.preloadImages(this, VoiceOverHelper.inGameImageKeys(6));
 
 
         // Arrows
@@ -332,52 +329,16 @@ export class GameScene_6 extends BaseGameScene {
 
     showWin() {
         const lastGameResult = GameManager.loadOneGameResult(7);
-        this.isLastGamePlayed = lastGameResult.isFinished ? true : false;
-        console.log("Is Last Game Played:", this.isLastGamePlayed);
-
-
-        this.time.delayedCall(500, () => {
-            this.addOnBubble = this.add.image(960, this.cameras.main.height * 0.8,
-                'game6_npc_box_win_d1').setDepth(1000); // Changed Y to 540 and removed interactive
-
-            this.tweens.add({
-                targets: this.addOnBubble,
-                scale: { from: 0.5, to: 1 },
-                duration: 200,
-                ease: 'Back.easeOut'
-            });
-        });
-
-        this.time.delayedCall(1200, () => { // Increased delay so they appear sequentially
-            this.addOnBubble2 = this.add.image(960, 540,
-                'game6_npc_box_win_d2').setDepth(1001)
-                .setInteractive({ useHandCursor: true });
-
-            this.tweens.add({
-                targets: this.addOnBubble2,
-                scale: { from: 0.5, to: 1 },
-                duration: 200,
-                ease: 'Back.easeOut'
-            });
-
-            this.addOnBubble2.on('pointerdown', () => {
-                this.addOnBubble2.destroy();
-                this.addOnBubble2 = null;
-
-                if (this.addOnBubble) {
-                    this.addOnBubble.destroy();
-                    this.addOnBubble = null;
-                }
-
-                if (this.isLastGamePlayed) {
-                    //item page
-                    console.log("Show item page");
-                } else {
-                    this.time.delayedCall(1000, () => {
-                        GameManager.switchToGameScene(this, 'GameScene_7');
-                    });
-                }
-            });
+        this.isLastGamePlayed = lastGameResult && lastGameResult.isFinished;
+        const finalKeys = VoiceOverHelper.GAME_DIALOGUE[6].winFinal || [];
+        this.showDialogueSequence(finalKeys, () => {
+            if (this.isLastGamePlayed) {
+                console.log("Show item page");
+            } else {
+                this.time.delayedCall(1000, () => {
+                    GameManager.switchToGameScene(this, 'GameScene_7');
+                });
+            }
         });
     }
 

@@ -148,33 +148,10 @@ export class MainStreetScene extends Phaser.Scene {
         this.load.spritesheet('npc6_select', 'assets/MainStreet/NPCs/NPC_6/game6_npc_select.png',
             { frameWidth: 250, frameHeight: 300 }); // 1750x600 / 7x2
 
-        // NPC bubbles
-        this.load.image('npc1_bubble_1', 'assets/MainStreet/NPCs/NPC_1/game1_npc1_bubble.png');
-        this.load.image('npc1_bubble_2', 'assets/MainStreet/NPCs/NPC_1/game1_npc2_bubble.png');
-        this.load.image('npc1_bubble_3', 'assets/MainStreet/NPCs/NPC_1/game1_npc3_bubble.png');
-
-        this.load.image('npc2_bubble_1', 'assets/MainStreet/NPCs/NPC_2/game2_npc1_bubble.png');
-        this.load.image('npc2_bubble_2', 'assets/MainStreet/NPCs/NPC_2/game2_npc2_bubble.png');
-
-        this.load.image('npc3_bubble_1', 'assets/MainStreet/NPCs/NPC_3/game3_npc1_bubble.png');
-        this.load.image('npc3_bubble_2', 'assets/MainStreet/NPCs/NPC_3/game3_npc2_bubble.png');
-        this.load.image('npc3_bubble_3', 'assets/MainStreet/NPCs/NPC_3/game3_npc3_bubble.png');
-        this.load.image('npc3_bubble_4', 'assets/MainStreet/NPCs/NPC_3/game3_npc4_bubble.png');
-
-        this.load.image('npc4_bubble_1', 'assets/MainStreet/NPCs/NPC_4/game4_npc1_bubble.png');
-        this.load.image('npc4_bubble_2', 'assets/MainStreet/NPCs/NPC_4/game4_npc2_bubble.png');
-        this.load.image('npc4_bubble_3', 'assets/MainStreet/NPCs/NPC_4/game4_npc3_bubble.png');
-        this.load.image('npc4_bubble_4', 'assets/MainStreet/NPCs/NPC_4/game4_npc4_bubble.png');
-
-        this.load.image('npc5_bubble_1', 'assets/MainStreet/NPCs/NPC_5/game5_npc1_bubble.png');
-        this.load.image('npc5_bubble_2', 'assets/MainStreet/NPCs/NPC_5/game5_npc2_bubble.png');
-        this.load.image('npc5_bubble_3', 'assets/MainStreet/NPCs/NPC_5/game5_npc3_bubble.png');
-        this.load.image('npc5_bubble_reject', 'assets/MainStreet/NPCs/NPC_5/game5_npc_reject_bubble.png');
-
-        this.load.image('npc6_bubble_1', 'assets/MainStreet/NPCs/NPC_6/game6_npc1_bubble.png');
-        this.load.image('npc6_bubble_2', 'assets/MainStreet/NPCs/NPC_6/game6_npc2_bubble.png');
-        this.load.image('npc6_bubble_3', 'assets/MainStreet/NPCs/NPC_6/game6_npc3_bubble.png');
-        this.load.image('npc6_bubble_reject', 'assets/MainStreet/NPCs/NPC_6/game6_npc1_bubble.png');
+        // Street npc_box dialogue (games 1-6)
+        [1, 2, 3, 4, 5, 6].forEach((gameId) => {
+            VoiceOverHelper.preloadImages(this, VoiceOverHelper.streetImageKeys(gameId));
+        });
 
         // Fake NPCs
         this.load.spritesheet('fake_npc_1', 'assets/MainStreet/NPCs/NPC_only/fakenpc1.png',
@@ -289,14 +266,12 @@ export class MainStreetScene extends Phaser.Scene {
 
 
 
-        const npc1_bubbles = ['npc1_bubble_1', 'npc1_bubble_2', 'npc1_bubble_3'];
-        const npc2_bubbles = ['npc2_bubble_1', 'npc2_bubble_2'];
-        const npc3_bubbles = ['npc3_bubble_1', 'npc3_bubble_2', 'npc3_bubble_3', 'npc3_bubble_4'];
-        const npc4_bubbles = ['npc4_bubble_1', 'npc4_bubble_2', 'npc4_bubble_3', 'npc4_bubble_4'];
-        const npc5_bubbles = ['npc5_bubble_1', 'npc5_bubble_2', 'npc5_bubble_3'];
-        const npc5_reject_bubbles = ['npc5_bubble_reject'];
-        const npc6_bubbles = ['npc6_bubble_1', 'npc6_bubble_2', 'npc6_bubble_3'];
-        const npc6_reject_bubbles = ['npc6_bubble_reject'];
+        const npc1_bubbles = VoiceOverHelper.getStreetLines(1);
+        const npc2_bubbles = VoiceOverHelper.getStreetLines(2);
+        const npc3_bubbles = VoiceOverHelper.getStreetLines(3);
+        const npc4_bubbles = VoiceOverHelper.getStreetLines(4);
+        const npc5_bubbles = VoiceOverHelper.getStreetLines(5);
+        const npc6_bubbles = VoiceOverHelper.getStreetLines(6);
 
         const fake_npc1_bubbles = ['fake_npc_1_bubble1', 'fake_npc_1_bubble2'];
         const fake_npc3_bubbles = ['fake_npc_3_bubble'];
@@ -347,8 +322,11 @@ export class MainStreetScene extends Phaser.Scene {
             npc.on('pointerdown', () => {
                 if (npc.canInteract) {
                     const gameNumber = index + 1;
-                    const sceneKey = `GameScene_${gameNumber}`;
-                    this.loadBubble(0, npc.bubbles, sceneKey, npc);
+                    const locked = (gameNumber === 5 || gameNumber === 6)
+                        && !VoiceOverHelper.arePrereqsMet(gameNumber);
+                    const lines = VoiceOverHelper.getStreetLines(gameNumber, locked);
+                    const sceneKey = locked ? null : `GameScene_${gameNumber}`;
+                    this.loadBubble(0, lines, sceneKey, npc);
                 }
             });
         });
@@ -458,6 +436,16 @@ export class MainStreetScene extends Phaser.Scene {
         this.bubbleImg = null;
     }
 
+    resolveDialogueTexture(key) {
+        const gendered = `${key}_${this.genderKey}`;
+        if (this.textures.exists(gendered)) return gendered;
+        return key;
+    }
+
+    isNpcBoxKey(key) {
+        return /^game\d+_npc_box/.test(key);
+    }
+
     loadBubble(index = 0, bubbles, sceneKey, targetNpc) {
 
         this.closeActiveBubble();
@@ -502,11 +490,19 @@ export class MainStreetScene extends Phaser.Scene {
         const startX = index % 2 === 1 ? playerX : npcX;
         const startY = index % 2 === 1 ? playerY : npcY;
 
-        console.log("Loading bubble at:", startX, startY, "for NPC:", targetNpc.id);
+        const textureKey = this.resolveDialogueTexture(bubbles[index]);
+        const useNpcBox = this.isNpcBoxKey(bubbles[index]);
+        const boxX = useNpcBox ? this.cameras.main.width / 2 : startX;
+        const boxY = useNpcBox ? this.cameras.main.height * 0.8 : startY;
 
-        this.bubbleImg = this.add.image(startX, startY, bubbles[index])
+        console.log("Loading bubble at:", boxX, boxY, "for NPC:", targetNpc.id, textureKey);
+
+        this.bubbleImg = this.add.image(boxX, boxY, textureKey)
             .setDepth(200)
             .setInteractive({ useHandCursor: true });
+        if (useNpcBox) {
+            this.bubbleImg.setScrollFactor(0).setAlpha(0);
+        }
 
         // 綁定當前 NPC 到對話框，方便 update 檢查距離
         this.bubbleImg.ownerNpc = targetNpc;
@@ -517,10 +513,18 @@ export class MainStreetScene extends Phaser.Scene {
         this.bubbleImg.on('pointerdown', () => {
             index++;
             if (index < bubbles.length) {
-                this.bubbleImg.setTexture(bubbles[index]);
-                const nextX = index % 2 === 1 ? playerX : npcX;
-                const nextY = index % 2 === 1 ? playerY : npcY;
-                this.bubbleImg.setPosition(nextX, nextY);
+                const nextTexture = this.resolveDialogueTexture(bubbles[index]);
+                const nextIsBox = this.isNpcBoxKey(bubbles[index]);
+                this.bubbleImg.setTexture(nextTexture);
+                if (nextIsBox) {
+                    this.bubbleImg.setScrollFactor(0);
+                    this.bubbleImg.setPosition(this.cameras.main.width / 2, this.cameras.main.height * 0.8);
+                } else {
+                    this.bubbleImg.setScrollFactor(1);
+                    const nextX = index % 2 === 1 ? playerX : npcX;
+                    const nextY = index % 2 === 1 ? playerY : npcY;
+                    this.bubbleImg.setPosition(nextX, nextY);
+                }
                 this.currentActiveBubble = this.bubbleImg;
                 VoiceOverHelper.playBubbleVo(this, bubbles[index], index % 2 === 1);
             } else {
@@ -537,6 +541,7 @@ export class MainStreetScene extends Phaser.Scene {
         this.tweens.add({
             targets: this.bubbleImg,
             scale: { from: 0.5, to: 1 },
+            alpha: { from: useNpcBox ? 0 : 1, to: 1 },
             duration: 200,
             ease: 'Back.easeOut'
         });
@@ -584,78 +589,78 @@ export class MainStreetScene extends Phaser.Scene {
         this.anims.create({
             key: 'npc1_anim',
             frames: this.anims.generateFrameNumbers('npc1', { start: 0, end: 19 }),
-            frameRate: 30,
+            frameRate: 18,
             repeat: -1
         });
         this.anims.create({
             key: 'npc1_select_anim',
             frames: this.anims.generateFrameNumbers('npc1_select', { start: 0, end: 19 }),
-            frameRate: 30,
+            frameRate: 18,
             repeat: -1
         });
 
         this.anims.create({
             key: 'npc2_anim',
             frames: this.anims.generateFrameNumbers('npc2', { start: 0, end: 9 }),
-            frameRate: 30,
+            frameRate: 18,
             repeat: -1
         });
         this.anims.create({
             key: 'npc2_select_anim',
             frames: this.anims.generateFrameNumbers('npc2_select', { start: 0, end: 9 }),
-            frameRate: 30,
+            frameRate: 18,
             repeat: -1
         });
 
         this.anims.create({
             key: 'npc3_anim',
             frames: this.anims.generateFrameNumbers('npc3', { start: 0, end: 14 }),
-            frameRate: 30,
+            frameRate: 18,
             repeat: -1
         });
         this.anims.create({
             key: 'npc3_select_anim',
             frames: this.anims.generateFrameNumbers('npc3_select', { start: 0, end: 14 }),
-            frameRate: 30,
+            frameRate: 18,
             repeat: -1
         });
 
         this.anims.create({
             key: 'npc4_anim',
             frames: this.anims.generateFrameNumbers('npc4', { start: 0, end: 19 }),
-            frameRate: 30,
+            frameRate: 18,
             repeat: -1
         });
         this.anims.create({
             key: 'npc4_select_anim',
             frames: this.anims.generateFrameNumbers('npc4_select', { start: 0, end: 19 }),
-            frameRate: 30,
+            frameRate: 18,
             repeat: -1
         });
 
         this.anims.create({
             key: 'npc5_anim',
             frames: this.anims.generateFrameNumbers('npc5', { start: 0, end: 17 }),
-            frameRate: 30,
+            frameRate: 18,
             repeat: -1
         });
         this.anims.create({
             key: 'npc5_select_anim',
             frames: this.anims.generateFrameNumbers('npc5_select', { start: 0, end: 17 }),
-            frameRate: 30,
+            frameRate: 18,
             repeat: -1
         });
 
         this.anims.create({
             key: 'npc6_anim',
             frames: this.anims.generateFrameNumbers('npc6', { start: 0, end: 13 }),
-            frameRate: 30,
+            frameRate: 18,
             repeat: -1
         });
         this.anims.create({
             key: 'npc6_select_anim',
             frames: this.anims.generateFrameNumbers('npc6_select', { start: 0, end: 13 }),
-            frameRate: 30,
+            frameRate: 18,
             repeat: -1
         });
 
@@ -663,65 +668,65 @@ export class MainStreetScene extends Phaser.Scene {
         this.anims.create({
             key: 'fake_npc_1_anim',
             frames: this.anims.generateFrameNumbers('fake_npc_1', { start: 0, end: 19 }),
-            frameRate: 30,
+            frameRate: 18,
             repeat: -1
         });
         this.anims.create({
             key: 'fake_npc_1_select_anim',
             frames: this.anims.generateFrameNumbers('fake_npc_1_select', { start: 0, end: 19 }),
-            frameRate: 30,
+            frameRate: 18,
             repeat: -1
         });
 
         this.anims.create({
             key: 'fake_npc_2_anim',
             frames: this.anims.generateFrameNumbers('fake_npc_2', { start: 0, end: 26 }),
-            frameRate: 30,
+            frameRate: 18,
             repeat: -1
         });
         this.anims.create({
             key: 'fake_npc_2_select_anim',
             frames: this.anims.generateFrameNumbers('fake_npc_2_select', { start: 0, end: 26 }),
-            frameRate: 30,
+            frameRate: 18,
             repeat: -1
         });
 
         this.anims.create({
             key: 'fake_npc_3_anim',
             frames: this.anims.generateFrameNumbers('fake_npc_3', { start: 0, end: 24 }),
-            frameRate: 30,
+            frameRate: 18,
             repeat: -1
         });
         this.anims.create({
             key: 'fake_npc_3_select_anim',
             frames: this.anims.generateFrameNumbers('fake_npc_3_select', { start: 0, end: 24 }),
-            frameRate: 30,
+            frameRate: 18,
             repeat: -1
         });
 
         this.anims.create({
             key: 'fake_npc_4_anim',
             frames: this.anims.generateFrameNumbers('fake_npc_4', { start: 0, end: 15 }),
-            frameRate: 30,
+            frameRate: 18,
             repeat: -1
         });
         this.anims.create({
             key: 'fake_npc_4_select_anim',
             frames: this.anims.generateFrameNumbers('fake_npc_4_select', { start: 0, end: 15 }),
-            frameRate: 30,
+            frameRate: 18,
             repeat: -1
         });
 
         this.anims.create({
             key: 'fake_npc_5_anim',
             frames: this.anims.generateFrameNumbers('fake_npc_5', { start: 0, end: 39 }),
-            frameRate: 30,
+            frameRate: 18,
             repeat: -1
         });
         this.anims.create({
             key: 'fake_npc_5_select_anim',
             frames: this.anims.generateFrameNumbers('fake_npc_5_select', { start: 0, end: 39 }),
-            frameRate: 30,
+            frameRate: 18,
             repeat: -1
         });
 
@@ -739,35 +744,35 @@ export class MainStreetScene extends Phaser.Scene {
             this.anims.create({
                 key: 'boy_idle_anim',
                 frames: this.anims.generateFrameNumbers('boy_idle', { start: 0, end: 151 }),
-                frameRate: 24,
+                frameRate: 18,
                 repeat: -1
             });
 
             this.anims.create({
                 key: 'boy_left_talk_anim',
                 frames: this.anims.generateFrameNumbers('boy_left_talk', { start: 0, end: 94 }),
-                frameRate: 24,
+                frameRate: 18,
                 repeat: -1
             });
 
             this.anims.create({
                 key: 'boy_right_talk_anim',
                 frames: this.anims.generateFrameNumbers('boy_right_talk', { start: 0, end: 168 }),
-                frameRate: 24,
+                frameRate: 18,
                 repeat: -1
             });
 
             this.anims.create({
                 key: 'boy_left_walk_anim',
                 frames: this.anims.generateFrameNumbers('boy_left_walk', { start: 0, end: 48 }),
-                frameRate: 24,
+                frameRate: 18,
                 repeat: -1
             });
 
             this.anims.create({
                 key: 'boy_right_walk_anim',
                 frames: this.anims.generateFrameNumbers('boy_right_walk', { start: 0, end: 48 }),
-                frameRate: 24,
+                frameRate: 18,
                 repeat: -1
             });
         }
@@ -776,28 +781,28 @@ export class MainStreetScene extends Phaser.Scene {
             this.anims.create({
                 key: 'girl_idle_anim',
                 frames: this.anims.generateFrameNumbers('girl_idle', { start: 0, end: 152 }),
-                frameRate: 24,
+                frameRate: 18,
                 repeat: -1
             });
 
             this.anims.create({
                 key: 'girl_left_talk_anim',
                 frames: this.anims.generateFrameNumbers('girl_left_talk', { start: 0, end: 23 }),
-                frameRate: 24,
+                frameRate: 18,
                 repeat: -1
             });
 
             this.anims.create({
                 key: 'girl_right_talk_anim',
                 frames: this.anims.generateFrameNumbers('girl_right_talk', { start: 0, end: 49 }),
-                frameRate: 24,
+                frameRate: 18,
                 repeat: -1
             });
 
             this.anims.create({
                 key: 'girl_left_walk_anim',
                 frames: this.anims.generateFrameNumbers('girl_left_walk', { start: 0, end: 24 }),
-                frameRate: 24,
+                frameRate: 18,
                 repeat: -1
             });
 

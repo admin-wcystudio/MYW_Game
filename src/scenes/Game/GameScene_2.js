@@ -4,6 +4,7 @@ import { QuestionPanel } from '../../UI/QuestionPanel.js';
 import UIHelper from '../../UI/UIHelper.js';
 import GameManager from '../GameManager.js';
 import BaseGameScene from './BaseGameScene.js';
+import VoiceOverHelper from '../../Audio/VoiceOverHelper.js';
 
 export class GameScene_2 extends BaseGameScene {
     constructor() {
@@ -28,9 +29,8 @@ export class GameScene_2 extends BaseGameScene {
         this.load.image('game2_confirm_button_select', `${path}game2_confirm_button_select.png`);
 
         // --- NPC 對話框 ---
-        this.load.image('game2_npc_box_intro', `${path}game2_npc_box1.png`);
-        this.load.image('game2_npc_box_tryagain', `${path}game2_npc_box2.png`);
-        this.load.image('game2_npc_box_win', `${path}game2_npc_box3.png`);
+        VoiceOverHelper.preload(this);
+        VoiceOverHelper.preloadImages(this, VoiceOverHelper.inGameImageKeys(2));
 
         // --- 第一題 (Q1) ---
         this.load.image('game2_q1_question', `${path}game2_q1_question.png`);
