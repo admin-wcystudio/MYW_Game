@@ -3,6 +3,7 @@ import UIHelper from '../UI/UIHelper.js';
 import { CustomPanel, SettingPanel } from '../UI/Panel.js';
 import NpcHelper from '../Character/NpcHelper.js';
 import GameManager from './GameManager.js';
+import VoiceOverHelper from '../Audio/VoiceOverHelper.js';
 
 export class MainStreetScene extends Phaser.Scene {
     constructor() {
@@ -82,6 +83,8 @@ export class MainStreetScene extends Phaser.Scene {
         this.load.image('gameintro_closebutton_click', 'assets/MainStreet/gameintro_closebutton_click.png');
         this.load.image('stage_building', 'assets/MainStreet/stage_building.png');
 
+        VoiceOverHelper.preload(this);
+
 
         // Only load spritesheets for the selected gender
         let gender = 'F';
@@ -119,19 +122,31 @@ export class MainStreetScene extends Phaser.Scene {
                 { frameWidth: 300, frameHeight: 350 });
         }
 
-        // NPC spritesheets
+        // NPC spritesheets (frame = png size / cols x rows)
         this.load.spritesheet('npc1', 'assets/MainStreet/NPCs/NPC_1/game1_npc.png',
-            { frameWidth: 225, frameHeight: 290 });
+            { frameWidth: 225, frameHeight: 290 }); // 1125x1160 / 5x4
+        this.load.spritesheet('npc1_select', 'assets/MainStreet/NPCs/NPC_1/game1_npc_select.png',
+            { frameWidth: 225, frameHeight: 290 }); // 1125x1160 / 5x4
         this.load.spritesheet('npc2', 'assets/MainStreet/NPCs/NPC_2/game2_npc.png',
-            { frameWidth: 250, frameHeight: 250 });
+            { frameWidth: 250, frameHeight: 250 }); // 1250x500 / 5x2
+        this.load.spritesheet('npc2_select', 'assets/MainStreet/NPCs/NPC_2/game2_npc_select.png',
+            { frameWidth: 250, frameHeight: 250 }); // 1250x500 / 5x2
         this.load.spritesheet('npc3', 'assets/MainStreet/NPCs/NPC_3/game3_npc.png',
-            { frameWidth: 152, frameHeight: 231 });
+            { frameWidth: 152, frameHeight: 231 }); // 760x693 / 5x3
+        this.load.spritesheet('npc3_select', 'assets/MainStreet/NPCs/NPC_3/game3_npc_select.png',
+            { frameWidth: 125, frameHeight: 190 }); // 625x570 / 5x3
         this.load.spritesheet('npc4', 'assets/MainStreet/NPCs/NPC_4/game4_npc.png',
-            { frameWidth: 200, frameHeight: 250 });
+            { frameWidth: 200, frameHeight: 250 }); // 1000x1000 / 5x4
+        this.load.spritesheet('npc4_select', 'assets/MainStreet/NPCs/NPC_4/game4_npc_select.png',
+            { frameWidth: 200, frameHeight: 250 }); // 1000x1000 / 5x4
         this.load.spritesheet('npc5', 'assets/MainStreet/NPCs/NPC_5/game5_npc.png',
-            { frameWidth: 250, frameHeight: 250 });
+            { frameWidth: 250, frameHeight: 250 }); // 1500x750 / 6x3
+        this.load.spritesheet('npc5_select', 'assets/MainStreet/NPCs/NPC_5/game5_npc_select.png',
+            { frameWidth: 250, frameHeight: 250 }); // 1500x750 / 6x3
         this.load.spritesheet('npc6', 'assets/MainStreet/NPCs/NPC_6/game6_npc.png',
-            { frameWidth: 250, frameHeight: 300 });
+            { frameWidth: 250, frameHeight: 300 }); // 1750x600 / 7x2
+        this.load.spritesheet('npc6_select', 'assets/MainStreet/NPCs/NPC_6/game6_npc_select.png',
+            { frameWidth: 250, frameHeight: 300 }); // 1750x600 / 7x2
 
         // NPC bubbles
         this.load.image('npc1_bubble_1', 'assets/MainStreet/NPCs/NPC_1/game1_npc1_bubble.png');
@@ -163,15 +178,25 @@ export class MainStreetScene extends Phaser.Scene {
 
         // Fake NPCs
         this.load.spritesheet('fake_npc_1', 'assets/MainStreet/NPCs/NPC_only/fakenpc1.png',
-            { frameWidth: 250, frameHeight: 250 });
+            { frameWidth: 250, frameHeight: 250 }); // 1250x1000 / 5x4
+        this.load.spritesheet('fake_npc_1_select', 'assets/MainStreet/NPCs/NPC_only/fakenpc1_select.png',
+            { frameWidth: 250, frameHeight: 250 }); // 1250x1000 / 5x4
         this.load.spritesheet('fake_npc_2', 'assets/MainStreet/NPCs/NPC_only/fakenpc2.png',
-            { frameWidth: 250, frameHeight: 250 });
+            { frameWidth: 250, frameHeight: 250 }); // 2250x750 / 9x3
+        this.load.spritesheet('fake_npc_2_select', 'assets/MainStreet/NPCs/NPC_only/fakenpc2_select.png',
+            { frameWidth: 250, frameHeight: 250 }); // 2250x750 / 9x3
         this.load.spritesheet('fake_npc_3', 'assets/MainStreet/NPCs/NPC_only/fakenpc3.png',
-            { frameWidth: 150, frameHeight: 150 });
+            { frameWidth: 150, frameHeight: 150 }); // 750x750 / 5x5
+        this.load.spritesheet('fake_npc_3_select', 'assets/MainStreet/NPCs/NPC_only/fakenpc3_select.png',
+            { frameWidth: 150, frameHeight: 150 }); // 750x750 / 5x5
         this.load.spritesheet('fake_npc_4', 'assets/MainStreet/NPCs/NPC_only/fakenpc4.png',
-            { frameWidth: 378, frameHeight: 213 });
+            { frameWidth: 378, frameHeight: 213 }); // 1512x852 / 4x4
+        this.load.spritesheet('fake_npc_4_select', 'assets/MainStreet/NPCs/NPC_only/fakenpc4_select.png',
+            { frameWidth: 378, frameHeight: 213 }); // 1512x852 / 4x4
         this.load.spritesheet('fake_npc_5', 'assets/MainStreet/NPCs/NPC_only/fakenpc5.png',
-            { frameWidth: 250, frameHeight: 250 });
+            { frameWidth: 250, frameHeight: 250 }); // 2000x1250 / 8x5
+        this.load.spritesheet('fake_npc_5_select', 'assets/MainStreet/NPCs/NPC_only/fakenpc5_select.png',
+            { frameWidth: 250, frameHeight: 250 }); // 2000x1250 / 8x5
 
         this.load.image('fake_npc_1_bubble', 'assets/MainStreet/NPCs/NPC_only/fakenpc1_bubble.png');
         this.load.image('fake_npc_1_bubble1', 'assets/MainStreet/NPCs/NPC_only/fakenpc1_bubble1.png');
@@ -185,6 +210,7 @@ export class MainStreetScene extends Phaser.Scene {
     create() {
         // Create NPC animations
         this.createAnimations();
+        this.events.once('shutdown', () => VoiceOverHelper.stop(this));
 
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
@@ -282,12 +308,12 @@ export class MainStreetScene extends Phaser.Scene {
         this.fakeNpcs = [];
 
 
-        const n1 = NpcHelper.createNpc(this, 1, 1000, 450, 1, 'npc1', npc1_bubbles, 6, 'npc1_anim');
-        const n2 = NpcHelper.createNpc(this, 2, 4000, 480, 1, 'npc2', npc2_bubbles, 6, 'npc2_anim');
-        const n3 = NpcHelper.createNpc(this, 3, 2000, 550, 1, 'npc3', npc3_bubbles, 6, 'npc3_anim');
-        const n4 = NpcHelper.createNpc(this, 4, 330, 750, 1, 'npc4', npc4_bubbles, 15, 'npc4_anim');
-        const n5 = NpcHelper.createNpc(this, 5, 5100, 750, 1, 'npc5', npc5_bubbles, 15, 'npc5_anim');
-        const n6 = NpcHelper.createNpc(this, 6, 7900, 420, 1, 'npc6', npc6_bubbles, 6, 'npc6_anim');
+        const n1 = NpcHelper.createNpc(this, 1, 1000, 450, 1, 'npc1', npc1_bubbles, 6, 'npc1_anim', 'npc1_select_anim');
+        const n2 = NpcHelper.createNpc(this, 2, 4000, 480, 1, 'npc2', npc2_bubbles, 6, 'npc2_anim', 'npc2_select_anim');
+        const n3 = NpcHelper.createNpc(this, 3, 2000, 550, 1, 'npc3', npc3_bubbles, 6, 'npc3_anim', 'npc3_select_anim');
+        const n4 = NpcHelper.createNpc(this, 4, 330, 750, 1, 'npc4', npc4_bubbles, 15, 'npc4_anim', 'npc4_select_anim');
+        const n5 = NpcHelper.createNpc(this, 5, 5100, 750, 1, 'npc5', npc5_bubbles, 15, 'npc5_anim', 'npc5_select_anim');
+        const n6 = NpcHelper.createNpc(this, 6, 7900, 420, 1, 'npc6', npc6_bubbles, 6, 'npc6_anim', 'npc6_select_anim');
 
         this.interactiveNpcs.push(n1);
         this.interactiveNpcs.push(n2);
@@ -297,11 +323,11 @@ export class MainStreetScene extends Phaser.Scene {
         this.interactiveNpcs.push(n6);
 
         // Fake NPCs (random talk)
-        const f1 = NpcHelper.createNpc(this, 7, 2800, 500, 1, 'fake_npc_1', fake_npc1_bubbles, 6, 'fake_npc_1_anim');
-        const f2 = NpcHelper.createNpc(this, 8, 3400, 440, 1, 'fake_npc_2', null, 6, 'fake_npc_2_anim');
-        const f3 = NpcHelper.createNpc(this, 9, 3250, 300, 1, 'fake_npc_3', fake_npc3_bubbles, 6, 'fake_npc_3_anim');
-        const f4 = NpcHelper.createNpc(this, 10, 4000, 850, 1, 'fake_npc_4', fake_npc4_bubbles, 15, 'fake_npc_4_anim');
-        const f5 = NpcHelper.createNpc(this, 11, 4450, 350, 1, 'fake_npc_5', fake_npc5_bubbles, 6, 'fake_npc_5_anim');
+        const f1 = NpcHelper.createNpc(this, 7, 2800, 500, 1, 'fake_npc_1', fake_npc1_bubbles, 6, 'fake_npc_1_anim', 'fake_npc_1_select_anim');
+        const f2 = NpcHelper.createNpc(this, 8, 3400, 440, 1, 'fake_npc_2', null, 6, 'fake_npc_2_anim', 'fake_npc_2_select_anim');
+        const f3 = NpcHelper.createNpc(this, 9, 3250, 300, 1, 'fake_npc_3', fake_npc3_bubbles, 6, 'fake_npc_3_anim', 'fake_npc_3_select_anim');
+        const f4 = NpcHelper.createNpc(this, 10, 4000, 850, 1, 'fake_npc_4', fake_npc4_bubbles, 15, 'fake_npc_4_anim', 'fake_npc_4_select_anim');
+        const f5 = NpcHelper.createNpc(this, 11, 4450, 350, 1, 'fake_npc_5', fake_npc5_bubbles, 6, 'fake_npc_5_anim', 'fake_npc_5_select_anim');
 
         this.fakeNpcs.push(f1);
         this.fakeNpcs.push(f2);
@@ -389,16 +415,15 @@ export class MainStreetScene extends Phaser.Scene {
 
             if (dist < npc.proximityDistance) {
                 npc.canInteract = true;
-                npc.setTint(0x888888); // 遠離變暗
-
+                if (npc.selectAnimKey) {
+                    npc.play(npc.selectAnimKey, true);
+                }
             } else {
                 npc.canInteract = false;
-                npc.setTint(0xffffff); // 靠近變亮
+                npc.play(npc.animKey, true);
 
                 if (this.currentActiveBubble && this.currentActiveBubble.ownerNpc === npc) {
-                    this.currentActiveBubble.destroy();
-                    this.currentActiveBubble = null;
-                    // if (Math.random() < 0.01) console.log("玩家遠離，自動關閉對話框");
+                    this.closeActiveBubble();
                 }
             }
         });
@@ -424,11 +449,18 @@ export class MainStreetScene extends Phaser.Scene {
     }
 
 
-    loadBubble(index = 0, bubbles, sceneKey, targetNpc) {
-
+    closeActiveBubble() {
+        VoiceOverHelper.stop(this);
         if (this.currentActiveBubble) {
             this.currentActiveBubble.destroy();
+            this.currentActiveBubble = null;
         }
+        this.bubbleImg = null;
+    }
+
+    loadBubble(index = 0, bubbles, sceneKey, targetNpc) {
+
+        this.closeActiveBubble();
 
         // Special handling for NPC 5 and 6: Check if Games 1-4 are completed
         // if (targetNpc.id === 5 || targetNpc.id === 6) {
@@ -479,6 +511,7 @@ export class MainStreetScene extends Phaser.Scene {
         // 綁定當前 NPC 到對話框，方便 update 檢查距離
         this.bubbleImg.ownerNpc = targetNpc;
         this.currentActiveBubble = this.bubbleImg;
+        VoiceOverHelper.playBubbleVo(this, bubbles[index], index % 2 === 1);
 
         // 處理點擊邏輯
         this.bubbleImg.on('pointerdown', () => {
@@ -489,13 +522,12 @@ export class MainStreetScene extends Phaser.Scene {
                 const nextY = index % 2 === 1 ? playerY : npcY;
                 this.bubbleImg.setPosition(nextX, nextY);
                 this.currentActiveBubble = this.bubbleImg;
+                VoiceOverHelper.playBubbleVo(this, bubbles[index], index % 2 === 1);
             } else {
-                // 對話結束
-                this.bubbleImg.destroy();
-                this.currentActiveBubble = null;
+                this.closeActiveBubble();
                 if (sceneKey) {
                     console.log("Starting game scene:", sceneKey);
-                    const playerPos = localStorage.setItem('playerPosition', JSON.stringify({ x: this.playerSprite.x, y: this.playerSprite.y }));
+                    localStorage.setItem('playerPosition', JSON.stringify({ x: this.playerSprite.x, y: this.playerSprite.y }));
                     GameManager.switchToGameScene(this, sceneKey);
                 }
             }
@@ -513,9 +545,7 @@ export class MainStreetScene extends Phaser.Scene {
     popRandomBubble(bubbles, targetNpc) {
         if (bubbles === null) return;
 
-        if (this.currentActiveBubble) {
-            this.currentActiveBubble.destroy();
-        }
+        this.closeActiveBubble();
 
         let randomKey = Phaser.Utils.Array.GetRandom(bubbles);
 
@@ -541,9 +571,8 @@ export class MainStreetScene extends Phaser.Scene {
         });
 
         this.time.delayedCall(3000, () => {
-            if (this.bubbleImg) {
-                this.bubbleImg.destroy();
-                this.currentActiveBubble = null;
+            if (this.currentActiveBubble && this.currentActiveBubble.ownerNpc === targetNpc) {
+                this.closeActiveBubble();
             }
         });
     }
@@ -554,42 +583,78 @@ export class MainStreetScene extends Phaser.Scene {
         // NPC Animations
         this.anims.create({
             key: 'npc1_anim',
-            frames: this.anims.generateFrameNumbers('npc1', { start: 0, end: 70 }),
+            frames: this.anims.generateFrameNumbers('npc1', { start: 0, end: 19 }),
+            frameRate: 30,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'npc1_select_anim',
+            frames: this.anims.generateFrameNumbers('npc1_select', { start: 0, end: 19 }),
             frameRate: 30,
             repeat: -1
         });
 
         this.anims.create({
             key: 'npc2_anim',
-            frames: this.anims.generateFrameNumbers('npc2', { start: 0, end: 68 }),
+            frames: this.anims.generateFrameNumbers('npc2', { start: 0, end: 9 }),
+            frameRate: 30,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'npc2_select_anim',
+            frames: this.anims.generateFrameNumbers('npc2_select', { start: 0, end: 9 }),
             frameRate: 30,
             repeat: -1
         });
 
         this.anims.create({
             key: 'npc3_anim',
-            frames: this.anims.generateFrameNumbers('npc3', { start: 0, end: 75 }),
+            frames: this.anims.generateFrameNumbers('npc3', { start: 0, end: 14 }),
+            frameRate: 30,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'npc3_select_anim',
+            frames: this.anims.generateFrameNumbers('npc3_select', { start: 0, end: 14 }),
             frameRate: 30,
             repeat: -1
         });
 
         this.anims.create({
             key: 'npc4_anim',
-            frames: this.anims.generateFrameNumbers('npc4', { start: 0, end: 94 }),
+            frames: this.anims.generateFrameNumbers('npc4', { start: 0, end: 19 }),
+            frameRate: 30,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'npc4_select_anim',
+            frames: this.anims.generateFrameNumbers('npc4_select', { start: 0, end: 19 }),
             frameRate: 30,
             repeat: -1
         });
 
         this.anims.create({
             key: 'npc5_anim',
-            frames: this.anims.generateFrameNumbers('npc5', { start: 0, end: 80 }),
+            frames: this.anims.generateFrameNumbers('npc5', { start: 0, end: 17 }),
+            frameRate: 30,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'npc5_select_anim',
+            frames: this.anims.generateFrameNumbers('npc5_select', { start: 0, end: 17 }),
             frameRate: 30,
             repeat: -1
         });
 
         this.anims.create({
             key: 'npc6_anim',
-            frames: this.anims.generateFrameNumbers('npc6', { start: 0, end: 94 }),
+            frames: this.anims.generateFrameNumbers('npc6', { start: 0, end: 13 }),
+            frameRate: 30,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'npc6_select_anim',
+            frames: this.anims.generateFrameNumbers('npc6_select', { start: 0, end: 13 }),
             frameRate: 30,
             repeat: -1
         });
@@ -597,35 +662,65 @@ export class MainStreetScene extends Phaser.Scene {
         // Fake NPC Animations
         this.anims.create({
             key: 'fake_npc_1_anim',
-            frames: this.anims.generateFrameNumbers('fake_npc_1', { start: 0, end: 96 }),
+            frames: this.anims.generateFrameNumbers('fake_npc_1', { start: 0, end: 19 }),
+            frameRate: 30,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'fake_npc_1_select_anim',
+            frames: this.anims.generateFrameNumbers('fake_npc_1_select', { start: 0, end: 19 }),
             frameRate: 30,
             repeat: -1
         });
 
         this.anims.create({
             key: 'fake_npc_2_anim',
-            frames: this.anims.generateFrameNumbers('fake_npc_2', { start: 0, end: 94 }),
+            frames: this.anims.generateFrameNumbers('fake_npc_2', { start: 0, end: 26 }),
+            frameRate: 30,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'fake_npc_2_select_anim',
+            frames: this.anims.generateFrameNumbers('fake_npc_2_select', { start: 0, end: 26 }),
             frameRate: 30,
             repeat: -1
         });
 
         this.anims.create({
             key: 'fake_npc_3_anim',
-            frames: this.anims.generateFrameNumbers('fake_npc_3', { start: 0, end: 94 }),
+            frames: this.anims.generateFrameNumbers('fake_npc_3', { start: 0, end: 24 }),
+            frameRate: 30,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'fake_npc_3_select_anim',
+            frames: this.anims.generateFrameNumbers('fake_npc_3_select', { start: 0, end: 24 }),
             frameRate: 30,
             repeat: -1
         });
 
         this.anims.create({
             key: 'fake_npc_4_anim',
-            frames: this.anims.generateFrameNumbers('fake_npc_4', { start: 8, end: 100 }),
+            frames: this.anims.generateFrameNumbers('fake_npc_4', { start: 0, end: 15 }),
+            frameRate: 30,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'fake_npc_4_select_anim',
+            frames: this.anims.generateFrameNumbers('fake_npc_4_select', { start: 0, end: 15 }),
             frameRate: 30,
             repeat: -1
         });
 
         this.anims.create({
             key: 'fake_npc_5_anim',
-            frames: this.anims.generateFrameNumbers('fake_npc_5', { start: 0, end: 280 }),
+            frames: this.anims.generateFrameNumbers('fake_npc_5', { start: 0, end: 39 }),
+            frameRate: 30,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'fake_npc_5_select_anim',
+            frames: this.anims.generateFrameNumbers('fake_npc_5_select', { start: 0, end: 39 }),
             frameRate: 30,
             repeat: -1
         });

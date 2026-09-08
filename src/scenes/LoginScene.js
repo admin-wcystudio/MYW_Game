@@ -23,22 +23,23 @@ export class LoginScene extends Phaser.Scene {
         this.load.image('bubble1', loginPath + 'choosepage_bubble1.png');
         this.load.image('bubble2', loginPath + 'choosepage_bubble2.png');
 
+        // frame = png size / (cols x rows)
         this.load.spritesheet('boy_galaxy', loginPath + 'choosepage_boy_galaxy.png',
-            { frameWidth: 350, frameHeight: 450 });
+            { frameWidth: 700, frameHeight: 900 }); // 3500x3600 / 5x4
 
         this.load.spritesheet('boy_chinese', loginPath + 'choosepage_boy_chinese.png',
-            { frameWidth: 350, frameHeight: 450 });
+            { frameWidth: 700, frameHeight: 900 }); // 3500x3600 / 5x4
 
         this.load.spritesheet('boy_transition', loginPath + 'choosepage_boy_galaxytochinese_transition.png',
-            { frameWidth: 350, frameHeight: 450 });
+            { frameWidth: 700, frameHeight: 900 }); // 5600x7200 / 8x8
 
         this.load.spritesheet('girl_galaxy', loginPath + 'choosepage_girl_galaxy.png',
-            { frameWidth: 350, frameHeight: 450 });
+            { frameWidth: 700, frameHeight: 900 }); // 3500x3600 / 5x4
 
         this.load.spritesheet('girl_chinese', loginPath + 'choosepage_girl_chinese.png',
-            { frameWidth: 350, frameHeight: 450 });
+            { frameWidth: 700, frameHeight: 900 }); // 3500x4500 / 5x5
         this.load.spritesheet('girl_transition', loginPath + 'choosepage_girl_galaxytochinese_transition.png',
-            { frameWidth: 350, frameHeight: 450 });
+            { frameWidth: 700, frameHeight: 900 }); // 5600x3600 / 8x4
     }
 
     create() {
@@ -121,13 +122,13 @@ export class LoginScene extends Phaser.Scene {
         // 1. Add the sprite (using the first spritesheet as initial texture)
         this.boySprite = this.add.sprite(620, 540, 'boy_galaxy')
             .setDepth(10)
-            .setScrollFactor(0).setScale(2);
+            .setScrollFactor(0).setScale(1);
 
         this.boySprite.play('boy_galaxy_anim');
 
         this.girlSprite = this.add.sprite(1300, 560, 'girl_galaxy')
             .setDepth(10)
-            .setScrollFactor(0).setScale(2);
+            .setScrollFactor(0).setScale(1);
 
         this.girlSprite.play('girl_galaxy_anim');
 
@@ -211,41 +212,41 @@ export class LoginScene extends Phaser.Scene {
     createAnimations() {
         this.anims.create({
             key: 'boy_galaxy_anim',  // Name you will use in other scenes
-            frames: this.anims.generateFrameNumbers('boy_galaxy', { start: 0, end: 98 }),
+            frames: this.anims.generateFrameNumbers('boy_galaxy', { start: 0, end: 19 }),
             frameRate: 30,
             repeat: -1
         });
         this.anims.create({
             key: 'boy_chinese_anim',  // Name you will use in other scenes
-            frames: this.anims.generateFrameNumbers('boy_galaxy', { start: 0, end: 98 }),
+            frames: this.anims.generateFrameNumbers('boy_chinese', { start: 0, end: 19 }),
             frameRate: 30,
             repeat: -1
         });
 
         this.anims.create({
             key: 'boy_transition_anim',  // Name you will use in other scenes
-            frames: this.anims.generateFrameNumbers('boy_transition', { start: 0, end: 98 }),
+            frames: this.anims.generateFrameNumbers('boy_transition', { start: 0, end: 63 }),
             frameRate: 30,
             repeat: 0
         });
 
         this.anims.create({
             key: 'girl_galaxy_anim',
-            frames: this.anims.generateFrameNumbers('girl_galaxy', { start: 0, end: 98 }),
+            frames: this.anims.generateFrameNumbers('girl_galaxy', { start: 0, end: 19 }),
             frameRate: 30,
             repeat: -1
         });
 
         this.anims.create({
             key: 'girl_chinese_anim',
-            frames: this.anims.generateFrameNumbers('girl_chinese', { start: 0, end: 98 }),
+            frames: this.anims.generateFrameNumbers('girl_chinese', { start: 0, end: 24 }),
             frameRate: 30,
             repeat: -1
         });
 
         this.anims.create({
             key: 'girl_transition_anim',  // Name you will use in other scenes
-            frames: this.anims.generateFrameNumbers('girl_transition', { start: 0, end: 98 }),
+            frames: this.anims.generateFrameNumbers('girl_transition', { start: 0, end: 31 }),
             frameRate: 30,
             repeat: 0
         });
