@@ -85,42 +85,27 @@ export class MainStreetScene extends Phaser.Scene {
 
         VoiceOverHelper.preload(this);
 
+        this.load.spritesheet('boy_idle', 'assets/MainStreet/Boy/maincharacter_boy_middlestand.png',
+            { frameWidth: 300, frameHeight: 350 }); // 5700x2800 / 19x8
+        this.load.spritesheet('boy_left_talk', 'assets/MainStreet/Boy/maincharacter_boy_lefttalking.png',
+            { frameWidth: 300, frameHeight: 350 }); // 5700x1750 / 19x5
+        this.load.spritesheet('boy_right_talk', 'assets/MainStreet/Boy/maincharacter_boy_righttalking.png',
+            { frameWidth: 300, frameHeight: 350 }); // 4200x4200 / 14x12
+        this.load.spritesheet('boy_left_walk', 'assets/MainStreet/Boy/maincharacter_boy_leftwalk.png',
+            { frameWidth: 300, frameHeight: 350 }); // 2400x2100 / 8x6
+        this.load.spritesheet('boy_right_walk', 'assets/MainStreet/Boy/maincharacter_boy_rightwalk.png',
+            { frameWidth: 300, frameHeight: 350 }); // 3300x1750 / 11x5
 
-        // Only load spritesheets for the selected gender
-        let gender = 'F';
-        try {
-            if (localStorage.getItem('player')) {
-                gender = JSON.parse(localStorage.getItem('player')).gender || 'M';
-            }
-        } catch (e) {
-            gender = 'M';
-        }
-
-        if (gender === 'M') {
-            this.load.spritesheet('boy_idle', 'assets/MainStreet/Boy/maincharacter_boy_middlestand.png',
-                { frameWidth: 300, frameHeight: 350 });
-            this.load.spritesheet('boy_left_talk', 'assets/MainStreet/Boy/maincharacter_boy_lefttalking.png',
-                { frameWidth: 300, frameHeight: 350 });
-            this.load.spritesheet('boy_right_talk', 'assets/MainStreet/Boy/maincharacter_boy_righttalking.png',
-                { frameWidth: 300, frameHeight: 350 });
-            this.load.spritesheet('boy_left_walk', 'assets/MainStreet/Boy/maincharacter_boy_leftwalk.png',
-                { frameWidth: 300, frameHeight: 350 });
-            this.load.spritesheet('boy_right_walk', 'assets/MainStreet/Boy/maincharacter_boy_rightwalk.png',
-                { frameWidth: 300, frameHeight: 350 });
-        }
-
-        if (gender === 'F') {
-            this.load.spritesheet('girl_idle', 'assets/MainStreet/Girl/maincharacter_girl_middlestand.png',
-                { frameWidth: 300, frameHeight: 350 });
-            this.load.spritesheet('girl_left_talk', 'assets/MainStreet/Girl/maincharacter_girl_lefttalking.png',
-                { frameWidth: 300, frameHeight: 350 });
-            this.load.spritesheet('girl_right_talk', 'assets/MainStreet/Girl/maincharacter_girl_righttalking.png',
-                { frameWidth: 300, frameHeight: 350 });
-            this.load.spritesheet('girl_left_walk', 'assets/MainStreet/Girl/maincharacter_girl_leftwalk.png',
-                { frameWidth: 300, frameHeight: 350 });
-            this.load.spritesheet('girl_right_walk', 'assets/MainStreet/Girl/maincharacter_girl_rightwalk.png',
-                { frameWidth: 300, frameHeight: 350 });
-        }
+        this.load.spritesheet('girl_idle', 'assets/MainStreet/Girl/maincharacter_girl_middlestand.png',
+            { frameWidth: 300, frameHeight: 350 }); // 4500x3500 / 15x10
+        this.load.spritesheet('girl_left_talk', 'assets/MainStreet/Girl/maincharacter_girl_lefttalking.png',
+            { frameWidth: 300, frameHeight: 350 }); // 3600x2800 / 12x8
+        this.load.spritesheet('girl_right_talk', 'assets/MainStreet/Girl/maincharacter_girl_righttalking.png',
+            { frameWidth: 300, frameHeight: 350 }); // 3000x1750 / 10x5
+        this.load.spritesheet('girl_left_walk', 'assets/MainStreet/Girl/maincharacter_girl_leftwalk.png',
+            { frameWidth: 300, frameHeight: 350 }); // 1800x1400 / 6x4
+        this.load.spritesheet('girl_right_walk', 'assets/MainStreet/Girl/maincharacter_girl_rightwalk.png',
+            { frameWidth: 300, frameHeight: 350 }); // 1800x1400 / 6x4
 
         // NPC spritesheets (frame = png size / cols x rows)
         this.load.spritesheet('npc1', 'assets/MainStreet/NPCs/NPC_1/game1_npc.png',
@@ -192,7 +177,7 @@ export class MainStreetScene extends Phaser.Scene {
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
 
-        const gender = localStorage.getItem('player') ? JSON.parse(localStorage.getItem('player')).gender : 'F';
+        const gender = this.getSavedGender();
 
         this.genderKey = gender === 'M' ? 'boy' : 'girl';
         const genderKey = this.genderKey;
@@ -245,22 +230,18 @@ export class MainStreetScene extends Phaser.Scene {
         this.btnLeft = new CustomButton(this, 150, height / 2, 'prev_button', 'prev_button_click',
             () => {
                 this.isLeftDown = true;
-                this.handleAnimation(genderKey, true, true);
             },
             () => {
                 this.isLeftDown = false;
-                this.handleAnimation(genderKey, false, true);
             }
         ).setScrollFactor(0).setDepth(100);
 
         this.btnRight = new CustomButton(this, width - 150, height / 2, 'next_button', 'next_button_click',
             () => {
                 this.isRightDown = true;
-                this.handleAnimation(genderKey, true, false);
             },
             () => {
                 this.isRightDown = false;
-                this.handleAnimation(genderKey, false, true);
             }
         ).setScrollFactor(0).setDepth(100);
 
@@ -369,8 +350,7 @@ export class MainStreetScene extends Phaser.Scene {
         this.playerSprite.lastDirectionLeft = isLeft;
 
         this.playerSprite.x = Phaser.Math.Clamp(this.playerSprite.x, 600, 8200);
-        const camView = this.cameras.main.worldView;
-        const buffer = 100; // Load slightly before they appear
+        this.handleAnimation(this.genderKey, isMoving, isLeft);
 
         const allNpcs = [...this.interactiveNpcs, ...this.fakeNpcs];
         this.currentNpcActivated = null;
@@ -408,20 +388,14 @@ export class MainStreetScene extends Phaser.Scene {
     }
 
     handleAnimation(gender, isMoving, isLeft) {
-        let walkKey = `${gender}_left_walk_anim`;
-        let idleKey = `${gender}_idle_anim`;
-
-
+        const idleKey = `${gender}_idle_anim`;
+        const walkKey = isLeft ? `${gender}_left_walk_anim` : `${gender}_right_walk_anim`;
 
         if (isMoving) {
-            // true means: if 'walkKey' is already playing, don't restart it
+            this.playerSprite.setFlipX(false);
             this.playerSprite.play(walkKey, true);
-            if (!isLeft) {
-                this.playerSprite.setFlipX(true);
-            } else {
-                this.playerSprite.setFlipX(false);
-            }
         } else {
+            this.playerSprite.setFlipX(false);
             this.playerSprite.play(idleKey, true);
         }
     }
@@ -730,89 +704,86 @@ export class MainStreetScene extends Phaser.Scene {
             repeat: -1
         });
 
-        let gender = 'M';
+        this.anims.create({
+            key: 'boy_idle_anim',
+            frames: this.anims.generateFrameNumbers('boy_idle', { start: 0, end: 151 }),
+            frameRate: 18,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'boy_left_talk_anim',
+            frames: this.anims.generateFrameNumbers('boy_left_talk', { start: 0, end: 94 }),
+            frameRate: 18,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'boy_right_talk_anim',
+            frames: this.anims.generateFrameNumbers('boy_right_talk', { start: 0, end: 167 }),
+            frameRate: 18,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'boy_left_walk_anim',
+            frames: this.anims.generateFrameNumbers('boy_left_walk', { start: 0, end: 47 }),
+            frameRate: 18,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'boy_right_walk_anim',
+            frames: this.anims.generateFrameNumbers('boy_right_walk', { start: 0, end: 54 }),
+            frameRate: 18,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'girl_idle_anim',
+            frames: this.anims.generateFrameNumbers('girl_idle', { start: 0, end: 149 }),
+            frameRate: 18,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'girl_left_talk_anim',
+            frames: this.anims.generateFrameNumbers('girl_left_talk', { start: 0, end: 95 }),
+            frameRate: 18,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'girl_right_talk_anim',
+            frames: this.anims.generateFrameNumbers('girl_right_talk', { start: 0, end: 49 }),
+            frameRate: 18,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'girl_left_walk_anim',
+            frames: this.anims.generateFrameNumbers('girl_left_walk', { start: 0, end: 23 }),
+            frameRate: 18,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'girl_right_walk_anim',
+            frames: this.anims.generateFrameNumbers('girl_right_walk', { start: 0, end: 23 }),
+            frameRate: 18,
+            repeat: -1
+        });
+    }
+
+    getSavedGender() {
         try {
-            if (localStorage.getItem('player')) {
-                gender = JSON.parse(localStorage.getItem('player')).gender || 'M';
+            const raw = localStorage.getItem('player');
+            if (raw) {
+                const gender = JSON.parse(raw).gender;
+                if (gender === 'M' || gender === 'F') return gender;
             }
-        } catch (e) {
-            gender = 'M';
-        }
-
-        // Player character animations - only create for the loaded gender
-        if (gender === 'M') {
-            this.anims.create({
-                key: 'boy_idle_anim',
-                frames: this.anims.generateFrameNumbers('boy_idle', { start: 0, end: 151 }),
-                frameRate: 18,
-                repeat: -1
-            });
-
-            this.anims.create({
-                key: 'boy_left_talk_anim',
-                frames: this.anims.generateFrameNumbers('boy_left_talk', { start: 0, end: 94 }),
-                frameRate: 18,
-                repeat: -1
-            });
-
-            this.anims.create({
-                key: 'boy_right_talk_anim',
-                frames: this.anims.generateFrameNumbers('boy_right_talk', { start: 0, end: 168 }),
-                frameRate: 18,
-                repeat: -1
-            });
-
-            this.anims.create({
-                key: 'boy_left_walk_anim',
-                frames: this.anims.generateFrameNumbers('boy_left_walk', { start: 0, end: 48 }),
-                frameRate: 18,
-                repeat: -1
-            });
-
-            this.anims.create({
-                key: 'boy_right_walk_anim',
-                frames: this.anims.generateFrameNumbers('boy_right_walk', { start: 0, end: 48 }),
-                frameRate: 18,
-                repeat: -1
-            });
-        }
-
-        if (gender === 'F') {
-            this.anims.create({
-                key: 'girl_idle_anim',
-                frames: this.anims.generateFrameNumbers('girl_idle', { start: 0, end: 152 }),
-                frameRate: 18,
-                repeat: -1
-            });
-
-            this.anims.create({
-                key: 'girl_left_talk_anim',
-                frames: this.anims.generateFrameNumbers('girl_left_talk', { start: 0, end: 23 }),
-                frameRate: 18,
-                repeat: -1
-            });
-
-            this.anims.create({
-                key: 'girl_right_talk_anim',
-                frames: this.anims.generateFrameNumbers('girl_right_talk', { start: 0, end: 49 }),
-                frameRate: 18,
-                repeat: -1
-            });
-
-            this.anims.create({
-                key: 'girl_left_walk_anim',
-                frames: this.anims.generateFrameNumbers('girl_left_walk', { start: 0, end: 24 }),
-                frameRate: 18,
-                repeat: -1
-            });
-
-            this.anims.create({
-                key: 'girl_right_walk_anim',
-                frames: this.anims.generateFrameNumbers('girl_right_walk', { start: 0, end: 24 }),
-                frameRate: 10,
-                repeat: -1
-            });
-        }
+        } catch (e) { }
+        return 'M';
     }
 
 }
