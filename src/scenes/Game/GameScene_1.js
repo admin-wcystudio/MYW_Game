@@ -9,7 +9,7 @@ export class GameScene_1 extends BaseGameScene {
     constructor() {
         super('GameScene_1');
         this.roundPerSeconds = 30;
-        this.targetRounds = 3;
+        this.targetRounds = 1;
         this.sceneIndex = 1;
         this.isContinuousTimer = false;
         this.isAllowRoundFail = false;
@@ -101,11 +101,14 @@ export class GameScene_1 extends BaseGameScene {
 
         // 旋轉按鈕
         this.rotateButton = new CustomButton(this, width - 200, height - 200, 'game1_rotate', null, () => {
-            if (this.selectedPuzzle) this.selectedPuzzle.angle += 90;
+            if (this.selectedPuzzle && !this.selectedPuzzle.getData('isCorrect')) {
+                this.selectedPuzzle.angle += 90;
+            }
         }).setDepth(100);
 
         // 拖拽事件 (搬移到這裡確保只設定一次)
         this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
+            if (gameObject.getData('isCorrect')) return;
             if (this.selectedPuzzle !== gameObject) this.selectPuzzle(gameObject);
             gameObject.setPosition(dragX, dragY).setDepth(100);
         });
@@ -160,6 +163,7 @@ export class GameScene_1 extends BaseGameScene {
     // --- 拼圖專用邏輯 (保持不變) ---
 
     selectPuzzle(piece) {
+        if (!piece || piece.getData('isCorrect')) return;
         if (this.selectedPuzzle) {
             this.selectedPuzzle.clearTint();
         }
@@ -174,6 +178,9 @@ export class GameScene_1 extends BaseGameScene {
 
         if (dist < 60 && isAngleCorrect) {
             piece.setPosition(targetX, targetY).setData('isCorrect', true).disableInteractive().clearTint();
+            if (this.selectedPuzzle === piece) {
+                this.selectedPuzzle = null;
+            }
             this.checkAllDone();
         }
     }
@@ -231,9 +238,10 @@ export class GameScene_1 extends BaseGameScene {
      * 重置每一局的拼圖狀態
      */
     resetForNewRound() {
+        this.selectedPuzzle = null;
         this.puzzleGroup.setVisible(true);
         this.puzzleGroup.getChildren().forEach(p => p.setData('isCorrect', false));
-        this.previewSprite.destroy();
+        if (this.previewSprite) this.previewSprite.destroy();
         this.randomPuzzlePosition(this.puzzleGroup.getChildren());
     }
 
