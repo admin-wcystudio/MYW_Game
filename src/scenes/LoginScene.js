@@ -10,6 +10,63 @@ export class LoginScene extends Phaser.Scene {
 
     preload() {
 
+        const width = this.cameras.main.width;
+        const height = this.cameras.main.height;
+
+        // Loading bar background
+        const barBg = this.add.rectangle(width / 2, height / 2, 400, 30, 0x222222);
+        barBg.setStrokeStyle(2, 0xffffff);
+
+        // Loading bar fill
+        const barFill = this.add.rectangle(width / 2 - 195, height / 2, 0, 22, 0x00ff00);
+        barFill.setOrigin(0, 0.5);
+
+        // Loading text
+        const loadingText = this.add.text(width / 2, height / 2 - 50, '載入中...', {
+            fontSize: '24px',
+            fontFamily: 'Arial',
+            color: '#ffffff'
+        }).setOrigin(0.5);
+
+        // Percentage text
+        const percentText = this.add.text(width / 2, height / 2 + 50, '0%', {
+            fontSize: '20px',
+            fontFamily: 'Arial',
+            color: '#ffffff'
+        }).setOrigin(0.5);
+
+        // Update progress bar on load progress
+        this.load.on('progress', (value) => {
+            barFill.width = 390 * value;
+            percentText.setText(Math.round(value * 100) + '%');
+        });
+
+        // Minimum wait time in ms (30 seconds)
+        const minWaitTime = 30000;
+        const startTime = Date.now();
+        let isAssetsLoaded = false;
+
+        const checkLoadingComplete = () => {
+            const elapsedTime = Date.now() - startTime;
+            if (isAssetsLoaded && elapsedTime >= minWaitTime) {
+                barBg.destroy();
+                barFill.destroy();
+                loadingText.destroy();
+                percentText.destroy();
+            } else if (isAssetsLoaded) {
+                // If assets loaded but time hasn't passed, check again later
+                const remainingTime = minWaitTime - elapsedTime;
+                this.time.delayedCall(remainingTime, checkLoadingComplete, [], this);
+            }
+        };
+
+        // Clean up when loading complete
+        this.load.on('complete', () => {
+            isAssetsLoaded = true;
+            checkLoadingComplete();
+        });
+
+
         //login page
         const loginPath = 'assets/Login/';
         this.load.video('login_bg_video', loginPath + 'choosepage_bg.mp4');
