@@ -1,6 +1,7 @@
 import { CustomButton } from '../UI/Button.js';
 import { CustomPanel, SettingPanel } from '../UI/Panel.js';
 import UIHelper from '../UI/UIHelper.js';
+import VoiceOverHelper from '../Audio/VoiceOverHelper.js';
 
 export class LoginScene extends Phaser.Scene {
     constructor() {
@@ -103,6 +104,9 @@ export class LoginScene extends Phaser.Scene {
         const height = 50;
 
 
+        this.genderLocked = false;
+        this.selectedGender = null;
+
         this.nameInput = this.add.rexInputText(1080, 190, width, height, {
             type: 'text',
             placeholder: '_',
@@ -113,11 +117,10 @@ export class LoginScene extends Phaser.Scene {
             backgroundColor: 'transparent'
         }).setDepth(20);
 
-        this.nameInput.on('textchange', (inputText) => {
-            console.log("現在的名字是:", inputText.text);
+        this.nameInput.on('textchange', () => {
+            if (this.genderLocked) return;
+            this.setGenderButtonsEnabled(this.hasPlayerName());
         });
-
-        this.selectedGender = 'M';
 
         // 1. Add the sprite (using the first spritesheet as initial texture)
         this.boySprite = this.add.sprite(620, 540, 'boy_galaxy')
@@ -136,35 +139,81 @@ export class LoginScene extends Phaser.Scene {
         this.add.image(340, 350, 'bubble1').setDepth(11);
         this.add.image(1650, 360, 'bubble2').setDepth(11);
 
-        const boyBtn = new CustomButton(
+        this.boyBtn = new CustomButton(
             this, 620, 950,
             'login_boy_btn', 'login_boy_btn_click',
             () => {
                 this.savePlayerInfo('M');
-
             }, () => { });
 
-        const girlBtn = new CustomButton(
+        this.girlBtn = new CustomButton(
             this, 1300, 950,
             'login_girl_btn', 'login_girl_btn_click',
             () => {
                 this.savePlayerInfo('F');
             }, () => { });
 
+        this.setGenderButtonsEnabled(false);
     }
 
-    savePlayerInfo(gender, currentSprite) {
-        const playerName = this.nameInput.text;
+    hasPlayerName() {
+        const playerName = this.nameInput?.text || '';
+        return playerName.trim() !== '';
+    }
 
-        if (!playerName || playerName.trim() === "") {
-            UIHelper.showToast(this, "請先輸入名字"); // 使用 Helper 提示
+    setGenderButtonsEnabled(enabled) {
+        [this.boyBtn, this.girlBtn].forEach((btn) => {
+            if (!btn) return;
+            btn.setActive(enabled);
+            btn.setAlpha(enabled ? 1 : 0.45);
+            if (enabled) btn.setNormalState();
+        });
+    }
+
+    lockNameField() {
+        if (this.nameInput.setReadOnly) this.nameInput.setReadOnly(true);
+        const node = this.nameInput.node;
+        if (node) {
+            node.readOnly = true;
+            node.blur();
+            node.style.pointerEvents = 'none';
+        }
+        this.nameInput.setAlpha(0.7);
+    }
+
+    lockGenderChoice(gender) {
+        this.genderLocked = true;
+        const chosen = gender === 'M' ? this.boyBtn : this.girlBtn;
+        const other = gender === 'M' ? this.girlBtn : this.boyBtn;
+
+        chosen.setLocked(true);
+        chosen.isClicked = true;
+        chosen.needClicked = true;
+        chosen.setPressedState();
+        chosen.setAlpha(1);
+
+        other.setLocked(true);
+        other.isClicked = false;
+        other.setNormalState();
+        other.setAlpha(0.45);
+
+        this.lockNameField();
+    }
+
+    savePlayerInfo(gender) {
+        if (this.genderLocked) return;
+
+        if (!this.hasPlayerName()) {
+            UIHelper.showToast(this, "請先輸入名字");
             return;
         }
 
+        this.lockGenderChoice(gender);
+        VoiceOverHelper.ensureBgm(this);
         this.selectedGender = gender;
         this.switchAnimation();
 
-        // 儲存資料
+        const playerName = this.nameInput.text.trim();
         const player = { name: playerName, gender: gender };
         localStorage.setItem('player', JSON.stringify(player));
 

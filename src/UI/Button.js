@@ -6,6 +6,7 @@ export class CustomButton extends Phaser.GameObjects.Image {
         this.pressedKey = pressedKey;
         this.isClicked = false;
         this.needClicked = false; // 預設為普通模式
+        this.locked = false;
 
         this.cbDown = callbackDown || (() => { });
         this.cbUp = callbackUp || (() => { });
@@ -14,7 +15,7 @@ export class CustomButton extends Phaser.GameObjects.Image {
         this.setInteractive({ useHandCursor: true });
 
         this.on('pointerdown', () => {
-            if (!this.input || !this.input.enabled) return;
+            if (this.locked || !this.input || !this.input.enabled) return;
             if (this.needClicked) {
                 // Toggle 
                 this.isClicked = !this.isClicked;
@@ -33,14 +34,14 @@ export class CustomButton extends Phaser.GameObjects.Image {
         });
 
         this.on('pointerover', () => {
-            if (!this.input || !this.input.enabled) return;
+            if (this.locked || !this.input || !this.input.enabled) return;
             if (!this.isClicked) {
                 this.setPressedState();
             }
         });
 
         this.on('pointerup', () => {
-            if (!this.input || !this.input.enabled) return;
+            if (this.locked || !this.input || !this.input.enabled) return;
             if (!this.needClicked) {
                 this.setNormalState();
                 this.cbUp();
@@ -48,7 +49,7 @@ export class CustomButton extends Phaser.GameObjects.Image {
         });
 
         this.on('pointerout', () => {
-            if (!this.input || !this.input.enabled) return;
+            if (this.locked || !this.input || !this.input.enabled) return;
             this.setNormalState();
             if (!this.needClicked) {
                 this.cbUp();
@@ -60,11 +61,15 @@ export class CustomButton extends Phaser.GameObjects.Image {
             this.disableInteractive();
             this.setAlpha(0.8);
         } else {
-            this.setInteractive();
+            this.setInteractive({ useHandCursor: true });
             this.setAlpha(1);
         }
     }
 
+    setLocked(isLocked) {
+        this.locked = isLocked;
+        if (isLocked) this.disableInteractive();
+    }
 
     setPressedState() {
         if (this.pressedKey) this.setTexture(this.pressedKey);

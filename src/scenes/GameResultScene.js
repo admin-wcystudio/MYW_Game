@@ -89,7 +89,7 @@ export class GameResultScene extends Phaser.Scene {
                     this.resultGroup.setVisible(false);
                     this.ui.descriptionPanel.setVisible(true);
 
-                    this.time.delayedCall(20000, () => {
+                    this.time.delayedCall(16000, () => {
                         this.ui.descriptionPanel.setVisible(false);
                         GameManager.switchToGameScene(this, 'GameStartScene');
                     });

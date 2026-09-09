@@ -208,8 +208,8 @@ export class GameScene_1 extends BaseGameScene {
         this.puzzleGroup.setVisible(false);
         if (this.previewSprite) this.previewSprite.destroy();
 
-        this.previewSprite = this.add.sprite(960, 400,
-            'game1_success_preview').setDepth(80).setScale(1.4);
+        this.previewSprite = this.add.sprite(960, 450,
+            'game1_success_preview').setDepth(80).setScale(2);
         this.previewSprite.play('success_preview_anim');
 
         this.time.delayedCall(400, () => {

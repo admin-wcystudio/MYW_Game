@@ -114,20 +114,23 @@ export default class UIHelper {
             }
         }
 
+        const HUD_PANEL_DEPTH = 2000;
+        const HUD_BUTTON_DEPTH = 2100;
+
         // Panels
         const settingPanel = new SettingPanel(scene, 960, 540).setScrollFactor(0);
         settingPanel.setVisible(false);
-        settingPanel.setDepth(999); // Setting panel above others by default
+        settingPanel.setDepth(HUD_PANEL_DEPTH);
         scene.add.existing(settingPanel);
 
         const descriptionPanel = new CustomPanel(scene, 960, 540, descriptionPages).setScrollFactor(0);
         descriptionPanel.setVisible(true);
-        descriptionPanel.setDepth(999);
+        descriptionPanel.setDepth(HUD_PANEL_DEPTH);
         scene.add.existing(descriptionPanel);
 
         const itemPanel = new ItemsPanel(scene, 960, 540).setScrollFactor(0);
         itemPanel.setVisible(false);
-        itemPanel.setDepth(999);
+        itemPanel.setDepth(HUD_PANEL_DEPTH);
         scene.add.existing(itemPanel);
 
         const allButtons = [];
@@ -140,7 +143,7 @@ export default class UIHelper {
                 settingPanel.setVisible(false);
             }).setScrollFactor(0);
 
-        settingBtn.setDepth(999); // Buttons above panels
+        settingBtn.setDepth(HUD_BUTTON_DEPTH);
         allButtons.push(settingBtn);
 
         const descBtn = new CustomButton(scene, 250, 100, 'desc_button', 'desc_button_click',
@@ -153,7 +156,7 @@ export default class UIHelper {
                 }
             }).setScrollFactor(0);
 
-        descBtn.setDepth(999);
+        descBtn.setDepth(HUD_BUTTON_DEPTH);
         allButtons.push(descBtn);
 
         const itemBtn = new CustomButton(scene, 400, 100, 'gameintro_bag', 'gameintro_bag_click',
@@ -162,7 +165,7 @@ export default class UIHelper {
             }, () => {
                 itemPanel.setVisible(false);
             }).setScrollFactor(0);
-        itemBtn.setDepth(999);
+        itemBtn.setDepth(HUD_BUTTON_DEPTH);
         allButtons.push(itemBtn);
 
         settingBtn.needClicked = true;
@@ -176,13 +179,37 @@ export default class UIHelper {
         itemBtn.toggleBtn = itemBtn;
         settingPanel.toggleBtn = settingBtn;
 
+        const hudButtons = [settingBtn, descBtn, itemBtn];
+        const hudPanels = [settingPanel, descriptionPanel, itemPanel];
+
+        function anyHudPanelOpen() {
+            return hudPanels.some((p) => p && p.visible);
+        }
+
+        function setHudButtonsVisible(visible) {
+            if (visible && scene.hudButtonsLocked) return;
+            hudButtons.forEach((btn) => {
+                if (!btn) return;
+                btn.setVisible(visible);
+                if (visible) btn.setInteractive({ useHandCursor: true });
+                else btn.disableInteractive();
+            });
+        }
+        scene.setHudButtonsVisible = setHudButtonsVisible;
+
+        hudPanels.forEach((panel) => {
+            const originalSetVisible = panel.setVisible.bind(panel);
+            panel.setVisible = (value) => {
+                originalSetVisible(value);
+                setHudButtonsVisible(!anyHudPanelOpen());
+                return panel;
+            };
+        });
 
         function openPanel(targetPanel, activeBtn) {
-            [settingPanel, descriptionPanel, itemPanel]
-                .forEach(p => {
-                    if (p) p.setVisible(false);
-                });
-            // --- 重設所有按鈕狀態 ---
+            hudPanels.forEach((p) => {
+                if (p && p !== targetPanel) p.setVisible(false);
+            });
             allButtons.forEach(btn => {
                 if (btn !== activeBtn) {
                     btn.resetStatus?.();
@@ -291,6 +318,11 @@ export default class UIHelper {
         settingBtn.needClicked = true;
         descBtn.needClicked = true;
         itemBtn.needClicked = true;
+
+        [settingBtn, descBtn, itemBtn].forEach((btn) => {
+            btn.setVisible(false);
+            btn.disableInteractive();
+        });
 
 
         descriptionPanel.toggleBtn = descBtn;

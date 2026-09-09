@@ -130,8 +130,7 @@ export class BootScene extends Phaser.Scene {
             this.registry.set('globalSettings', settings);
         }
 
-        localStorage.setItem('player', JSON.stringify({ name: 'player', gender: 'M' }));
-        this.scene.start('MainStreetScene');
+        this.scene.start('GameResultScene');
     }
 
 

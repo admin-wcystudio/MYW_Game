@@ -312,6 +312,7 @@ export default class BaseGameScene extends Phaser.Scene {
                 this.showWin();
                 this.isGameActive = false;
                 this.gameState = 'completed';
+                this.hideHudButtons();
                 if (typeof this.onGameWin === 'function') this.onGameWin();
             }
         }
@@ -407,6 +408,21 @@ export default class BaseGameScene extends Phaser.Scene {
             GameManager.backToMainStreet(this);
         });
         popupPanel.setDepth(1200);
+        this.hideHudButtons();
+    }
+
+    hideHudButtons() {
+        this.hudButtonsLocked = true;
+        if (typeof this.setHudButtonsVisible === 'function') {
+            this.setHudButtonsVisible(false);
+        }
+    }
+
+    showHudButtons() {
+        this.hudButtonsLocked = false;
+        if (typeof this.setHudButtonsVisible === 'function') {
+            this.setHudButtonsVisible(true);
+        }
     }
 
     // 增加一個重置函數
@@ -418,6 +434,7 @@ export default class BaseGameScene extends Phaser.Scene {
         this.isGameActive = false;
         this.gameTimer.reset(this.roundPerSeconds);
         this.resetGameUI();
+        this.showHudButtons();
         this.resetForNewRound();
         this.startGame();
     }

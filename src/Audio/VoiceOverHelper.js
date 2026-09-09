@@ -3,6 +3,8 @@ import { gameConfig } from '../config.js';
 
 export default class VoiceOverHelper {
     static FADE_MS = 200;
+    static BGM_VOLUME = 0.18;
+    static BGM_DUCKED_VOLUME = 0.05;
 
     static GAME_DIALOGUE = {
         1: {
@@ -229,7 +231,56 @@ export default class VoiceOverHelper {
         return null;
     }
 
-    static stop(scene) {
+    static getBgm(scene) {
+        return scene.sound.get('bgm');
+    }
+
+    static ensureBgm(scene) {
+        if (!scene.cache.audio.exists('bgm')) return;
+
+        const start = () => {
+            let bgm = scene.sound.get('bgm');
+            if (!bgm) {
+                bgm = scene.sound.add('bgm', {
+                    loop: true,
+                    volume: VoiceOverHelper.BGM_VOLUME
+                });
+            }
+            bgm.setLoop(true);
+            bgm.setVolume(VoiceOverHelper.BGM_VOLUME);
+            if (!bgm.isPlaying) bgm.play();
+        };
+
+        start();
+        if (scene.sound.locked) {
+            scene.sound.once('unlocked', start);
+        }
+    }
+
+    static fadeBgm(scene, volume) {
+        const bgm = VoiceOverHelper.getBgm(scene);
+        if (!bgm) return;
+        if (scene.currentBgmTween) {
+            scene.currentBgmTween.stop();
+            scene.currentBgmTween = null;
+        }
+        scene.currentBgmTween = scene.tweens.add({
+            targets: bgm,
+            volume,
+            duration: VoiceOverHelper.FADE_MS
+        });
+    }
+
+    static duckBgm(scene) {
+        VoiceOverHelper.fadeBgm(scene, VoiceOverHelper.BGM_DUCKED_VOLUME);
+    }
+
+    static restoreBgm(scene) {
+        VoiceOverHelper.fadeBgm(scene, VoiceOverHelper.BGM_VOLUME);
+    }
+
+    static stop(scene, options = {}) {
+        const restoreBgm = options.restoreBgm !== false;
         if (scene.currentVoTween) {
             scene.currentVoTween.stop();
             scene.currentVoTween = null;
@@ -239,12 +290,16 @@ export default class VoiceOverHelper {
             scene.currentVo.destroy();
             scene.currentVo = null;
         }
+        if (restoreBgm) VoiceOverHelper.restoreBgm(scene);
     }
 
     static playBubbleVo(scene, bubbleKey, isPlayer = null) {
-        VoiceOverHelper.stop(scene);
+        VoiceOverHelper.stop(scene, { restoreBgm: false });
         const boxBase = VoiceOverHelper.boxBaseFromBubbleKey(bubbleKey);
-        if (!boxBase) return;
+        if (!boxBase) {
+            VoiceOverHelper.restoreBgm(scene);
+            return;
+        }
 
         const lang = VoiceOverHelper.getLanguageSuffix();
         const genderTag = VoiceOverHelper.getGenderTag();
@@ -254,16 +309,26 @@ export default class VoiceOverHelper {
         }
 
         const voKey = VoiceOverHelper.resolveKey(scene, boxBase, isPlayer);
-        if (!voKey) return;
+        if (!voKey) {
+            VoiceOverHelper.restoreBgm(scene);
+            return;
+        }
 
         const sound = scene.sound.add(voKey);
         sound.setVolume(0);
         sound.play();
         scene.currentVo = sound;
+        VoiceOverHelper.duckBgm(scene);
         scene.currentVoTween = scene.tweens.add({
             targets: sound,
             volume: 1,
             duration: VoiceOverHelper.FADE_MS
+        });
+        sound.once('complete', () => {
+            if (scene.currentVo === sound) {
+                scene.currentVo = null;
+                VoiceOverHelper.restoreBgm(scene);
+            }
         });
     }
 }
