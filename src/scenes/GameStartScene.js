@@ -19,7 +19,8 @@ export class GameStartScene extends Phaser.Scene {
         this.bgVideo.setMute(false);
         this.bgVideo.play(true); // loop
 
-        VoiceOverHelper.ensureBgm(this);
+        VoiceOverHelper.stop(this, { restoreBgm: false });
+        VoiceOverHelper.stopBgm(this);
 
         const descriptionPages = [
             {

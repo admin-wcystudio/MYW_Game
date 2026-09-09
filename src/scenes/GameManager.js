@@ -2,6 +2,7 @@ import { CustomButton } from '../UI/Button.js';
 import UIHelper from '../UI/UIHelper.js';
 import { CustomPanel, SettingPanel } from '../UI/Panel.js';
 import NpcHelper from '../Character/NpcHelper.js';
+import VoiceOverHelper from '../Audio/VoiceOverHelper.js';
 
 export default class GameManager {
     static saveGameResult(sceneIndex, isCompleted, seconds = 0) {
@@ -47,6 +48,7 @@ export default class GameManager {
     }
 
     static backToMainStreet(scene) {
+        VoiceOverHelper.stop(scene, { restoreBgm: false });
         scene.cameras.main.fadeOut(500, 0, 0, 0);
 
         scene.cameras.main.once('camerafadeoutcomplete', () => {

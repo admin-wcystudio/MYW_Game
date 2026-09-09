@@ -257,6 +257,15 @@ export default class VoiceOverHelper {
         }
     }
 
+    static stopBgm(scene) {
+        if (scene.currentBgmTween) {
+            scene.currentBgmTween.stop();
+            scene.currentBgmTween = null;
+        }
+        const bgm = VoiceOverHelper.getBgm(scene);
+        if (bgm && bgm.isPlaying) bgm.stop();
+    }
+
     static fadeBgm(scene, volume) {
         const bgm = VoiceOverHelper.getBgm(scene);
         if (!bgm) return;

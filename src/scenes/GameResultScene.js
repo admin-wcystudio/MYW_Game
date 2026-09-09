@@ -1,6 +1,7 @@
 import { CustomButton } from "../UI/Button.js";
 import UIHelper from "../UI/UIHelper.js";
 import GameManager from "./GameManager.js";
+import VoiceOverHelper from "../Audio/VoiceOverHelper.js";
 
 export class GameResultScene extends Phaser.Scene {
     constructor() {
@@ -82,6 +83,9 @@ export class GameResultScene extends Phaser.Scene {
         this.closeButton = new CustomButton(this, 1600, 200, 'finishpage_close_button'
             , 'finishpage_close_button_select', () => {
                 if (this.itemImage == null) return; // Ensure the item has been revealed before allowing to close
+
+                VoiceOverHelper.stop(this, { restoreBgm: false });
+                VoiceOverHelper.stopBgm(this);
 
                 this.takeScreenshot();
 
