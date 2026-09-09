@@ -174,7 +174,6 @@ export class MainStreetScene extends Phaser.Scene {
         this.createAnimations();
         this.events.once('shutdown', () => VoiceOverHelper.stop(this));
         VoiceOverHelper.ensureBgm(this);
-        this.input.once('pointerdown', () => VoiceOverHelper.ensureBgm(this));
 
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;

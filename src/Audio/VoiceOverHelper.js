@@ -3,8 +3,9 @@ import { gameConfig } from '../config.js';
 
 export default class VoiceOverHelper {
     static FADE_MS = 200;
-    static BGM_VOLUME = 0.18;
-    static BGM_DUCKED_VOLUME = 0.05;
+    static BGM_VOLUME = 0.32;
+    static BGM_DUCKED_VOLUME = 0.08;
+    static bgmAllowed = false;
 
     static GAME_DIALOGUE = {
         1: {
@@ -237,36 +238,48 @@ export default class VoiceOverHelper {
 
     static ensureBgm(scene) {
         if (!scene.cache.audio.exists('bgm')) return;
+        VoiceOverHelper.bgmAllowed = true;
 
         const start = () => {
+            if (!VoiceOverHelper.bgmAllowed) return;
             let bgm = scene.sound.get('bgm');
             if (!bgm) {
-                bgm = scene.sound.add('bgm', {
-                    loop: true,
-                    volume: VoiceOverHelper.BGM_VOLUME
-                });
+                bgm = scene.sound.add('bgm');
             }
             bgm.setLoop(true);
             bgm.setVolume(VoiceOverHelper.BGM_VOLUME);
-            if (!bgm.isPlaying) bgm.play();
+            if (!bgm.isPlaying) {
+                bgm.play({ loop: true, volume: VoiceOverHelper.BGM_VOLUME });
+            }
         };
 
         start();
-        if (scene.sound.locked) {
-            scene.sound.once('unlocked', start);
-        }
+        scene.sound.once('unlocked', start);
     }
 
     static stopBgm(scene) {
+        VoiceOverHelper.bgmAllowed = false;
         if (scene.currentBgmTween) {
             scene.currentBgmTween.stop();
             scene.currentBgmTween = null;
         }
-        const bgm = VoiceOverHelper.getBgm(scene);
-        if (bgm && bgm.isPlaying) bgm.stop();
+        const sounds = typeof scene.sound.getAll === 'function'
+            ? scene.sound.getAll('bgm')
+            : [];
+        const single = VoiceOverHelper.getBgm(scene);
+        const list = sounds.length ? sounds : (single ? [single] : []);
+        list.forEach((bgm) => {
+            bgm.setVolume(0);
+            bgm.stop();
+            bgm.destroy();
+        });
+        if (typeof scene.sound.removeByKey === 'function') {
+            scene.sound.removeByKey('bgm');
+        }
     }
 
     static fadeBgm(scene, volume) {
+        if (!VoiceOverHelper.bgmAllowed && volume > 0) return;
         const bgm = VoiceOverHelper.getBgm(scene);
         if (!bgm) return;
         if (scene.currentBgmTween) {
@@ -285,6 +298,7 @@ export default class VoiceOverHelper {
     }
 
     static restoreBgm(scene) {
+        if (!VoiceOverHelper.bgmAllowed) return;
         VoiceOverHelper.fadeBgm(scene, VoiceOverHelper.BGM_VOLUME);
     }
 

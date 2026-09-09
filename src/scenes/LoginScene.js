@@ -52,6 +52,7 @@ export class LoginScene extends Phaser.Scene {
         this.bgVideo.setMute(false);
 
         this.bgVideo.play(true); // loop
+        VoiceOverHelper.ensureBgm(this);
 
         const descriptionPages = [
             {

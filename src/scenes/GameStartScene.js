@@ -15,12 +15,11 @@ export class GameStartScene extends Phaser.Scene {
         localStorage.removeItem('playerPosition');
         localStorage.removeItem('hasSeenMainStreetIntro');
 
-        this.bgVideo = this.add.video(960, 540, 'cover_video');
-        this.bgVideo.setMute(false);
-        this.bgVideo.play(true); // loop
+        VoiceOverHelper.ensureBgm(this);
 
-        VoiceOverHelper.stop(this, { restoreBgm: false });
-        VoiceOverHelper.stopBgm(this);
+        this.bgVideo = this.add.video(960, 540, 'cover_video');
+        this.bgVideo.setMute(true);
+        this.bgVideo.play(true); // loop
 
         const descriptionPages = [
             {
@@ -80,7 +79,6 @@ export class GameStartScene extends Phaser.Scene {
         gameDescrBtn.needClicked = false;
 
         const startBtn = new CustomButton(this, 960, 900, 'game_start', 'game_start_click', () => {
-            console.log("go to login");
             this.scene.start('LoginScene');
         });
 
