@@ -89,7 +89,7 @@ export class LoginScene extends Phaser.Scene {
             { frameWidth: 700, frameHeight: 900 }); // 3500x3600 / 5x4
 
         this.load.spritesheet('boy_transition', loginPath + 'choosepage_boy_galaxytochinese_transition.png',
-            { frameWidth: 700, frameHeight: 900 }); // 5600x7200 / 8x8
+            { frameWidth: 350, frameHeight: 450 }); // 2800x3600 / 8x8
 
         this.load.spritesheet('girl_galaxy', loginPath + 'choosepage_girl_galaxy.png',
             { frameWidth: 700, frameHeight: 900 }); // 3500x3600 / 5x4
@@ -97,7 +97,7 @@ export class LoginScene extends Phaser.Scene {
         this.load.spritesheet('girl_chinese', loginPath + 'choosepage_girl_chinese.png',
             { frameWidth: 700, frameHeight: 900 }); // 3500x4500 / 5x5
         this.load.spritesheet('girl_transition', loginPath + 'choosepage_girl_galaxytochinese_transition.png',
-            { frameWidth: 700, frameHeight: 900 }); // 5600x3600 / 8x4
+            { frameWidth: 350, frameHeight: 450 }); // 2800x1800 / 8x4
     }
 
     create() {
@@ -291,16 +291,22 @@ export class LoginScene extends Phaser.Scene {
 
     switchAnimation() {
         if (this.selectedGender === 'M') {
+            this.girlSprite.setScale(1);
             this.girlSprite.play('girl_galaxy_anim');
+            this.boySprite.setScale(2);
             this.boySprite.play('boy_transition_anim');
-            this.boySprite.on('animationcomplete', () => {
+            this.boySprite.once('animationcomplete', () => {
+                this.boySprite.setScale(1);
                 this.boySprite.play('boy_chinese_anim');
             });
 
         } else {
+            this.boySprite.setScale(1);
             this.boySprite.play('boy_galaxy_anim');
+            this.girlSprite.setScale(2);
             this.girlSprite.play('girl_transition_anim');
-            this.girlSprite.on('animationcomplete', () => {
+            this.girlSprite.once('animationcomplete', () => {
+                this.girlSprite.setScale(1);
                 this.girlSprite.play('girl_chinese_anim');
             });
         }
