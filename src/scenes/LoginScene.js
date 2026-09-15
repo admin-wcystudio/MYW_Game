@@ -83,21 +83,22 @@ export class LoginScene extends Phaser.Scene {
 
         // frame = png size / (cols x rows)
         this.load.spritesheet('boy_galaxy', loginPath + 'choosepage_boy_galaxy.png',
-            { frameWidth: 700, frameHeight: 900 }); // 3500x3600 / 5x4
+            { frameWidth: 250, frameHeight: 321 }); // 1000x1285 / 4x4
 
         this.load.spritesheet('boy_chinese', loginPath + 'choosepage_boy_chinese.png',
-            { frameWidth: 700, frameHeight: 900 }); // 3500x3600 / 5x4
+            { frameWidth: 250, frameHeight: 321 }); // 1000x1285 / 4x4
 
         this.load.spritesheet('boy_transition', loginPath + 'choosepage_boy_galaxytochinese_transition.png',
-            { frameWidth: 350, frameHeight: 450 }); // 2800x3600 / 8x8
+            { frameWidth: 200, frameHeight: 257 }); // 1000x1029 / 5x4
 
         this.load.spritesheet('girl_galaxy', loginPath + 'choosepage_girl_galaxy.png',
-            { frameWidth: 700, frameHeight: 900 }); // 3500x3600 / 5x4
+            { frameWidth: 250, frameHeight: 321 }); // 1000x1285 / 4x4
 
         this.load.spritesheet('girl_chinese', loginPath + 'choosepage_girl_chinese.png',
-            { frameWidth: 700, frameHeight: 900 }); // 3500x4500 / 5x5
+            { frameWidth: 250, frameHeight: 321 }); // 1000x1286 / 4x4
+
         this.load.spritesheet('girl_transition', loginPath + 'choosepage_girl_galaxytochinese_transition.png',
-            { frameWidth: 350, frameHeight: 450 }); // 2800x1800 / 8x4
+            { frameWidth: 200, frameHeight: 257 }); // 1000x1285 / 5x5
     }
 
     create() {
@@ -183,15 +184,15 @@ export class LoginScene extends Phaser.Scene {
         // 1. Add the sprite (using the first spritesheet as initial texture)
         this.boySprite = this.add.sprite(620, 540, 'boy_galaxy')
             .setDepth(10)
-            .setScrollFactor(0).setScale(1);
-
+            .setScrollFactor(0);
         this.boySprite.play('boy_galaxy_anim');
+        this.fitLoginSprite(this.boySprite);
 
         this.girlSprite = this.add.sprite(1300, 560, 'girl_galaxy')
             .setDepth(10)
-            .setScrollFactor(0).setScale(1);
-
+            .setScrollFactor(0);
         this.girlSprite.play('girl_galaxy_anim');
+        this.fitLoginSprite(this.girlSprite);
 
 
         this.add.image(340, 350, 'bubble1').setDepth(11);
@@ -289,25 +290,31 @@ export class LoginScene extends Phaser.Scene {
         this.switchToTransitionScene();
     }
 
+    fitLoginSprite(sprite) {
+        const frame = sprite.frame;
+        if (!frame || !frame.width || !frame.height) return;
+        sprite.setScale(700 / frame.width, 900 / frame.height);
+    }
+
     switchAnimation() {
         if (this.selectedGender === 'M') {
-            this.girlSprite.setScale(1);
             this.girlSprite.play('girl_galaxy_anim');
-            this.boySprite.setScale(2);
+            this.fitLoginSprite(this.girlSprite);
             this.boySprite.play('boy_transition_anim');
+            this.fitLoginSprite(this.boySprite);
             this.boySprite.once('animationcomplete', () => {
-                this.boySprite.setScale(1);
                 this.boySprite.play('boy_chinese_anim');
+                this.fitLoginSprite(this.boySprite);
             });
 
         } else {
-            this.boySprite.setScale(1);
             this.boySprite.play('boy_galaxy_anim');
-            this.girlSprite.setScale(2);
+            this.fitLoginSprite(this.boySprite);
             this.girlSprite.play('girl_transition_anim');
+            this.fitLoginSprite(this.girlSprite);
             this.girlSprite.once('animationcomplete', () => {
-                this.girlSprite.setScale(1);
                 this.girlSprite.play('girl_chinese_anim');
+                this.fitLoginSprite(this.girlSprite);
             });
         }
     }
@@ -320,42 +327,42 @@ export class LoginScene extends Phaser.Scene {
 
     createAnimations() {
         this.anims.create({
-            key: 'boy_galaxy_anim',  // Name you will use in other scenes
-            frames: this.anims.generateFrameNumbers('boy_galaxy', { start: 0, end: 19 }),
+            key: 'boy_galaxy_anim',
+            frames: this.anims.generateFrameNumbers('boy_galaxy', { start: 0, end: 15 }),
             frameRate: 16,
             repeat: -1
         });
         this.anims.create({
-            key: 'boy_chinese_anim',  // Name you will use in other scenes
-            frames: this.anims.generateFrameNumbers('boy_chinese', { start: 0, end: 19 }),
+            key: 'boy_chinese_anim',
+            frames: this.anims.generateFrameNumbers('boy_chinese', { start: 0, end: 15 }),
             frameRate: 16,
             repeat: -1
         });
 
         this.anims.create({
-            key: 'boy_transition_anim',  // Name you will use in other scenes
-            frames: this.anims.generateFrameNumbers('boy_transition', { start: 0, end: 63 }),
+            key: 'boy_transition_anim',
+            frames: this.anims.generateFrameNumbers('boy_transition', { start: 0, end: 19 }),
             frameRate: 16,
             repeat: 0
         });
 
         this.anims.create({
             key: 'girl_galaxy_anim',
-            frames: this.anims.generateFrameNumbers('girl_galaxy', { start: 0, end: 19 }),
+            frames: this.anims.generateFrameNumbers('girl_galaxy', { start: 0, end: 15 }),
             frameRate: 16,
             repeat: -1
         });
 
         this.anims.create({
             key: 'girl_chinese_anim',
-            frames: this.anims.generateFrameNumbers('girl_chinese', { start: 0, end: 24 }),
+            frames: this.anims.generateFrameNumbers('girl_chinese', { start: 0, end: 15 }),
             frameRate: 16,
             repeat: -1
         });
 
         this.anims.create({
-            key: 'girl_transition_anim',  // Name you will use in other scenes
-            frames: this.anims.generateFrameNumbers('girl_transition', { start: 0, end: 31 }),
+            key: 'girl_transition_anim',
+            frames: this.anims.generateFrameNumbers('girl_transition', { start: 0, end: 24 }),
             frameRate: 16,
             repeat: 0
         });
