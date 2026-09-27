@@ -255,11 +255,6 @@ export class MainStreetScene extends Phaser.Scene {
         const npc5_bubbles = VoiceOverHelper.getStreetLines(5);
         const npc6_bubbles = VoiceOverHelper.getStreetLines(6);
 
-        const fake_npc1_bubbles = ['fake_npc_1_bubble1', 'fake_npc_1_bubble2'];
-        const fake_npc3_bubbles = ['fake_npc_3_bubble'];
-        const fake_npc4_bubbles = ['fake_npc_4_bubble1', 'fake_npc_4_bubble2'];
-        const fake_npc5_bubbles = ['fake_npc_5_bubble'];
-
         // NPCs (trigger game)
         this.interactiveNpcs = [];
         this.fakeNpcs = [];
@@ -279,12 +274,12 @@ export class MainStreetScene extends Phaser.Scene {
         this.interactiveNpcs.push(n5);
         this.interactiveNpcs.push(n6);
 
-        // Fake NPCs (random talk)
-        const f1 = NpcHelper.createNpc(this, 7, 2800, 500, 1, 'fake_npc_1', fake_npc1_bubbles, 6, 'fake_npc_1_anim', 'fake_npc_1_select_anim');
-        const f2 = NpcHelper.createNpc(this, 8, 3400, 440, 1, 'fake_npc_2', null, 6, 'fake_npc_2_anim', 'fake_npc_2_select_anim');
-        const f3 = NpcHelper.createNpc(this, 9, 3250, 300, 1, 'fake_npc_3', fake_npc3_bubbles, 6, 'fake_npc_3_anim', 'fake_npc_3_select_anim');
-        const f4 = NpcHelper.createNpc(this, 10, 4000, 850, 1, 'fake_npc_4', fake_npc4_bubbles, 15, 'fake_npc_4_anim', 'fake_npc_4_select_anim');
-        const f5 = NpcHelper.createNpc(this, 11, 4450, 350, 1, 'fake_npc_5', fake_npc5_bubbles, 6, 'fake_npc_5_anim', 'fake_npc_5_select_anim');
+        // Decorative NPCs: no yellow outline, no talking bubble
+        const f1 = NpcHelper.createNpc(this, 7, 2800, 500, 1, 'fake_npc_1', null, 6, 'fake_npc_1_anim', null);
+        const f2 = NpcHelper.createNpc(this, 8, 3400, 440, 1, 'fake_npc_2', null, 6, 'fake_npc_2_anim', null);
+        const f3 = NpcHelper.createNpc(this, 9, 3250, 300, 1, 'fake_npc_3', null, 6, 'fake_npc_3_anim', null);
+        const f4 = NpcHelper.createNpc(this, 10, 4000, 850, 1, 'fake_npc_4', null, 15, 'fake_npc_4_anim', null);
+        const f5 = NpcHelper.createNpc(this, 11, 4450, 350, 1, 'fake_npc_5', null, 6, 'fake_npc_5_anim', null);
 
         this.fakeNpcs.push(f1);
         this.fakeNpcs.push(f2);
@@ -313,12 +308,8 @@ export class MainStreetScene extends Phaser.Scene {
             });
         });
 
-        this.fakeNpcs.forEach(npc => {
-            npc.on('pointerdown', () => {
-                if (npc.canInteract) {
-                    this.popRandomBubble(npc.bubbles, npc);
-                }
-            });
+        this.fakeNpcs.forEach((npc) => {
+            if (npc.input) npc.disableInteractive();
         });
 
         this.playerSprite = this.add.sprite(playerPos.x, playerPos.y,
@@ -412,9 +403,7 @@ export class MainStreetScene extends Phaser.Scene {
     }
 
     resolveDialogueTexture(key) {
-        const gendered = `${key}_${this.genderKey}`;
-        if (this.textures.exists(gendered)) return gendered;
-        return key;
+        return VoiceOverHelper.resolveTexture(this, key) || key;
     }
 
     isNpcBoxKey(key) {
@@ -473,8 +462,7 @@ export class MainStreetScene extends Phaser.Scene {
         console.log("Loading bubble at:", boxX, boxY, "for NPC:", targetNpc.id, textureKey);
 
         this.bubbleImg = this.add.image(boxX, boxY, textureKey)
-            .setDepth(200)
-            .setInteractive({ useHandCursor: true });
+            .setDepth(200);
         if (useNpcBox) {
             this.bubbleImg.setScrollFactor(0).setAlpha(0);
         }
@@ -482,10 +470,11 @@ export class MainStreetScene extends Phaser.Scene {
         // 綁定當前 NPC 到對話框，方便 update 檢查距離
         this.bubbleImg.ownerNpc = targetNpc;
         this.currentActiveBubble = this.bubbleImg;
-        VoiceOverHelper.playBubbleVo(this, bubbles[index], index % 2 === 1);
+        const isPlayerLine = (lineKey) => /_(?:boy|girl)$/.test(lineKey);
+        VoiceOverHelper.playBubbleVo(this, bubbles[index], isPlayerLine(bubbles[index]));
 
-        // 處理點擊邏輯
-        this.bubbleImg.on('pointerdown', () => {
+        const advanceBubble = () => {
+            if (!this.bubbleImg) return;
             index++;
             if (index < bubbles.length) {
                 const nextTexture = this.resolveDialogueTexture(bubbles[index]);
@@ -501,7 +490,7 @@ export class MainStreetScene extends Phaser.Scene {
                     this.bubbleImg.setPosition(nextX, nextY);
                 }
                 this.currentActiveBubble = this.bubbleImg;
-                VoiceOverHelper.playBubbleVo(this, bubbles[index], index % 2 === 1);
+                VoiceOverHelper.playBubbleVo(this, bubbles[index], isPlayerLine(bubbles[index]));
             } else {
                 this.closeActiveBubble();
                 if (sceneKey) {
@@ -510,7 +499,18 @@ export class MainStreetScene extends Phaser.Scene {
                     GameManager.switchToGameScene(this, sceneKey);
                 }
             }
-        });
+        };
+
+        const armBubble = () => {
+            if (!this.bubbleImg) return;
+            this.bubbleImg.setInteractive({ useHandCursor: true });
+            this.bubbleImg.on('pointerdown', advanceBubble);
+        };
+        if (this.input.activePointer.isDown) {
+            this.input.once('pointerup', () => this.time.delayedCall(0, armBubble));
+        } else {
+            armBubble();
+        }
 
         // 彈出動畫
         this.tweens.add({

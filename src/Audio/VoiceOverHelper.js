@@ -41,7 +41,7 @@ export default class VoiceOverHelper {
         },
         6: {
             streetLock: ['game6_npc_box1'],
-            street: ['game6_npc_box2', 'game6_npc_box3', 'game6_npc_box4'],
+            street: ['game6_npc_box2', 'game6_npc_box2_girl', 'game6_npc_box3'],
             intro: [],
             win: 'game6_npc_box5',
             winFinal: ['game6_npc_box6', 'game6_npc_box7'],
@@ -209,9 +209,15 @@ export default class VoiceOverHelper {
     static resolveTexture(scene, key) {
         if (!key) return null;
         const genderTag = VoiceOverHelper.getGenderTag();
+        if (/_(?:boy|girl)$/.test(key)) {
+            const swapped = key.replace(/_(?:boy|girl)$/, `_${genderTag}`);
+            if (scene.textures.exists(swapped)) return swapped;
+            if (scene.textures.exists(key)) return key;
+            return null;
+        }
+        if (scene.textures.exists(key)) return key;
         const gendered = `${key}_${genderTag}`;
         if (scene.textures.exists(gendered)) return gendered;
-        if (scene.textures.exists(key)) return key;
         return null;
     }
 

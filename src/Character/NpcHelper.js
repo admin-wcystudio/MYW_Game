@@ -12,9 +12,11 @@ export default class NpcHelper {
         npc.animKey = animKey;
         npc.selectAnimKey = selectAnimKey;
         npc.bubbles = bubbles;
-        npc.setInteractive({ useHandCursor: true });
         npc.id = id;
         npc.proximityDistance = 300;
+        if (selectAnimKey || (bubbles && bubbles.length)) {
+            npc.setInteractive({ useHandCursor: true });
+        }
 
         return npc;
     }

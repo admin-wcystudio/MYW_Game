@@ -156,8 +156,8 @@ export class SettingPanel extends Phaser.GameObjects.Container {
         const savedData = localStorage.getItem('gameSettings');
         const settings = savedData ? JSON.parse(savedData) : { volume: 3, language: 'HK' };
 
-        // default volume
         this.currentVolume = settings.volume;
+        this.currentLanguage = settings.language === 'CN' ? 'CN' : 'HK';
         this.volumeCells = [];
 
         // background
@@ -184,16 +184,18 @@ export class SettingPanel extends Phaser.GameObjects.Container {
             cell.setVisible(i <= this.currentVolume);
         }
 
-        //language
-        this.currentLanguage = settings.language;
-
-        this.mandarinBtn = new CustomButton2(scene, -50, 50,
-            'lang_mandarin', 'lang_mandarin_click',
-            () => this.setLanguage('CN')).setScrollFactor(0);
+        // Language Section — radio: exactly one of Putonghua / Cantonese is always selected
+        this.mandarinBtn = new CustomButton2(
+            scene, -50, 50, 'lang_mandarin', 'lang_mandarin_click',
+            () => this.setLanguage('CN'),
+            () => this.setLanguage('CN')
+        ).setScrollFactor(0);
         this.mandarinBtn.setDepth(105);
         this.mandarinBtn.needClicked = true;
 
-        this.cantoneseBtn = new CustomButton2(scene, 300, 50, 'lang_cantonese', 'lang_cantonese_click',
+        this.cantoneseBtn = new CustomButton2(
+            scene, 300, 50, 'lang_cantonese', 'lang_cantonese_click',
+            () => this.setLanguage('HK'),
             () => this.setLanguage('HK')
         ).setScrollFactor(0);
         this.cantoneseBtn.setDepth(105);
@@ -243,7 +245,7 @@ export class SettingPanel extends Phaser.GameObjects.Container {
     }
 
     setLanguage(lang) {
-        this.currentLanguage = lang;
+        this.currentLanguage = (lang === 'CN') ? 'CN' : 'HK';
         console.log("Setting language to:", lang);
 
         if (this.currentLanguage === 'CN') {
@@ -266,7 +268,7 @@ export class SettingPanel extends Phaser.GameObjects.Container {
     saveToLocal() {
         const settings = {
             volume: this.currentVolume,
-            language: this.currentLanguage
+            language: this.currentLanguage === 'CN' ? 'CN' : 'HK'
         };
 
         localStorage.setItem('gameSettings', JSON.stringify(settings));

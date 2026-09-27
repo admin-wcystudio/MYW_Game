@@ -43,6 +43,7 @@ export class GameScene_6 extends BaseGameScene {
         this.load.image('game6_hit_point', `${path}game_hit_point.png`);
         this.load.image('game6_hit_button', `${path}game6_hit_button.png`);
         this.load.image('game6_hit_button_select', `${path}game6_hit_button_select.png`);
+        this.load.audio('game6_drum', `${path}drum.mp3`);
 
     }
     create() {
@@ -67,6 +68,7 @@ export class GameScene_6 extends BaseGameScene {
         this.spawnHitPoint = false;
         this.isHitPointValid = false;
         this.isWin = false;
+        this.events.once('shutdown', () => this.stopDrum());
 
         // const debugGraphics = this.add.graphics().setDepth(50);
         // debugGraphics.lineStyle(4, 0xff0000, 1);
@@ -144,8 +146,32 @@ export class GameScene_6 extends BaseGameScene {
         }
     }
 
+    playDrum() {
+        if (!this.cache.audio.exists('game6_drum')) return;
+        const start = () => {
+            if (!this.canSpawn) return;
+            if (!this.drumSound) {
+                this.drumSound = this.sound.add('game6_drum', { loop: true, volume: 1 });
+            }
+            if (!this.drumSound.isPlaying) {
+                this.drumSound.play({ loop: true, volume: 1 });
+            }
+        };
+        start();
+        this.sound.once('unlocked', start);
+    }
+
+    stopDrum() {
+        if (!this.drumSound) return;
+        this.drumSound.stop();
+        this.drumSound.destroy();
+        this.drumSound = null;
+    }
+
     enableGameInteraction(enable) {
         this.canSpawn = enable;
+        if (enable) this.playDrum();
+        else this.stopDrum();
         if (this.buttonGroup) {
             this.buttonGroup.setVisible(enable);
             this.buttonGroup.getChildren().forEach(button => {
