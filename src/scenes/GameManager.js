@@ -5,7 +5,7 @@ import NpcHelper from '../Character/NpcHelper.js';
 import VoiceOverHelper from '../Audio/VoiceOverHelper.js';
 
 export default class GameManager {
-    static SESSION_START_KEY = 'sessionStart';
+    static SESSION_START_KEY = 'sessionStart_MYW';
 
     static startSessionClock() {
         if (!localStorage.getItem(GameManager.SESSION_START_KEY)) {
